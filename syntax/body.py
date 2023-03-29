@@ -1,12 +1,11 @@
-class eval:
+class body:
     def __init__(self, type=None, *args):
         self.type = type
         match type:
-            case 'ID' | 'eval':
+            case 'exp':
                 self.content = args[0]
-            case _:
+            case 'statement_body':
                 self.content = {
-                    'exp': args[0],
-                    'op': args[1],
-                    'eval': args[2]
+                    'statement': args[0],
+                    'body': args[1]
                 }

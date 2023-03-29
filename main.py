@@ -1,14 +1,12 @@
 '''
-SIMPLIFIED GRAMMAR
+GRAMMAR
 
-code            : func
-                | code func
-func            : FDEF ID args LBRACE body RBRACE
+empty           :
 
-args            : LPAR args_cont
-args_cont       : RPAR
-                | args_cont COMMA lvar
-                | lvar
+func            : FDEF ID LPAR args RPAR LBRACE body RBRACE
+
+args            : empty
+                | args COMMA lvar
 
 lvar            : singl
                 | llist
@@ -29,8 +27,10 @@ ltuple_cont     : lvar
 body            : exp
                 | statement body
 
-statement       : lvar ASSIGN exp
-                | lvar REASSIGN exp
+statement       : assign
+                | reassign
+assign          : lvar ASSIGN exp
+reassign        : lvar REASSIGN exp
 
 exp             : rvar
                 | eval
@@ -39,12 +39,11 @@ exp             : rvar
                 | lambda
 
 lambda          : LAMBDA args LBRACE exp RBRACE
-                | LAMBDA args LBRACE cond RBRACE
 
 cond            : COND LBRACE condition RBRACE
                 | IF eval THEN exp ELSE exp
 
-condition       : condition_cont '_' COLON exp
+condition       : condition_cont ELSE COLON exp
 
 condition_cont  : evalexp
                 | evalexp COMMA condition_cont
@@ -52,7 +51,7 @@ condition_cont  : evalexp
 evalexp         : eval COLON exp
 
 eval            : ID
-                | eval 'cond_op' aritm
+                | exp 'cond_op' eval
                 | LPAR eval RPAR
 
 aritm           : ID

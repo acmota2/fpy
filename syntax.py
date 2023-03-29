@@ -1,15 +1,16 @@
+from syntax import code
 from .ply import yacc
 from lexer import tokens
 
-def p_code_func(p):
-    'code : func'
-    p[0] = p[1]
+code = code()
 
-def p_code_code_func(p):
-    'code : code func'
-    p[0] = f'{p[1]}\n{p[2]}'
+# def p_code_func(p):
+#     'code : func'
+#     p[0] = p[1]
 
-# FODEU!
+# def p_code_code_func(p):
+#     'code : code func'
+#     p[0] = f'{p[1]}\n{p[2]}'
 
 def p_body_statement(p):
     'body : statement body'

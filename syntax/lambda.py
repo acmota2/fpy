@@ -7,5 +7,7 @@ class lambda_:
                     'args': args[0],
                     'exp': args[1]
                 }
+                # lvars
+                self.ids = args[0].ids
             case _:
                 print('Error on lambda')

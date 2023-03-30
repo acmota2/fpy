@@ -1,8 +1,9 @@
-from syntax import code
+from syntax import code, func
 from .ply import yacc
 from lexer import tokens
 
-code = code()
+code_: code = code()
+scope = []
 
 # def p_code_func(p):
 #     'code : func'
@@ -12,21 +13,40 @@ code = code()
 #     'code : code func'
 #     p[0] = f'{p[1]}\n{p[2]}'
 
+def p_empty(p):
+    'empty : '
+    pass
+
+def p_scope(p):
+    'scope : '
+    scope.append(set())
+
+def p_func(p):
+    'func : FDEF ID LPAR scope args RPAR LBRACE body RBRACE'
+    code.insert_func(func(name=p[2], args=p[5], body=p[8]))
+    scope.pop()
+
 def p_body_statement(p):
     'body : statement body'
-    p[0] = f'{p[1]}\n'
+    p[0] = p[1]
 
 def p_body_exp(p):
     'body : exp'
     p[0] = p[1]
 
 def p_statement_REASSIGN(p):
-    'statement : lvar REASSIGN exp'
-    p[0] = f'{p[1]}={p[3]}'
+    '''statement : assign
+                 | reassign'''
+    p[0] = p[1]
 
-def p_statement_ASSIGN(p):
-    'statement : lvar ASSIGN exp'
-    p[0] = f'{p[1]}={p[3]}'
+def p_assign(p):
+    'assign : lvar ASSIGN exp'
+    # esta condição está errada, verificar!!!
+    if p[1] not in scope[-1]:
+        ...
+    else:
+        # se me apetecer: "previous declaration on: blabla"
+        print('Variable already declared')
 
 def p_exp_cond(p):
     'exp : cond'
@@ -215,7 +235,7 @@ def p_rtuple_cont_COMMA(p):
     p[0] = f'({p[1]},{p[3]})'
 
 def p_singl_ID(p):
-    'singl : ID'
+    'singl : ID'    
     p[0] = p[1]
 
 def p_singl_NUM(p):

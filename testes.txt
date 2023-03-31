@@ -1,0 +1,16 @@
+'''fpy
+fdef bla([]) {
+    []
+}
+fdef bla([h|t]) {
+    [ h+1 | bla(t) ]
+}
+'''
+defmodule Bla do
+    def bla([]) do 
+        [] 
+    end
+    def bla([h|t]) do
+        [ h+1 | bla(t) ]
+    end
+end

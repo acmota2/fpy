@@ -2,7 +2,6 @@ empty           :
 
 scope           :
 
-# verificar a regra code 
 code            : BEGIN func END
                 | BEGIN code func END
 
@@ -11,21 +10,21 @@ func            : FDEF ID LPAR scope args RPAR LBRACE body RBRACE
 args            : empty
                 | args COMMA lvar
 
-lvar            : singl
+lvar            : var
                 | llist
                 | ltuple
 
 llist           : LBRACKET llist_cont
 llist_cont      : RBRACKET
                 | llist_term RBRACKET
-llist_term      : singl
-                | list_term COMMA singl
-                | singl LISTER llist
+llist_term      : var  
+                | llist_term COMMA var
+                | var LISTER llist
 
 ltuple          : LPAR
                 | ltuple_cont RPAR
 ltuple_cont     : lvar
-                | ltuple_cont COMMA singl
+                | ltuple_cont COMMA var
 
 body            : exp
                 | statement body
@@ -63,7 +62,7 @@ aritm           : ID
                 | NUM 'aritm_op' aritm
                 | LPAR aritm RPAR
 
-rvar            : singl
+rvar            : var
                 | rlist
                 | rtuple
                 | func_call
@@ -84,7 +83,7 @@ func_call       : ID LPAR func_call_cont
 func_call_cont  : RPAR
                 | exp COMMA func_call_cont
 
-singl           : ID
+var             : ID
                 | NUM
                 | STRING
                 | CHAR

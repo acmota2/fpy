@@ -1,15 +1,24 @@
-import singl
+import syntax.var as var
 
 class llist_term:
-    def __init__(self, type=None, singl: singl=None, head: singl=None, tail=None):
+    def __init__(
+        self,
+        type=None,
+        *args
+    ):
             self.type = type
             match type:
-                case 'singl':
-                    self.content = singl
-                case 'comma' | 'lister':
+                case 'var':
+                    self.content = args[0]
+                case 'lister':
                     self.content = {
-                        'head': head,    # singl
-                        'tail': tail     # llist
+                        'head': args[0],    # var
+                        'tail': args[1]     # llist
+                    }
+                case 'commas':
+                    self.content = {
+                        'cont': args[0],
+                        'var': args[1]
                     }
                 case _:
                     print('Error on llist_term')
@@ -22,7 +31,7 @@ class llist_cont:
     def __init__(self, type=None, content=None):
         self.type = type
         match type:
-            case 'end' | 'llist_term':
+            case 'llist_term':
                 self.content = content
             case _:
                 print('Error on llist_cont')

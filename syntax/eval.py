@@ -1,12 +1,17 @@
 class eval:
-    def __init__(self, type=None, *args):
-        self.type = type
-        match type:
-            case 'ID' | 'eval':
-                self.content = args[0]
-            case _:
-                self.content = {
-                    'exp': args[0],
-                    'op': args[1],
-                    'eval': args[2]
-                }
+    def __init__(
+        self,
+        type=None,
+        signal=None,
+        exp=None,
+        eval=None
+    ):
+        if type == 'eval':
+            self.type = type
+            self.condition = (signal, exp, eval)
+        else:
+            print('Error on eval')
+
+    def __eq__(self, other):
+        return self.type == other.type and \
+            self.conditon == other.conditon

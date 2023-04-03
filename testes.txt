@@ -1,11 +1,15 @@
 '''fpy
-fdef bla([]) {
-    []
+fdef bla {
+    []: []
+    [h|t] : [ h+1 | bla(t) ]
 }
 fdef bla([h|t]) {
     [ h+1 | bla(t) ]
 }
 '''
+
+# Elixir
+
 defmodule Bla do
     def bla([]) do 
         [] 
@@ -14,3 +18,8 @@ defmodule Bla do
         [ h+1 | bla(t) ]
     end
 end
+
+# Haskell
+
+bla [] = []
+bla (h:t) = (h+1) : bla t

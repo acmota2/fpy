@@ -1,5 +1,3 @@
-import func
-
 class code:
     def __init__(self):
         self.funcs = {}
@@ -8,7 +6,7 @@ class code:
     def add_errors(self, errors: list[str]):
         self.errors.extend(errors)
 
-    def insert_func(self, func: func):
+    def insert_func(self, func):
         if func.name not in self.funcs:
             self.funcs[func.name] = {
                 'def_num': 0,

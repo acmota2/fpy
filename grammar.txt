@@ -17,14 +17,15 @@ lvar            : var
 llist           : LBRACKET llist_cont
 llist_cont      : RBRACKET
                 | llist_term RBRACKET
-llist_term      : var  
-                | llist_term COMMA var
-                | var LISTER llist
+llist_term      : lvar  
+                | llist_term COMMA lvar
+                | lvar LISTER llist
 
-ltuple          : LPAR
-                | ltuple_cont RPAR
-ltuple_cont     : lvar
-                | ltuple_cont COMMA var
+ltuple          : LPAR ltuple_cont
+ltuple_cont     : ltuple_term COMMA lvar RPAR
+                | empty RPAR
+ltuple_term     : lvar
+                | ltuple_term COMMA lvar
 
 body            : exp
                 | statement body
@@ -44,9 +45,7 @@ lambda          : LAMBDA args LBRACE exp RBRACE
 
 cond            : COND LBRACE condition RBRACE
                 | IF eval THEN exp ELSE exp
-
 condition       : condition_cont ELSE COLON exp
-
 condition_cont  : evalexp
                 | evalexp COMMA condition_cont
 
@@ -74,10 +73,11 @@ rlist_term      : exp
                 | rlist_term COMMA exp
                 | exp LISTER rlist
 
-rtuple          : LPAR
-                | rtuple_cont COMMA exp RPAR
-rtuple_cont     : exp
-                | rtuple_cont COMMA exp
+rtuple          : LPAR rtuple_cont
+rtuple_cont     : rtuple_term COMMA exp RPAR
+                | empty RPAR
+rtuple_term     : exp
+                | rtuple_term COMMA exp
 
 func_call       : ID LPAR func_call_cont
 func_call_cont  : RPAR

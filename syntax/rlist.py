@@ -1,31 +1,29 @@
 class rlist:
-    def __init__(self, type=None, content=None):
+    def __init__(self, type=None, rlist_term=None):
         self.type = type
+        self.exps = []
         match type:
             case 'rlist':
-                self.content = content
+                if rlist_term:
+                    self.exps.extend(rlist_term.exps)
             case _:
                 print('Error on rlist')
 
-class rlist_cont:
-    def __init__(self, type=None, content=None):
-        self.type = type
-        match type:
-            case 'end' | 'rlist_term':
-                self.content = content
-            case _:
-                print('Error on rlist_cont')
+    def __eq__(self, other):
+        return self.type == other.type and \
+            self.exps == other.exps
 
-class rlist_term:
-    def __init__(self, type=None, *args):
-            self.type = type
-            match type:
-                case 'exp':
-                    self.content = args[0]
-                case 'comma' | 'lister':
-                    self.content = {
-                        'head': args[0],
-                        'tail': args[1]
-                    }
-                case _:
-                    print('Error on rlist_term')
+    def add_exp(self, exp):
+        self.exps.append(exp)
+
+    def get_ids(self) -> set:
+        r: set = {}
+        for v in self.exps:
+            if v in r:
+                return None
+            match v.type:
+                case 'ID' | 'NUM' | 'STRING' | 'CHAR':
+                    r.append(v.var)
+                case 'rtuple' | 'rlist':
+                    r.extend(v.exps)
+        return r

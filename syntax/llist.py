@@ -1,54 +1,29 @@
-import syntax.var as var
-
-class llist_term:
-    def __init__(
-        self,
-        type=None,
-        *args
-    ):
-            self.type = type
-            match type:
-                case 'var':
-                    self.content = args[0]
-                case 'lister':
-                    self.content = {
-                        'head': args[0],    # var
-                        'tail': args[1]     # llist
-                    }
-                case 'commas':
-                    self.content = {
-                        'cont': args[0],
-                        'var': args[1]
-                    }
-                case _:
-                    print('Error on llist_term')
-
-    def __eq__(self, other):
-        return self.type == other.type and \
-            self.content == other.content
-
-class llist_cont:
-    def __init__(self, type=None, content=None):
-        self.type = type
-        match type:
-            case 'llist_term':
-                self.content = content
-            case _:
-                print('Error on llist_cont')
-
-    def __eq__(self, other):
-        return self.type == other.type \
-            and self.content == other.content
-
 class llist:
-    def __init__(self, type=None, content: llist_cont=None):
+    def __init__(self, type=None, llist_term=None):
         self.type = type
+        self.vars = []
         match type:
             case 'llist':
-                self.content = content
+                if llist_term:
+                    self.vars.extend(llist_term.vars)
             case _:
                 print('Error on llist')
 
     def __eq__(self, other):
-        return self.type == other.type \
-            and self.content == other.content
+        return self.type == other.type and \
+            self.vars == other.vars
+    
+    def add_lvar(self, lvar):
+        self.vars.append(lvar)
+
+    def get_ids(self) -> set:
+        r: list = {}
+        for v in self.vars:
+            if v in r:
+                return None
+            match v.type:
+                case 'ID':
+                    r.append(v.var)
+                case 'ltuple' | 'llist':
+                    r.extend(v.vars)
+        return r

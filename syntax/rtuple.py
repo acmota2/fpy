@@ -1,25 +1,27 @@
-class rtuple:
-    def __init__(self, type=None, *args):
+class ltuple:
+    def __init__(self, type=None, rtuple_term=None):
         self.type = type
+        self.exps = []
         match type:
-            case 'LPAR':
-                self.content = None
-            case 'cont':
-                self.content = {
-                    'rtuple_cont': args[0],
-                    'exp': args[1]
-                }
+            case 'rtuple':
+                if rtuple_term:
+                    self.exps.extend(rtuple_term.exps)
             case _:
                 print('Error on rtuple')
 
-class rtuple_cont:
-    def __init__(self, type=None, *args):
-        self.type = type
-        match type:
-            case 'exp':
-                self.content = args[0]
-            case 'cont':
-                self.content = {
-                    'rtuple_cont': args[0],
-                    'exp': args[1]
-                }
+    def __eq__(self, other):
+        return self.type == other.type and \
+            self.exps == other.exps
+
+    def add_exp(self, exp):
+        self.exps.append(exp)
+
+    def get_ids(self) -> set:
+        r: set = {}
+        for v in self.exps:
+            match v.type:
+                case 'ID' | 'NUM' | 'STRING' | 'CHAR':
+                    r.append(v.var)
+                case 'rtuple' | 'rlist':
+                    r.extend(v.exps)
+        return r

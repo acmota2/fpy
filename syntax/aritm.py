@@ -1,12 +1,11 @@
 class aritm:
-    def __init__(self, type=None, *args):
-        self.type = type
-        match type:
-            case 'ID' | 'NUM' | 'aritm':
-                self.content = args[0]
-            case _:
-                self.content = {
-                    'lval': args[0],
-                    'op':   args[1],
-                    'rval': args[2]
-                }
+    def __init__(self, type=None, op=None, var=None, aritm=None):
+        if type == 'aritm':
+            self.type = type
+            self.aritm = (op, var, aritm)
+        else:
+            print('Error on aritm')
+    
+    def __eq__(self, other):
+        return self.type == other.type and \
+               self.aritm == other.aritm

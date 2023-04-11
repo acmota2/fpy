@@ -1,4 +1,4 @@
-from .ply.yacc import yacc
+from ply import yacc
 from lexer import tokens
 import syntax as syn
 

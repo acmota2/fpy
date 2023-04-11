@@ -1,8 +1,8 @@
 from ply import yacc
 from lexer import tokens
-import syntax as syn
+import semantics as sem
 
-code_: syn.code = syn.code()
+code_: sem.code = sem.code()
 scope = []
 
 
@@ -18,7 +18,7 @@ def p_scope(p):
 
 def p_func(p):
     'func : FDEF ID LPAR scope args RPAR LBRACE body RBRACE'
-    syn.code.insert_func(syn.func(name=p[2], args=p[5], body=p[8]))
+    sem.code.insert_func(sem.func(name=p[2], args=p[5], body=p[8]))
     scope.pop()
 
 
@@ -36,7 +36,7 @@ def p_llist(p):
 
 def p_llist_cont_empty(p):
     'llist_cont : RBRACKET'
-    p[0] = syn.llist(type='llist')
+    p[0] = sem.llist(type='llist')
 
 
 def p_llist_term_lvar(p):
@@ -44,7 +44,7 @@ def p_llist_term_lvar(p):
     try:
         p[0].add_lvar(p[1])
     except:
-        p[0] = syn.llist(type='llist')
+        p[0] = sem.llist(type='llist')
         p[0].add_lvar(p[1])
 
 
@@ -55,7 +55,7 @@ def p_llist_term_COMMA_LISTER(p):
         p[1].add_lvar(p[3])
         p[0] = p[1]
     except:
-        p[1] = syn.llist(type='llist', llist_term=p[3])
+        p[1] = sem.llist(type='llist', llist_term=p[3])
         p[0] = p[1]
 
 
@@ -66,7 +66,7 @@ def p_ltuple_LPAR(p):
 
 def p_ltuple_cont_empty(p):
     'ltuple_cont : empty RPAR'
-    p[0] = syn.ltuple(type='ltuple')
+    p[0] = sem.ltuple(type='ltuple')
 
 
 def p_ltuple_cont_lvar(p):
@@ -79,7 +79,7 @@ def p_ltuple_term_lvar(p):
     try:
         p[0].add_lvar(p[1])
     except:
-        p[0] = syn.ltuple(type='ltuple', ltuple_term=p[1])
+        p[0] = sem.ltuple(type='ltuple', ltuple_term=p[1])
         p[0].add_lvar(p[1])
 
 
@@ -89,7 +89,7 @@ def p_ltuple_term_cont(p):
         p[1].add_lvar(p[1])
         p[0] = p[1]
     except:
-        p[1] = syn.ltuple(type='ltuple', ltuple_term=p[1])
+        p[1] = sem.ltuple(type='ltuple', ltuple_term=p[1])
         p[1].add_lvar(p[1])
         p[0] = p[1]
 
@@ -99,14 +99,14 @@ def p_body_statement(p):
     try:
         p[0].statements.append(p[1])
     except:
-        p[0] = syn.body('statement_body', p[1])
+        p[0] = sem.body('statement_body', p[1])
         p[0].statements.append(p[1])
 
 
 def p_body_exp(p):
     'body : exp'
     try:
-        p[0] = syn.body('body', p[1])
+        p[0] = sem.body('body', p[1])
     except:
         print('''Found statement, expected expression at the end of function.
         Accepted types are: ''')
@@ -122,7 +122,7 @@ def p_assign_reassign(p):
     '''assign : lvar ASSIGN exp
               | lvar REASSIGN exp'''
     type = 'reassign' if p[2] == '=' else 'assign'
-    p[0] = syn.statement(type=type, lvar=p[1], exp=p[3])
+    p[0] = sem.statement(type=type, lvar=p[1], exp=p[3])
 
 
 def p_exp(p):
@@ -136,7 +136,7 @@ def p_exp(p):
 
 def p_lambda_(p):
     'lambda : LAMBDA args LBRACE exp RBRACE'
-    p[0] = syn.lambda_(type='lambda', args=p[2], exp=p[4])
+    p[0] = sem.lambda_(type='lambda', args=p[2], exp=p[4])
 
 
 def p_cond(p):
@@ -146,7 +146,7 @@ def p_cond(p):
 
 def p_cond_if_then_else(p):
     'cond : IF eval THEN exp ELSE exp'
-    p[0] = syn.if_then_else(type='if_then_else',
+    p[0] = sem.if_then_else(type='if_then_else',
                             eval=p[2], then=p[4], else_=p[6])
 
 
@@ -161,7 +161,7 @@ def p_condition_cont_evalexp(p):
     try:
         p[0].add_condition(p[1])
     except:
-        p[0] = syn.cond('cond')
+        p[0] = sem.cond('cond')
         p[0].add_condition(p[1])
 
 
@@ -170,7 +170,7 @@ def p_condition_cont_evalexp(p):
     try:
         p[0].add_condition(p[1])
     except:
-        p[0] = syn.cond('cond')
+        p[0] = sem.cond('cond')
         p[0].add_condition(p[1])
 
 
@@ -192,7 +192,7 @@ def p_eval_exp_OP_eval(p):
             | exp LTE eval
             | exp GTE eval'''
     print(p[2])
-    p[0] = syn.eval(type='eval', condition=(p[2], p[1], p[3]))
+    p[0] = sem.eval(type='eval', condition=(p[2], p[1], p[3]))
 
 
 def p_eval_PAR(p):
@@ -221,7 +221,7 @@ def p_aritm_OP(p):
              | NUM MOD aritm
              | NUM POW aritm
              | NUM INTDIV aritm'''
-    p[0] = syn.aritm(
+    p[0] = sem.aritm(
         type='aritm',
         op=p[2],
         var=p[1],
@@ -261,7 +261,7 @@ def p_rlist_term_exp(p):
     try:
         p[0].add_exp(p[1])
     except:
-        p[0] = syn.rlist(type='llist')
+        p[0] = sem.rlist(type='llist')
         p[0].add_exp(p[1])
 
 
@@ -272,7 +272,7 @@ def p_rlist_term_COMMA_LISTER(p):
         p[1].add_lvar(p[3])
         p[0] = p[1]
     except:
-        p[1] = syn.llist(type='llist', llist_term=p[3])
+        p[1] = sem.llist(type='llist', llist_term=p[3])
         p[0] = p[1]
 
 
@@ -283,7 +283,7 @@ def p_rtuple_LPAR(p):
 
 def p_rtuple_cont_empty(p):
     'rtuple_cont : empty RPAR'
-    p[0] = syn.rtuple(type='rtuple')
+    p[0] = sem.rtuple(type='rtuple')
 
 
 def p_rtuple_cont_exp(p):
@@ -296,7 +296,7 @@ def p_rtuple_term_epx(p):
     try:
         p[0].add_exp(p[1])
     except:
-        p[0] = syn.rtuple(type='rtuple', rtuple_term=p[1])
+        p[0] = sem.rtuple(type='rtuple', rtuple_term=p[1])
         p[0].add_exp(p[1])
 
 
@@ -306,7 +306,7 @@ def p_rtuple_term_cont(p):
         p[1].add_exp(p[1])
         p[0] = p[1]
     except:
-        p[1] = syn.rtuple(type='rtuple', rtuple_term=p[1])
+        p[1] = sem.rtuple(type='rtuple', rtuple_term=p[1])
         p[1].add_exp(p[1])
         p[0] = p[1]
 
@@ -327,7 +327,7 @@ def p_func_call_cont_COMMA(p):
     try:
         p[0].add_args(p[1])
     except:
-        p[0] = syn.func_call(type='func_call')
+        p[0] = sem.func_call(type='func_call')
         p[0].add_args(p[1])
 
 
@@ -336,7 +336,7 @@ def p_var(p):
            | NUM
            | STRING
            | CHAR'''
-    p[0] = syn.var(
+    p[0] = sem.var(
         type=p[1].token().type,
         var=p[1])
 

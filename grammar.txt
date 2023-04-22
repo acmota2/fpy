@@ -5,27 +5,26 @@ scope           :
 code            : BEGIN func END
                 | BEGIN code func END
 
-func            : FDEF ID LPAR scope args RPAR LBRACE body RBRACE
+func            : FDEF ID LPAR scope RPAR LBRACE body RBRACE
+                | FDEF ID LPAR scope args RPAR LBRACE body RBRACE
 
-args            : empty
+args            : lvar
                 | args COMMA lvar
 
 lvar            : var
                 | llist
                 | ltuple
 
-llist           : LBRACKET llist_cont
-llist_cont      : RBRACKET
-                | llist_term RBRACKET
-llist_term      : lvar  
-                | llist_term COMMA lvar
+llist           : LBRACKET RBRACKET
+                | LBRACKET llist_cont RBRACKET
+llist_cont      : lvar  
+                | llist_cont COMMA lvar
                 | lvar LISTER llist
 
-ltuple          : LPAR ltuple_cont
-ltuple_cont     : ltuple_term COMMA lvar RPAR
-                | empty RPAR
-ltuple_term     : lvar
-                | ltuple_term COMMA lvar
+ltuple          : LPAR RPAR
+                | LPAR ltuple_cont COMMA lvar RPAR
+ltuple_cont     : lvar
+                | ltuple_cont COMMA lvar
 
 body            : exp
                 | statement body
@@ -41,7 +40,8 @@ exp             : rvar
                 | cond
                 | lambda
 
-lambda          : LAMBDA args LBRACE exp RBRACE
+lambda          : LAMBDA LBRACE exp RBRACE
+                | LAMBDA args LBRACE exp RBRACE
 
 cond            : COND LBRACE condition RBRACE
                 | IF eval THEN exp ELSE exp
@@ -66,18 +66,16 @@ rvar            : var
                 | rtuple
                 | func_call
 
-rlist           : LBRACKET rlist_cont
-rlist_cont      : RBRACKET
-                | rlist_term RBRACKET
-rlist_term      : exp
+rlist           : LBRACKET RBRACKET
+                | LBRACKET rlist_cont RBRACKET
+rlist_cont      : exp
                 | rlist_term COMMA exp
                 | exp LISTER rlist
 
-rtuple          : LPAR rtuple_cont
-rtuple_cont     : rtuple_term COMMA exp RPAR
-                | empty RPAR
-rtuple_term     : exp
-                | rtuple_term COMMA exp
+rtuple          : LPAR RPAR
+                | LPAR rtuple_cont COMMA exp RPAR
+rtuple_cont     : exp
+                | rtuple_cont COMMA exp
 
 func_call       : ID LPAR func_call_cont
 func_call_cont  : RPAR

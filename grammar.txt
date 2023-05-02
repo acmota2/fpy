@@ -5,33 +5,33 @@ scope           :
 code            : BEGIN func END
                 | BEGIN code func END
 
-func            : FDEF ID LPAR scope RPAR LBRACE body RBRACE
-                | FDEF ID LPAR scope args RPAR LBRACE body RBRACE
+func            : FDEF ID '(' scope ')' '{' body '}'
+                | FDEF ID '(' scope args ')' '{' body '}'
 
 args            : lvar
-                | args COMMA lvar
+                | args ',' lvar
 
 lvar            : var
                 | llist
                 | ltuple
 
-llist           : LBRACKET RBRACKET
-                | LBRACKET llist_cont RBRACKET
+llist           : '[' ']'
+                | '[' llist_cont ']'
 llist_cont      : lvar  
-                | llist_cont COMMA lvar
-                | lvar LISTER llist
+                | llist_cont ',' lvar
+                | lvar '|' llist
 
-ltuple          : LPAR RPAR
-                | LPAR ltuple_cont COMMA lvar RPAR
+ltuple          : '(' ')'
+                | '(' ltuple_cont ',' lvar ')'
 ltuple_cont     : lvar
-                | ltuple_cont COMMA lvar
+                | ltuple_cont ',' lvar
 
 body            : exp
                 | statement body
 
 statement       : assign
                 | reassign
-assign          : lvar ASSIGN exp
+assign          : lvar '=' exp
 reassign        : lvar REASSIGN exp
 
 exp             : rvar
@@ -40,46 +40,46 @@ exp             : rvar
                 | cond
                 | lambda
 
-lambda          : LAMBDA LBRACE exp RBRACE
-                | LAMBDA args LBRACE exp RBRACE
+lambda          : LAMBDA '{' exp '}'
+                | LAMBDA args '{' exp '}'
 
-cond            : COND LBRACE condition RBRACE
+cond            : COND '{' condition '}'
                 | IF eval THEN exp ELSE exp
-condition       : condition_cont ELSE COLON exp
+condition       : condition_cont ELSE ':' exp
 condition_cont  : evalexp
-                | evalexp COMMA condition_cont
+                | evalexp ',' condition_cont
 
-evalexp         : eval COLON exp
+evalexp         : eval ':' exp
 
 eval            : ID
                 | exp 'cond_op' eval
-                | LPAR eval RPAR
+                | '(' eval ')'
 
 aritm           : ID
                 | NUM
                 | ID 'aritm_op' aritm
                 | NUM 'aritm_op' aritm
-                | LPAR aritm RPAR
+                | '(' aritm ')'
 
 rvar            : var
                 | rlist
                 | rtuple
                 | func_call
 
-rlist           : LBRACKET RBRACKET
-                | LBRACKET rlist_cont RBRACKET
+rlist           : '[' ']'
+                | '[' rlist_cont ']'
 rlist_cont      : exp
-                | rlist_term COMMA exp
-                | exp LISTER rlist
+                | rlist_term ',' exp
+                | exp '|' rlist
 
-rtuple          : LPAR RPAR
-                | LPAR rtuple_cont COMMA exp RPAR
+rtuple          : '(' ')'
+                | '(' rtuple_cont ',' exp ')'
 rtuple_cont     : exp
-                | rtuple_cont COMMA exp
+                | rtuple_cont ',' exp
 
-func_call       : ID LPAR func_call_cont
-func_call_cont  : RPAR
-                | exp COMMA func_call_cont
+func_call       : ID '(' func_call_cont
+func_call_cont  : ')'
+                | exp ',' func_call_cont
 
 var             : ID
                 | NUM

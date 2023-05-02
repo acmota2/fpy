@@ -1,5 +1,5 @@
-from ply import yacc
-from lexer import tokens
+from lexer import tokens, literals
+import ply.yacc as yacc
 import semantics as sem
 
 code_: sem.code = sem.code()

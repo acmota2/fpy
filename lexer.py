@@ -1,4 +1,4 @@
-from ply import lex
+import ply.lex as lex
 import sys
 
 reserved = {
@@ -6,7 +6,6 @@ reserved = {
     'then': 'THEN',
     'else': 'ELSE',
     'fdef': 'FDEF',
-    'lambda': 'LAMBDA',
     'or': 'OR',
     'and': 'AND'
 }
@@ -15,26 +14,24 @@ tokens = [
     # limits
     'BEGIN','END',
     # vars
-    'ID','NUM','ASSIGN','REASSIGN','COMMA','STRING','CHAR',
-    # open/close
-    'LPAR','RPAR','LBRACKET','RBRACKET','LBRACE','RBRACE',
+    'ID','NUM','ASSIGN','STRING','CHAR',
     # cond
-    'COND','COLON',
-    # list [head|tail]
-    'LISTER',
+    'COND',
     # aritm
-    'SUM','PROD','DIV','SUB','MOD','POW','INTDIV',
+    'POW','INTDIV', # +, -, /, * e % sao literals
     # conditional
-    'EQ','LT','GT','LTE','GTE','DIF',
+    'EQ','LTE','GTE','DIF', # LT e GT sao literals
 ] + list(reserved.values())
+
+literals = ['[',']','(',')','{','}',',','+','-','/','=','%','|','<','>',':']
 
 states = (
    ('fpy','exclusive'),
 )
 
-t_ignore = r'.*'
+t_ignore = ' \t'
 
-t_fpy_ignore = f'\r\n '
+t_fpy_ignore = '\t\r\n '
 
 t_fpy_ignore_COMMENT = r'\#.*'
 
@@ -77,61 +74,8 @@ def t_fpy_ASSIGN(t):
     r':='
     return t
 
-t_fpy_REASSIGN = r'='
-
-def t_fpy_COMMA(t):
-    r','
-    return t
-
-def t_fpy_LPAR(t):
-    r'\('
-    return t
-
-def t_fpy_RPAR(t):
-    r'\)'
-    return t
-
-def t_fpy_LBRACKET(t):
-    r'\['
-    return t
-
-def t_fpy_RBRACKET(t):
-    r'\]'
-    return t
-
-def t_fpy_LBRACE(t):
-    r'\{'
-    return t
-
-def t_fpy_RBRACE(t):
-    r'\}'
-    return t
-
 t_fpy_COND = r'\[\?\.\.\?\]'
 
-def t_fpy_COLON(t):
-    r':'
-    return t
-
-def t_fpy_LISTER(t):
-    r'\|'
-    return t
-
-def t_fpy_SUM(t):
-    r'\+'
-    return t
-
-def t_fpy_SUB(t):
-    r'-'
-    return t
-
-def t_fpy_PROD(t):
-    r'\*'
-    return t
-
-def t_fpy_DIV(t):
-    r'\/'
-    return t
 
 def t_fpy_INTDIV(t):
     r'\/\/'
@@ -163,6 +107,8 @@ def t_error(t):
 def t_fpy_error(t):
     print(f'Error on line {t.lexer.lineno}, position {t.lexer.lexpos}')
     t.lexer.skip(1)
+
+lexer = lex.lex()
 
 # for testing purposes
 if __name__ == '__main__':

@@ -7,7 +7,8 @@ reserved = {
     'else': 'ELSE',
     'fdef': 'FDEF',
     'or': 'OR',
-    'and': 'AND'
+    'and': 'AND',
+    'not': 'NOT'
 }
 
 tokens = [

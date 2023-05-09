@@ -1,0 +1,25 @@
+condition   : eval ':' exp
+
+eval        : eval AND evalexp
+            | eval OR evalexp
+            | NOT evalexp
+            | evalexp
+
+exp         : exp '+' factor
+            | exp '-' factor
+
+factor      : factor '*' term
+            | factor '/' term
+            | factor INTDIV term
+
+term        : term POW numerical
+            | term '%' numerical
+            | '(' exp ')'
+
+singular    : STRING
+            | rlist
+            | rtuple
+            | numerical
+
+numerical   : NUM
+            | ID

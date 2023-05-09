@@ -43,9 +43,9 @@ exp             : rvar
 lambda          : LAMBDA '{' exp '}'
                 | LAMBDA args '{' exp '}'
 
-cond            : COND '{' condition '}'
+cond            : COND '{' conditions '}'
                 | IF eval THEN exp ELSE exp
-condition       : condition_cont ELSE ':' exp
+conditions      : condition_cont ELSE ':' exp
 condition_cont  : evalexp
                 | evalexp ',' condition_cont
 

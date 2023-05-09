@@ -1,9 +1,18 @@
 condition   : eval ':' exp
 
-eval        : eval AND evalexp
-            | eval OR evalexp
-            | NOT evalexp
-            | evalexp
+eval        : eval AND relat
+            | eval OR relat
+            | NOT eval
+            | relat
+
+relat       : ID
+            | relat EQ singular
+            | relat DIF singular
+            | relat '>' singular
+            | relat '<' singular
+            | relat LTE singular
+            | relat GTE singular
+            | '(' eval ')'
 
 exp         : exp '+' factor
             | exp '-' factor
@@ -19,7 +28,4 @@ term        : term POW numerical
 singular    : STRING
             | rlist
             | rtuple
-            | numerical
-
-numerical   : NUM
-            | ID
+            | NUM

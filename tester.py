@@ -27,7 +27,7 @@ def p_grammar_tester(p):
                     | '(' pattern_list ')'
 
     prefix          : ID
-                    | '|' SPECIALID '|'
+                    | '[' SPECIALID ']'
 
     let_block       : LET '{' let_cont '}'
 
@@ -54,7 +54,7 @@ def p_grammar_tester(p):
                     | ltuple_cont ',' lpattern
 
     lvar            : ID
-                    | '|' SPECIALID '|'
+                    | '[' SPECIALID ']'
                     | STRING
                     | NUM
                     | CHAR
@@ -87,10 +87,13 @@ def p_grammar_tester(p):
     multivar        : primaryvar
                     | rlist
                     | rtuple
-                    | multivar '(' exp_list ')'
+                    | multivar '(' compound_list ')'
+
+    compound_list   : compound
+                    | compound_list ',' compound
 
     primaryvar      : ID
-                    | '|' SPECIALID '|'
+                    | '[' SPECIALID ']'
                     | STRING
                     | NUM
                     | CHAR

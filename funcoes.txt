@@ -1,0 +1,40 @@
+fdef foldl(_,acc,[]) { acc }
+fdef foldl(f,acc,[h|t]) {
+	foldl(f,f(acc,h),t)
+}
+
+fdef foldr(_,acc,[]) { acc }
+fdef foldr(f,acc,[h|t]) {
+	let { _ = foldr(f,acc,t) }
+	f(acc,h)
+}
+
+fdef map(_,[]) { [] }
+fdef map(f,[h|t]) {
+	[ f(h) | map(f,t) ]
+}
+
+fdef filter(_,[]) { [] }
+fdef filter(f,[h|t]) {
+	[?..?] {
+		f(h): filter(f,t),
+		else: [ h | filter(f,t) ]
+	}
+}
+
+fdef curry(f,a,b) {
+	f((a,b))
+}
+
+fdef uncurry(f,(a,b)) {
+    f(a,b)
+}
+
+fdef [><](f,g,(a,b)) {
+	(f(a), g(b))
+}
+
+fdef fact(0) { 1 }
+fdef fact(n) {
+    n * fact(n - 1)
+}

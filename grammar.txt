@@ -1,16 +1,16 @@
 all             : BEGIN body END
 body            : function
                 | body function
-function        : FDEF prefix args '{' expression '}'
-                | FDEF prefix args '{' let_block expression '}'
+function        : FDEF prefix args '{' compound '}'
+                | FDEF prefix args '{' let_block compound '}'
 args            : '(' ')'
                 | '(' pattern_list ')'
 prefix          : ID
-                | '|' SPECIALID '|'
+                | '[' SPECIALID ']'
 let_block       : LET '{' let_cont '}'
 let_cont        : assign
                 | let_cont ',' assign
-assign          : lpattern '=' expression
+assign          : lpattern '=' compound
 lpattern        : lvar
                 | llist
                 | ltuple
@@ -24,33 +24,36 @@ ltuple          : '(' ')'
 ltuple_cont     : lpattern ',' lpattern
                 | ltuple_cont ',' lpattern
 lvar            : ID
-                | '|' SPECIALID '|'
+                | '[' SPECIALID ']'
                 | STRING
                 | NUM
                 | CHAR
                 | BOOL
                 | '(' lpattern ')'
-expression      : compound
-                | lambda
-                | expression infix compound
+compound        : expression
+                | compound infix expression
                 | '(' infix expression ')'
                 | '(' expression infix ')'
-lambda          : FDEF '(' ')' '{' expression '}' 
-                | FDEF '(' pattern_list ')' '{' expression '}'
-compound        : multivar
-                | COND '{' cond ',' ELSE ':' compound '}'
-                | IF compound THEN compound ELSE compound
-cond            : cond_singl
-                | cond ',' cond_singl
-cond_singl      : compound ':' compound
 infix           : '`' ID '`'
                 | SPECIALID
+expression      : multivar
+                | lambda
+                | conditional
+lambda          : FDEF '(' ')' '{' expression '}' 
+                | FDEF '(' pattern_list ')' '{' expression '}'
+conditional     : COND '{' cond ',' ELSE ':' expression '}'
+                | IF expression THEN expression ELSE expression
+cond            : cond_singl
+                | cond ',' cond_singl
+cond_singl      : expression ':' expression
 multivar        : primaryvar
                 | rlist
                 | rtuple
-                | multivar '(' exp_list ')'
+                | multivar '(' compound_list ')'
+compound_list   : compound
+                | compound_list ',' compound
 primaryvar      : ID
-                | '|' SPECIALID '|'
+                | '[' SPECIALID ']'
                 | STRING
                 | NUM
                 | CHAR
@@ -63,5 +66,6 @@ rtuple_cont     : expression ',' expression
 rlist           : '[' ']'
                 | '[' exp_list ']'
                 | '[' expression '|' expression ']'
+                | '[' expression RANGER expression ']'
 exp_list        : expression
                 | exp_list ',' expression

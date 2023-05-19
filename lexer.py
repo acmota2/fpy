@@ -32,14 +32,14 @@ t_fpy_ignore = '\t\r\n '
 
 t_fpy_ignore_COMMENT = r'\#.*'
 
-t_fpy_SPECIALID = r"([\!@#$%\^&\*\-\/\\.;<>|\+]\=*)|(\=\=+)+"
+t_fpy_SPECIALID = r"(([\!@#$%\^&\*\-\/\\.;<>|\+]\=*)|(\=\=+))+"
 
 def t_fpy_RANGER(t):
     r'\.\.'
     return t
 
 def t_fpy_EQUAL(t):
-    r'=[^=]'
+    r'='
     t.type = '='
     return t
 

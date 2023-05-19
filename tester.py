@@ -111,7 +111,7 @@ def p_grammar_tester(p):
     exp_list        : expression
                     | exp_list ',' expression
     '''
-    print('Worked!', p)
+    print('Worked!')
 
 
 def p_error(p):

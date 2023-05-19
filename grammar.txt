@@ -1,87 +1,67 @@
-empty           :
-
-scope           :
-
-code            : BEGIN func END
-                | BEGIN code func END
-
-func            : FDEF ID '(' scope ')' '{' body '}'
-                | FDEF ID '(' scope args ')' '{' body '}'
-
-args            : lvar
-                | args ',' lvar
-
-lvar            : var
+all             : BEGIN body END
+body            : function
+                | body function
+function        : FDEF prefix args '{' expression '}'
+                | FDEF prefix args '{' let_block expression '}'
+args            : '(' ')'
+                | '(' pattern_list ')'
+prefix          : ID
+                | '|' SPECIALID '|'
+let_block       : LET '{' let_cont '}'
+let_cont        : assign
+                | let_cont ',' assign
+assign          : lpattern '=' expression
+lpattern        : lvar
                 | llist
                 | ltuple
-
 llist           : '[' ']'
-                | '[' llist_cont ']'
-llist_cont      : lvar  
-                | llist_cont ',' lvar
-                | lvar '|' llist
-
+                | '[' pattern_list ']'
+                | '[' lpattern '|' lpattern ']'
+pattern_list    : lpattern
+                | pattern_list ',' lpattern
 ltuple          : '(' ')'
-                | '(' ltuple_cont ',' lvar ')'
-ltuple_cont     : lvar
-                | ltuple_cont ',' lvar
-
-body            : exp
-                | statement body
-
-statement       : assign
-                | reassign
-assign          : lvar '=' exp
-reassign        : lvar REASSIGN exp
-
-exp             : rvar
-                | eval
-                | aritm
-                | cond
-                | lambda
-
-lambda          : LAMBDA '{' exp '}'
-                | LAMBDA args '{' exp '}'
-
-cond            : COND '{' conditions '}'
-                | IF eval THEN exp ELSE exp
-conditions      : condition_cont ELSE ':' exp
-condition_cont  : evalexp
-                | evalexp ',' condition_cont
-
-evalexp         : eval ':' exp
-
-eval            : ID
-                | exp 'cond_op' eval
-                | '(' eval ')'
-
-aritm           : ID
+                | '(' ltuple_cont ')'
+ltuple_cont     : lpattern ',' lpattern
+                | ltuple_cont ',' lpattern
+lvar            : ID
+                | '|' SPECIALID '|'
+                | STRING
                 | NUM
-                | ID 'aritm_op' aritm
-                | NUM 'aritm_op' aritm
-                | '(' aritm ')'
-
-rvar            : var
+                | CHAR
+                | BOOL
+                | '(' lpattern ')'
+expression      : compound
+                | lambda
+                | expression infix compound
+                | '(' infix expression ')'
+                | '(' expression infix ')'
+lambda          : FDEF '(' ')' '{' expression '}' 
+                | FDEF '(' pattern_list ')' '{' expression '}'
+compound        : multivar
+                | COND '{' cond ',' ELSE ':' compound '}'
+                | IF compound THEN compound ELSE compound
+cond            : cond_singl
+                | cond ',' cond_singl
+cond_singl      : compound ':' compound
+infix           : '`' ID '`'
+                | SPECIALID
+multivar        : primaryvar
                 | rlist
                 | rtuple
-                | func_call
-
-rlist           : '[' ']'
-                | '[' rlist_cont ']'
-rlist_cont      : exp
-                | rlist_term ',' exp
-                | exp '|' rlist
-
-rtuple          : '(' ')'
-                | '(' rtuple_cont ',' exp ')'
-rtuple_cont     : exp
-                | rtuple_cont ',' exp
-
-func_call       : ID '(' func_call_cont
-func_call_cont  : ')'
-                | exp ',' func_call_cont
-
-var             : ID
-                | NUM
+                | multivar '(' exp_list ')'
+primaryvar      : ID
+                | '|' SPECIALID '|'
                 | STRING
+                | NUM
                 | CHAR
+                | BOOL
+                | '(' expression ')'
+rtuple          : '(' ')'
+                | '(' rtuple_cont ')'
+rtuple_cont     : expression ',' expression
+                | rtuple_cont ',' expression
+rlist           : '[' ']'
+                | '[' exp_list ']'
+                | '[' expression '|' expression ']'
+exp_list        : expression
+                | exp_list ',' expression

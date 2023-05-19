@@ -6,9 +6,9 @@ _tabversion = '3.10'
 
 _lr_method = 'LALR'
 
-_lr_signature = 'AND ASSIGN BEGIN CHAR COND DIF ELSE END EQ FDEF GTE ID IF INTDIV LTE NUM OR POW STRING THEN\n    multi_var       : ID\n                    | NUM\n                    | STRING\n                    | CHAR\n    '
+_lr_signature = "BEGIN BOOL CHAR COND ELSE END FDEF ID IF LET NUM RANGER SPECIALID STRING THEN\n    all             : BEGIN body END\n\n    body            : function\n                    | body function\n\n    function        : FDEF prefix args '{' compound '}'\n                    | FDEF prefix args '{' let_block compound '}'\n\n    args            : '(' ')'\n                    | '(' pattern_list ')'\n\n    prefix          : ID\n                    | '|' SPECIALID '|'\n\n    let_block       : LET '{' let_cont '}'\n\n    let_cont        : assign\n                    | let_cont ',' assign\n\n    assign          : lpattern '=' compound\n\n    lpattern        : lvar\n                    | llist\n                    | ltuple\n\n    llist           : '[' ']'\n                    | '[' pattern_list ']'\n                    | '[' lpattern '|' lpattern ']'\n\n    pattern_list    : lpattern\n                    | pattern_list ',' lpattern\n\n    ltuple          : '(' ')'\n                    | '(' ltuple_cont ')'\n\n    ltuple_cont     : lpattern ',' lpattern\n                    | ltuple_cont ',' lpattern\n\n    lvar            : ID\n                    | '|' SPECIALID '|'\n                    | STRING\n                    | NUM\n                    | CHAR\n                    | BOOL\n                    | '(' lpattern ')'\n\n    compound        : expression\n                    | compound infix expression\n                    | '(' infix expression ')'\n                    | '(' expression infix ')'\n\n    infix           : '`' ID '`'\n                    | SPECIALID\n\n    expression      : multivar\n                    | lambda\n                    | conditional\n\n    lambda          : FDEF '(' ')' '{' expression '}' \n                    | FDEF '(' pattern_list ')' '{' expression '}'\n\n    conditional     : COND '{' cond ',' ELSE ':' expression '}'\n                    | IF expression THEN expression ELSE expression\n\n    cond            : cond_singl\n                    | cond ',' cond_singl\n\n    cond_singl      : expression ':' expression\n\n    multivar        : primaryvar\n                    | rlist\n                    | rtuple\n                    | multivar '(' exp_list ')'\n\n    primaryvar      : ID\n                    | '|' SPECIALID '|'\n                    | STRING\n                    | NUM\n                    | CHAR\n                    | BOOL\n                    | '(' expression ')'\n\n    rtuple          : '(' ')'\n                    | '(' rtuple_cont ')'\n\n    rtuple_cont     : expression ',' expression\n                    | rtuple_cont ',' expression\n\n    rlist           : '[' ']'\n                    | '[' exp_list ']'\n                    | '[' expression '|' expression ']'\n                    | '[' expression RANGER expression ']'\n\n    exp_list        : expression\n                    | exp_list ',' expression\n    "
     
-_lr_action_items = {'ID':([0,],[2,]),'NUM':([0,],[3,]),'STRING':([0,],[4,]),'CHAR':([0,],[5,]),'$end':([1,2,3,4,5,],[0,-1,-2,-3,-4,]),}
+_lr_action_items = {'BEGIN':([0,],[2,]),'$end':([1,6,],[0,-1,]),'FDEF':([2,3,4,7,14,32,34,43,50,61,62,64,66,67,72,73,91,96,98,107,110,111,112,116,118,123,125,127,128,135,141,146,],[5,5,-2,-3,30,30,30,30,30,-4,30,-38,30,30,30,30,-5,30,30,30,30,30,30,30,-37,-10,30,30,30,30,30,30,]),'END':([3,4,7,61,91,],[6,-2,-3,-4,-5,]),'ID':([5,12,14,15,28,32,34,43,50,55,60,62,63,64,66,67,71,72,73,80,82,86,96,98,107,110,111,112,116,118,123,124,125,127,128,135,141,146,],[9,22,44,22,22,44,44,44,44,22,22,44,90,-38,44,44,22,44,44,22,22,22,44,44,44,44,44,44,44,-37,-10,22,44,44,44,44,44,44,]),'|':([5,12,13,14,15,19,20,21,22,24,25,26,27,28,32,34,36,37,38,39,40,41,43,44,46,47,48,49,50,52,55,56,57,59,60,62,64,66,67,69,71,72,73,75,76,78,79,80,81,82,84,85,86,95,96,97,98,107,108,109,110,111,112,116,118,123,124,125,126,127,128,133,135,141,142,143,144,146,147,148,150,],[10,23,29,45,23,-14,-15,-16,-26,-28,-29,-30,-31,23,45,45,-39,-40,-41,-49,-50,-51,45,-53,-55,-56,-57,-58,45,-22,23,84,-17,86,23,45,-38,45,45,-60,23,45,45,108,-64,111,-32,23,-23,23,-27,-18,23,-59,45,-61,45,45,-54,-65,45,45,45,45,-37,-10,23,45,-52,45,45,-19,45,45,-66,-67,-42,45,-45,-43,-44,]),'(':([8,9,12,14,15,28,29,30,32,34,36,39,40,41,43,44,46,47,48,49,50,55,60,62,64,66,67,69,71,72,73,76,80,82,86,95,96,97,98,107,108,109,110,111,112,116,118,123,124,125,126,127,128,135,141,142,143,146,],[12,-8,15,34,15,15,-9,60,34,66,72,-49,-50,-51,66,-53,-55,-56,-57,-58,66,15,15,66,-38,66,66,-60,15,66,66,-64,15,15,15,-59,66,-61,66,66,-54,-65,66,66,66,66,-37,-10,15,34,-52,66,66,66,66,-66,-67,66,]),'SPECIALID':([10,23,31,33,34,36,37,38,39,40,41,44,45,46,47,48,49,65,68,69,76,89,95,97,108,109,119,120,126,137,142,143,144,147,148,150,],[13,56,64,-33,64,-39,-40,-41,-49,-50,-51,-53,75,-55,-56,-57,-58,64,64,-60,-64,-34,-59,-61,-54,-65,-35,-36,-52,64,-66,-67,-42,-45,-43,-44,]),'{':([11,16,35,42,54,87,117,],[14,-6,71,73,-7,116,135,]),')':([12,15,17,18,19,20,21,22,24,25,26,27,34,36,37,38,39,40,41,44,46,47,48,49,51,52,53,57,60,64,66,68,69,70,76,79,81,83,84,85,88,92,93,94,95,97,102,103,108,109,113,114,118,121,122,126,130,133,142,143,144,147,148,150,],[16,52,54,-20,-14,-15,-16,-26,-28,-29,-30,-31,69,-39,-40,-41,-49,-50,-51,-53,-55,-56,-57,-58,79,-22,81,-17,87,-38,69,95,-60,97,-64,-32,-23,-21,-27,-18,117,95,119,120,-59,-61,126,-68,-54,-65,-24,-25,-37,-62,-63,-52,-69,-19,-66,-67,-42,-45,-43,-44,]),'STRING':([12,14,15,28,32,34,43,50,55,60,62,64,66,67,71,72,73,80,82,86,96,98,107,110,111,112,116,118,123,124,125,127,128,135,141,146,],[24,46,24,24,46,46,46,46,24,24,46,-38,46,46,24,46,46,24,24,24,46,46,46,46,46,46,46,-37,-10,24,46,46,46,46,46,46,]),'NUM':([12,14,15,28,32,34,43,50,55,60,62,64,66,67,71,72,73,80,82,86,96,98,107,110,111,112,116,118,123,124,125,127,128,135,141,146,],[25,47,25,25,47,47,47,47,25,25,47,-38,47,47,25,47,47,25,25,25,47,47,47,47,47,47,47,-37,-10,25,47,47,47,47,47,47,]),'CHAR':([12,14,15,28,32,34,43,50,55,60,62,64,66,67,71,72,73,80,82,86,96,98,107,110,111,112,116,118,123,124,125,127,128,135,141,146,],[26,48,26,26,48,48,48,48,26,26,48,-38,48,48,26,48,48,26,26,26,48,48,48,48,48,48,48,-37,-10,26,48,48,48,48,48,48,]),'BOOL':([12,14,15,28,32,34,43,50,55,60,62,64,66,67,71,72,73,80,82,86,96,98,107,110,111,112,116,118,123,124,125,127,128,135,141,146,],[27,49,27,27,49,49,49,49,27,27,49,-38,49,49,27,49,49,27,27,27,49,49,49,49,49,49,49,-37,-10,27,49,49,49,49,49,49,]),'[':([12,14,15,28,32,34,43,50,55,60,62,64,66,67,71,72,73,80,82,86,96,98,107,110,111,112,116,118,123,124,125,127,128,135,141,146,],[28,50,28,28,50,50,50,50,28,28,50,-38,50,50,28,50,50,28,28,28,50,50,50,50,50,50,50,-37,-10,28,50,50,50,50,50,50,]),'LET':([14,],[35,]),'COND':([14,32,34,43,50,62,64,66,67,72,73,96,98,107,110,111,112,116,118,123,125,127,128,135,141,146,],[42,42,42,42,42,42,-38,42,42,42,42,42,42,42,42,42,42,42,-37,-10,42,42,42,42,42,42,]),'IF':([14,32,34,43,50,62,64,66,67,72,73,96,98,107,110,111,112,116,118,123,125,127,128,135,141,146,],[43,43,43,43,43,43,-38,43,43,43,43,43,43,43,43,43,43,43,-37,-10,43,43,43,43,43,43,]),',':([17,18,19,20,21,22,24,25,26,27,33,36,37,38,39,40,41,44,46,47,48,49,51,52,53,57,58,59,68,69,70,76,77,78,79,81,83,84,85,88,89,92,95,97,99,100,102,103,104,106,108,109,113,114,119,120,121,122,126,130,133,136,137,139,140,142,143,144,147,148,150,],[55,-20,-14,-15,-16,-26,-28,-29,-30,-31,-33,-39,-40,-41,-49,-50,-51,-53,-55,-56,-57,-58,80,-22,82,-17,55,-20,96,-60,98,-64,110,-68,-32,-23,-21,-27,-18,55,-34,96,-59,-61,124,-11,110,-68,127,-46,-54,-65,-24,-25,-35,-36,-62,-63,-52,-69,-19,-12,-13,-47,-48,-66,-67,-42,-45,-43,-44,]),']':([19,20,21,22,24,25,26,27,28,36,37,38,39,40,41,44,46,47,48,49,50,52,57,58,59,69,76,77,78,79,81,83,84,85,95,97,108,109,115,126,130,131,132,133,142,143,144,147,148,150,],[-14,-15,-16,-26,-28,-29,-30,-31,57,-39,-40,-41,-49,-50,-51,-53,-55,-56,-57,-58,76,-22,-17,85,-20,-60,-64,109,-68,-32,-23,-21,-27,-18,-59,-61,-54,-65,133,-52,-69,142,143,-19,-66,-67,-42,-45,-43,-44,]),'=':([19,20,21,22,24,25,26,27,52,57,79,81,84,85,101,133,],[-14,-15,-16,-26,-28,-29,-30,-31,-22,-17,-32,-23,-27,-18,125,-19,]),'}':([31,33,36,37,38,39,40,41,44,46,47,48,49,65,69,76,89,95,97,99,100,108,109,119,120,126,134,136,137,142,143,144,145,147,148,149,150,],[61,-33,-39,-40,-41,-49,-50,-51,-53,-55,-56,-57,-58,91,-60,-64,-34,-59,-61,123,-11,-54,-65,-35,-36,-52,144,-12,-13,-66,-67,-42,148,-45,-43,150,-44,]),'`':([31,33,34,36,37,38,39,40,41,44,46,47,48,49,65,68,69,76,89,90,95,97,108,109,119,120,126,137,142,143,144,147,148,150,],[63,-33,63,-39,-40,-41,-49,-50,-51,-53,-55,-56,-57,-58,63,63,-60,-64,-34,118,-59,-61,-54,-65,-35,-36,-52,63,-66,-67,-42,-45,-43,-44,]),'THEN':([36,37,38,39,40,41,44,46,47,48,49,69,74,76,95,97,108,109,126,142,143,144,147,148,150,],[-39,-40,-41,-49,-50,-51,-53,-55,-56,-57,-58,-60,107,-64,-59,-61,-54,-65,-52,-66,-67,-42,-45,-43,-44,]),'RANGER':([36,37,38,39,40,41,44,46,47,48,49,69,76,78,95,97,108,109,126,142,143,144,147,148,150,],[-39,-40,-41,-49,-50,-51,-53,-55,-56,-57,-58,-60,-64,112,-59,-61,-54,-65,-52,-66,-67,-42,-45,-43,-44,]),':':([36,37,38,39,40,41,44,46,47,48,49,69,76,95,97,105,108,109,126,138,142,143,144,147,148,150,],[-39,-40,-41,-49,-50,-51,-53,-55,-56,-57,-58,-60,-64,-59,-61,128,-54,-65,-52,146,-66,-67,-42,-45,-43,-44,]),'ELSE':([36,37,38,39,40,41,44,46,47,48,49,69,76,95,97,108,109,126,127,129,142,143,144,147,148,150,],[-39,-40,-41,-49,-50,-51,-53,-55,-56,-57,-58,-60,-64,-59,-61,-54,-65,-52,138,141,-66,-67,-42,-45,-43,-44,]),}
 
 _lr_action = {}
 for _k, _v in _lr_action_items.items():
@@ -17,7 +17,7 @@ for _k, _v in _lr_action_items.items():
       _lr_action[_x][_k] = _y
 del _lr_action_items
 
-_lr_goto_items = {'multi_var':([0,],[1,]),}
+_lr_goto_items = {'all':([0,],[1,]),'body':([2,],[3,]),'function':([2,3,],[4,7,]),'prefix':([5,],[8,]),'args':([8,],[11,]),'pattern_list':([12,28,60,],[17,58,88,]),'lpattern':([12,15,28,55,60,71,80,82,86,124,],[18,51,59,83,18,101,113,114,115,101,]),'lvar':([12,15,28,55,60,71,80,82,86,124,],[19,19,19,19,19,19,19,19,19,19,]),'llist':([12,15,28,55,60,71,80,82,86,124,],[20,20,20,20,20,20,20,20,20,20,]),'ltuple':([12,15,28,55,60,71,80,82,86,124,],[21,21,21,21,21,21,21,21,21,21,]),'compound':([14,32,125,],[31,65,137,]),'let_block':([14,],[32,]),'expression':([14,32,34,43,50,62,66,67,72,73,96,98,107,110,111,112,116,125,127,128,135,141,146,],[33,33,68,74,78,89,92,93,103,105,121,122,129,130,131,132,134,33,105,140,145,147,149,]),'multivar':([14,32,34,43,50,62,66,67,72,73,96,98,107,110,111,112,116,125,127,128,135,141,146,],[36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,36,]),'lambda':([14,32,34,43,50,62,66,67,72,73,96,98,107,110,111,112,116,125,127,128,135,141,146,],[37,37,37,37,37,37,37,37,37,37,37,37,37,37,37,37,37,37,37,37,37,37,37,]),'conditional':([14,32,34,43,50,62,66,67,72,73,96,98,107,110,111,112,116,125,127,128,135,141,146,],[38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,38,]),'primaryvar':([14,32,34,43,50,62,66,67,72,73,96,98,107,110,111,112,116,125,127,128,135,141,146,],[39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,39,]),'rlist':([14,32,34,43,50,62,66,67,72,73,96,98,107,110,111,112,116,125,127,128,135,141,146,],[40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,40,]),'rtuple':([14,32,34,43,50,62,66,67,72,73,96,98,107,110,111,112,116,125,127,128,135,141,146,],[41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,41,]),'ltuple_cont':([15,],[53,]),'infix':([31,34,65,68,137,],[62,67,62,94,62,]),'rtuple_cont':([34,66,],[70,70,]),'exp_list':([50,72,],[77,102,]),'let_cont':([71,],[99,]),'assign':([71,124,],[100,136,]),'cond':([73,],[104,]),'cond_singl':([73,127,],[106,139,]),}
 
 _lr_goto = {}
 for _k, _v in _lr_goto_items.items():
@@ -26,9 +26,74 @@ for _k, _v in _lr_goto_items.items():
        _lr_goto[_x][_k] = _y
 del _lr_goto_items
 _lr_productions = [
-  ("S' -> multi_var","S'",1,None,None,None),
-  ('multi_var -> ID','multi_var',1,'p_grammar_tester','tester.py',18),
-  ('multi_var -> NUM','multi_var',1,'p_grammar_tester','tester.py',19),
-  ('multi_var -> STRING','multi_var',1,'p_grammar_tester','tester.py',20),
-  ('multi_var -> CHAR','multi_var',1,'p_grammar_tester','tester.py',21),
+  ("S' -> all","S'",1,None,None,None),
+  ('all -> BEGIN body END','all',3,'p_grammar_tester','tester.py',18),
+  ('body -> function','body',1,'p_grammar_tester','tester.py',20),
+  ('body -> body function','body',2,'p_grammar_tester','tester.py',21),
+  ('function -> FDEF prefix args { compound }','function',6,'p_grammar_tester','tester.py',23),
+  ('function -> FDEF prefix args { let_block compound }','function',7,'p_grammar_tester','tester.py',24),
+  ('args -> ( )','args',2,'p_grammar_tester','tester.py',26),
+  ('args -> ( pattern_list )','args',3,'p_grammar_tester','tester.py',27),
+  ('prefix -> ID','prefix',1,'p_grammar_tester','tester.py',29),
+  ('prefix -> | SPECIALID |','prefix',3,'p_grammar_tester','tester.py',30),
+  ('let_block -> LET { let_cont }','let_block',4,'p_grammar_tester','tester.py',32),
+  ('let_cont -> assign','let_cont',1,'p_grammar_tester','tester.py',34),
+  ('let_cont -> let_cont , assign','let_cont',3,'p_grammar_tester','tester.py',35),
+  ('assign -> lpattern = compound','assign',3,'p_grammar_tester','tester.py',37),
+  ('lpattern -> lvar','lpattern',1,'p_grammar_tester','tester.py',39),
+  ('lpattern -> llist','lpattern',1,'p_grammar_tester','tester.py',40),
+  ('lpattern -> ltuple','lpattern',1,'p_grammar_tester','tester.py',41),
+  ('llist -> [ ]','llist',2,'p_grammar_tester','tester.py',43),
+  ('llist -> [ pattern_list ]','llist',3,'p_grammar_tester','tester.py',44),
+  ('llist -> [ lpattern | lpattern ]','llist',5,'p_grammar_tester','tester.py',45),
+  ('pattern_list -> lpattern','pattern_list',1,'p_grammar_tester','tester.py',47),
+  ('pattern_list -> pattern_list , lpattern','pattern_list',3,'p_grammar_tester','tester.py',48),
+  ('ltuple -> ( )','ltuple',2,'p_grammar_tester','tester.py',50),
+  ('ltuple -> ( ltuple_cont )','ltuple',3,'p_grammar_tester','tester.py',51),
+  ('ltuple_cont -> lpattern , lpattern','ltuple_cont',3,'p_grammar_tester','tester.py',53),
+  ('ltuple_cont -> ltuple_cont , lpattern','ltuple_cont',3,'p_grammar_tester','tester.py',54),
+  ('lvar -> ID','lvar',1,'p_grammar_tester','tester.py',56),
+  ('lvar -> | SPECIALID |','lvar',3,'p_grammar_tester','tester.py',57),
+  ('lvar -> STRING','lvar',1,'p_grammar_tester','tester.py',58),
+  ('lvar -> NUM','lvar',1,'p_grammar_tester','tester.py',59),
+  ('lvar -> CHAR','lvar',1,'p_grammar_tester','tester.py',60),
+  ('lvar -> BOOL','lvar',1,'p_grammar_tester','tester.py',61),
+  ('lvar -> ( lpattern )','lvar',3,'p_grammar_tester','tester.py',62),
+  ('compound -> expression','compound',1,'p_grammar_tester','tester.py',64),
+  ('compound -> compound infix expression','compound',3,'p_grammar_tester','tester.py',65),
+  ('compound -> ( infix expression )','compound',4,'p_grammar_tester','tester.py',66),
+  ('compound -> ( expression infix )','compound',4,'p_grammar_tester','tester.py',67),
+  ('infix -> ` ID `','infix',3,'p_grammar_tester','tester.py',69),
+  ('infix -> SPECIALID','infix',1,'p_grammar_tester','tester.py',70),
+  ('expression -> multivar','expression',1,'p_grammar_tester','tester.py',72),
+  ('expression -> lambda','expression',1,'p_grammar_tester','tester.py',73),
+  ('expression -> conditional','expression',1,'p_grammar_tester','tester.py',74),
+  ('lambda -> FDEF ( ) { expression }','lambda',6,'p_grammar_tester','tester.py',76),
+  ('lambda -> FDEF ( pattern_list ) { expression }','lambda',7,'p_grammar_tester','tester.py',77),
+  ('conditional -> COND { cond , ELSE : expression }','conditional',8,'p_grammar_tester','tester.py',79),
+  ('conditional -> IF expression THEN expression ELSE expression','conditional',6,'p_grammar_tester','tester.py',80),
+  ('cond -> cond_singl','cond',1,'p_grammar_tester','tester.py',82),
+  ('cond -> cond , cond_singl','cond',3,'p_grammar_tester','tester.py',83),
+  ('cond_singl -> expression : expression','cond_singl',3,'p_grammar_tester','tester.py',85),
+  ('multivar -> primaryvar','multivar',1,'p_grammar_tester','tester.py',87),
+  ('multivar -> rlist','multivar',1,'p_grammar_tester','tester.py',88),
+  ('multivar -> rtuple','multivar',1,'p_grammar_tester','tester.py',89),
+  ('multivar -> multivar ( exp_list )','multivar',4,'p_grammar_tester','tester.py',90),
+  ('primaryvar -> ID','primaryvar',1,'p_grammar_tester','tester.py',92),
+  ('primaryvar -> | SPECIALID |','primaryvar',3,'p_grammar_tester','tester.py',93),
+  ('primaryvar -> STRING','primaryvar',1,'p_grammar_tester','tester.py',94),
+  ('primaryvar -> NUM','primaryvar',1,'p_grammar_tester','tester.py',95),
+  ('primaryvar -> CHAR','primaryvar',1,'p_grammar_tester','tester.py',96),
+  ('primaryvar -> BOOL','primaryvar',1,'p_grammar_tester','tester.py',97),
+  ('primaryvar -> ( expression )','primaryvar',3,'p_grammar_tester','tester.py',98),
+  ('rtuple -> ( )','rtuple',2,'p_grammar_tester','tester.py',100),
+  ('rtuple -> ( rtuple_cont )','rtuple',3,'p_grammar_tester','tester.py',101),
+  ('rtuple_cont -> expression , expression','rtuple_cont',3,'p_grammar_tester','tester.py',103),
+  ('rtuple_cont -> rtuple_cont , expression','rtuple_cont',3,'p_grammar_tester','tester.py',104),
+  ('rlist -> [ ]','rlist',2,'p_grammar_tester','tester.py',106),
+  ('rlist -> [ exp_list ]','rlist',3,'p_grammar_tester','tester.py',107),
+  ('rlist -> [ expression | expression ]','rlist',5,'p_grammar_tester','tester.py',108),
+  ('rlist -> [ expression RANGER expression ]','rlist',5,'p_grammar_tester','tester.py',109),
+  ('exp_list -> expression','exp_list',1,'p_grammar_tester','tester.py',111),
+  ('exp_list -> exp_list , expression','exp_list',3,'p_grammar_tester','tester.py',112),
 ]

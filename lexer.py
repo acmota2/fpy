@@ -6,35 +6,47 @@ reserved = {
     'then': 'THEN',
     'else': 'ELSE',
     'fdef': 'FDEF',
-    'or': 'OR',
-    'and': 'AND',
-    'not': 'NOT'
+    'let': 'LET',
 }
 
 tokens = [
     # limits
     'BEGIN','END',
     # vars
-    'ID','NUM','ASSIGN','STRING','CHAR',
+    'ID','SPECIALID','NUM','STRING','CHAR','BOOL',
     # cond
     'COND',
-    # aritm
-    'POW','INTDIV', # +, -, /, * e % sao literals
-    # conditional
-    'EQ','LTE','GTE','DIF', # LT e GT sao literals
+    # range
+    'RANGER',
 ] + list(reserved.values())
 
-literals = ['[',']','(',')','{','}',',','+','-','/','=','%','|','<','>',':']
+literals = ['[',']','(',')','{','}',',','=','|',':','`']
 
 states = (
    ('fpy','exclusive'),
 )
 
-t_ignore = ' \t'
+t_ignore = ' \t\n'
 
 t_fpy_ignore = '\t\r\n '
 
 t_fpy_ignore_COMMENT = r'\#.*'
+
+t_fpy_SPECIALID = r"([\!@#$%\^&\*\-\/\\.;<>|\+]\=*)|(\=\=+)+"
+
+def t_fpy_RANGER(t):
+    r'\.\.'
+    return t
+
+def t_fpy_EQUAL(t):
+    r'=[^=]'
+    t.type = '='
+    return t
+
+def t_fpy_LISTER(t):
+    r'\|'
+    t.type = '|'
+    return t
 
 def t_newline(t):
     r'\n'
@@ -59,6 +71,7 @@ def t_fpy_ID(t):
     t.type = reserved.get(t.value,'ID')
     return t
 
+
 def t_fpy_NUM(t):
     r'(-\+)?\d+(.\d+)?'
     return t
@@ -71,36 +84,16 @@ def t_fpy_CHAR(t):
     r'\'[^\']\''
     return t
 
+def t_fpy_BOOL(t):
+    r'True|False'
+    return t
+
 def t_fpy_ASSIGN(t):
     r':='
     return t
 
 t_fpy_COND = r'\[\?\.\.\?\]'
 
-
-def t_fpy_INTDIV(t):
-    r'\/\/'
-    return t
-
-def t_fpy_POW(t):
-    r'\*\*'
-    return t
-
-def t_fpy_EQ(t):
-    r'=='
-    return t
-
-def t_fpy_LT(t):
-    r'<'
-    return t
-
-def t_fpy_GT(t):
-    r'>'
-    return t
-
-t_fpy_LTE = r'<='
-t_fpy_GTE = r'>='
-t_fpy_DIF = r'!='
 
 def t_error(t):
     t.lexer.skip(1)

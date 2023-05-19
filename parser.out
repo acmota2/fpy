@@ -1,107 +1,2940 @@
 Created by PLY version 3.11 (http://www.dabeaz.com/ply)
 
-Unused terminals:
-
-    AND
-    ASSIGN
-    BEGIN
-    COND
-    DIF
-    ELSE
-    END
-    EQ
-    FDEF
-    GTE
-    IF
-    INTDIV
-    LTE
-    OR
-    POW
-    THEN
-
 Grammar
 
-Rule 0     S' -> multi_var
-Rule 1     multi_var -> ID
-Rule 2     multi_var -> NUM
-Rule 3     multi_var -> STRING
-Rule 4     multi_var -> CHAR
+Rule 0     S' -> all
+Rule 1     all -> BEGIN body END
+Rule 2     body -> function
+Rule 3     body -> body function
+Rule 4     function -> FDEF prefix args { compound }
+Rule 5     function -> FDEF prefix args { let_block compound }
+Rule 6     args -> ( )
+Rule 7     args -> ( pattern_list )
+Rule 8     prefix -> ID
+Rule 9     prefix -> | SPECIALID |
+Rule 10    let_block -> LET { let_cont }
+Rule 11    let_cont -> assign
+Rule 12    let_cont -> let_cont , assign
+Rule 13    assign -> lpattern = compound
+Rule 14    lpattern -> lvar
+Rule 15    lpattern -> llist
+Rule 16    lpattern -> ltuple
+Rule 17    llist -> [ ]
+Rule 18    llist -> [ pattern_list ]
+Rule 19    llist -> [ lpattern | lpattern ]
+Rule 20    pattern_list -> lpattern
+Rule 21    pattern_list -> pattern_list , lpattern
+Rule 22    ltuple -> ( )
+Rule 23    ltuple -> ( ltuple_cont )
+Rule 24    ltuple_cont -> lpattern , lpattern
+Rule 25    ltuple_cont -> ltuple_cont , lpattern
+Rule 26    lvar -> ID
+Rule 27    lvar -> | SPECIALID |
+Rule 28    lvar -> STRING
+Rule 29    lvar -> NUM
+Rule 30    lvar -> CHAR
+Rule 31    lvar -> BOOL
+Rule 32    lvar -> ( lpattern )
+Rule 33    compound -> expression
+Rule 34    compound -> compound infix expression
+Rule 35    compound -> ( infix expression )
+Rule 36    compound -> ( expression infix )
+Rule 37    infix -> ` ID `
+Rule 38    infix -> SPECIALID
+Rule 39    expression -> multivar
+Rule 40    expression -> lambda
+Rule 41    expression -> conditional
+Rule 42    lambda -> FDEF ( ) { expression }
+Rule 43    lambda -> FDEF ( pattern_list ) { expression }
+Rule 44    conditional -> COND { cond , ELSE : expression }
+Rule 45    conditional -> IF expression THEN expression ELSE expression
+Rule 46    cond -> cond_singl
+Rule 47    cond -> cond , cond_singl
+Rule 48    cond_singl -> expression : expression
+Rule 49    multivar -> primaryvar
+Rule 50    multivar -> rlist
+Rule 51    multivar -> rtuple
+Rule 52    multivar -> multivar ( exp_list )
+Rule 53    primaryvar -> ID
+Rule 54    primaryvar -> | SPECIALID |
+Rule 55    primaryvar -> STRING
+Rule 56    primaryvar -> NUM
+Rule 57    primaryvar -> CHAR
+Rule 58    primaryvar -> BOOL
+Rule 59    primaryvar -> ( expression )
+Rule 60    rtuple -> ( )
+Rule 61    rtuple -> ( rtuple_cont )
+Rule 62    rtuple_cont -> expression , expression
+Rule 63    rtuple_cont -> rtuple_cont , expression
+Rule 64    rlist -> [ ]
+Rule 65    rlist -> [ exp_list ]
+Rule 66    rlist -> [ expression | expression ]
+Rule 67    rlist -> [ expression RANGER expression ]
+Rule 68    exp_list -> expression
+Rule 69    exp_list -> exp_list , expression
 
 Terminals, with rules where they appear
 
-AND                  : 
-ASSIGN               : 
-BEGIN                : 
-CHAR                 : 4
-COND                 : 
-DIF                  : 
-ELSE                 : 
-END                  : 
-EQ                   : 
-FDEF                 : 
-GTE                  : 
-ID                   : 1
-IF                   : 
-INTDIV               : 
-LTE                  : 
-NUM                  : 2
-OR                   : 
-POW                  : 
-STRING               : 3
-THEN                 : 
+(                    : 6 7 22 23 32 35 36 42 43 52 59 60 61
+)                    : 6 7 22 23 32 35 36 42 43 52 59 60 61
+,                    : 12 21 24 25 44 47 62 63 69
+:                    : 44 48
+=                    : 13
+BEGIN                : 1
+BOOL                 : 31 58
+CHAR                 : 30 57
+COND                 : 44
+ELSE                 : 44 45
+END                  : 1
+FDEF                 : 4 5 42 43
+ID                   : 8 26 37 53
+IF                   : 45
+LET                  : 10
+NUM                  : 29 56
+RANGER               : 67
+SPECIALID            : 9 27 38 54
+STRING               : 28 55
+THEN                 : 45
+[                    : 17 18 19 64 65 66 67
+]                    : 17 18 19 64 65 66 67
+`                    : 37 37
 error                : 
+{                    : 4 5 10 42 43 44
+|                    : 9 9 19 27 27 54 54 66
+}                    : 4 5 10 42 43 44
 
 Nonterminals, with rules where they appear
 
-multi_var            : 0
+all                  : 0
+args                 : 4 5
+assign               : 11 12
+body                 : 1 3
+compound             : 4 5 13 34
+cond                 : 44 47
+cond_singl           : 46 47
+conditional          : 41
+exp_list             : 52 65 69
+expression           : 33 34 35 36 42 43 44 45 45 45 48 48 59 62 62 63 66 66 67 67 68 69
+function             : 2 3
+infix                : 34 35 36
+lambda               : 40
+let_block            : 5
+let_cont             : 10 12
+llist                : 15
+lpattern             : 13 19 19 20 21 24 24 25 32
+ltuple               : 16
+ltuple_cont          : 23 25
+lvar                 : 14
+multivar             : 39 52
+pattern_list         : 7 18 21 43
+prefix               : 4 5
+primaryvar           : 49
+rlist                : 50
+rtuple               : 51
+rtuple_cont          : 61 63
 
 Parsing method: LALR
 
 state 0
 
-    (0) S' -> . multi_var
-    (1) multi_var -> . ID
-    (2) multi_var -> . NUM
-    (3) multi_var -> . STRING
-    (4) multi_var -> . CHAR
+    (0) S' -> . all
+    (1) all -> . BEGIN body END
 
-    ID              shift and go to state 2
-    NUM             shift and go to state 3
-    STRING          shift and go to state 4
-    CHAR            shift and go to state 5
+    BEGIN           shift and go to state 2
 
-    multi_var                      shift and go to state 1
+    all                            shift and go to state 1
 
 state 1
 
-    (0) S' -> multi_var .
+    (0) S' -> all .
 
 
 
 state 2
 
-    (1) multi_var -> ID .
+    (1) all -> BEGIN . body END
+    (2) body -> . function
+    (3) body -> . body function
+    (4) function -> . FDEF prefix args { compound }
+    (5) function -> . FDEF prefix args { let_block compound }
 
-    $end            reduce using rule 1 (multi_var -> ID .)
+    FDEF            shift and go to state 5
 
+    body                           shift and go to state 3
+    function                       shift and go to state 4
 
 state 3
 
-    (2) multi_var -> NUM .
+    (1) all -> BEGIN body . END
+    (3) body -> body . function
+    (4) function -> . FDEF prefix args { compound }
+    (5) function -> . FDEF prefix args { let_block compound }
 
-    $end            reduce using rule 2 (multi_var -> NUM .)
+    END             shift and go to state 6
+    FDEF            shift and go to state 5
 
+    function                       shift and go to state 7
 
 state 4
 
-    (3) multi_var -> STRING .
+    (2) body -> function .
 
-    $end            reduce using rule 3 (multi_var -> STRING .)
+    END             reduce using rule 2 (body -> function .)
+    FDEF            reduce using rule 2 (body -> function .)
 
 
 state 5
 
-    (4) multi_var -> CHAR .
+    (4) function -> FDEF . prefix args { compound }
+    (5) function -> FDEF . prefix args { let_block compound }
+    (8) prefix -> . ID
+    (9) prefix -> . | SPECIALID |
 
-    $end            reduce using rule 4 (multi_var -> CHAR .)
+    ID              shift and go to state 9
+    |               shift and go to state 10
+
+    prefix                         shift and go to state 8
+
+state 6
+
+    (1) all -> BEGIN body END .
+
+    $end            reduce using rule 1 (all -> BEGIN body END .)
+
+
+state 7
+
+    (3) body -> body function .
+
+    END             reduce using rule 3 (body -> body function .)
+    FDEF            reduce using rule 3 (body -> body function .)
+
+
+state 8
+
+    (4) function -> FDEF prefix . args { compound }
+    (5) function -> FDEF prefix . args { let_block compound }
+    (6) args -> . ( )
+    (7) args -> . ( pattern_list )
+
+    (               shift and go to state 12
+
+    args                           shift and go to state 11
+
+state 9
+
+    (8) prefix -> ID .
+
+    (               reduce using rule 8 (prefix -> ID .)
+
+
+state 10
+
+    (9) prefix -> | . SPECIALID |
+
+    SPECIALID       shift and go to state 13
+
+
+state 11
+
+    (4) function -> FDEF prefix args . { compound }
+    (5) function -> FDEF prefix args . { let_block compound }
+
+    {               shift and go to state 14
+
+
+state 12
+
+    (6) args -> ( . )
+    (7) args -> ( . pattern_list )
+    (20) pattern_list -> . lpattern
+    (21) pattern_list -> . pattern_list , lpattern
+    (14) lpattern -> . lvar
+    (15) lpattern -> . llist
+    (16) lpattern -> . ltuple
+    (26) lvar -> . ID
+    (27) lvar -> . | SPECIALID |
+    (28) lvar -> . STRING
+    (29) lvar -> . NUM
+    (30) lvar -> . CHAR
+    (31) lvar -> . BOOL
+    (32) lvar -> . ( lpattern )
+    (17) llist -> . [ ]
+    (18) llist -> . [ pattern_list ]
+    (19) llist -> . [ lpattern | lpattern ]
+    (22) ltuple -> . ( )
+    (23) ltuple -> . ( ltuple_cont )
+
+    )               shift and go to state 16
+    ID              shift and go to state 22
+    |               shift and go to state 23
+    STRING          shift and go to state 24
+    NUM             shift and go to state 25
+    CHAR            shift and go to state 26
+    BOOL            shift and go to state 27
+    (               shift and go to state 15
+    [               shift and go to state 28
+
+    pattern_list                   shift and go to state 17
+    lpattern                       shift and go to state 18
+    lvar                           shift and go to state 19
+    llist                          shift and go to state 20
+    ltuple                         shift and go to state 21
+
+state 13
+
+    (9) prefix -> | SPECIALID . |
+
+    |               shift and go to state 29
+
+
+state 14
+
+    (4) function -> FDEF prefix args { . compound }
+    (5) function -> FDEF prefix args { . let_block compound }
+    (33) compound -> . expression
+    (34) compound -> . compound infix expression
+    (35) compound -> . ( infix expression )
+    (36) compound -> . ( expression infix )
+    (10) let_block -> . LET { let_cont }
+    (39) expression -> . multivar
+    (40) expression -> . lambda
+    (41) expression -> . conditional
+    (49) multivar -> . primaryvar
+    (50) multivar -> . rlist
+    (51) multivar -> . rtuple
+    (52) multivar -> . multivar ( exp_list )
+    (42) lambda -> . FDEF ( ) { expression }
+    (43) lambda -> . FDEF ( pattern_list ) { expression }
+    (44) conditional -> . COND { cond , ELSE : expression }
+    (45) conditional -> . IF expression THEN expression ELSE expression
+    (53) primaryvar -> . ID
+    (54) primaryvar -> . | SPECIALID |
+    (55) primaryvar -> . STRING
+    (56) primaryvar -> . NUM
+    (57) primaryvar -> . CHAR
+    (58) primaryvar -> . BOOL
+    (59) primaryvar -> . ( expression )
+    (64) rlist -> . [ ]
+    (65) rlist -> . [ exp_list ]
+    (66) rlist -> . [ expression | expression ]
+    (67) rlist -> . [ expression RANGER expression ]
+    (60) rtuple -> . ( )
+    (61) rtuple -> . ( rtuple_cont )
+
+    (               shift and go to state 34
+    LET             shift and go to state 35
+    FDEF            shift and go to state 30
+    COND            shift and go to state 42
+    IF              shift and go to state 43
+    ID              shift and go to state 44
+    |               shift and go to state 45
+    STRING          shift and go to state 46
+    NUM             shift and go to state 47
+    CHAR            shift and go to state 48
+    BOOL            shift and go to state 49
+    [               shift and go to state 50
+
+    compound                       shift and go to state 31
+    let_block                      shift and go to state 32
+    expression                     shift and go to state 33
+    multivar                       shift and go to state 36
+    lambda                         shift and go to state 37
+    conditional                    shift and go to state 38
+    primaryvar                     shift and go to state 39
+    rlist                          shift and go to state 40
+    rtuple                         shift and go to state 41
+
+state 15
+
+    (32) lvar -> ( . lpattern )
+    (22) ltuple -> ( . )
+    (23) ltuple -> ( . ltuple_cont )
+    (14) lpattern -> . lvar
+    (15) lpattern -> . llist
+    (16) lpattern -> . ltuple
+    (24) ltuple_cont -> . lpattern , lpattern
+    (25) ltuple_cont -> . ltuple_cont , lpattern
+    (26) lvar -> . ID
+    (27) lvar -> . | SPECIALID |
+    (28) lvar -> . STRING
+    (29) lvar -> . NUM
+    (30) lvar -> . CHAR
+    (31) lvar -> . BOOL
+    (32) lvar -> . ( lpattern )
+    (17) llist -> . [ ]
+    (18) llist -> . [ pattern_list ]
+    (19) llist -> . [ lpattern | lpattern ]
+    (22) ltuple -> . ( )
+    (23) ltuple -> . ( ltuple_cont )
+
+    )               shift and go to state 52
+    ID              shift and go to state 22
+    |               shift and go to state 23
+    STRING          shift and go to state 24
+    NUM             shift and go to state 25
+    CHAR            shift and go to state 26
+    BOOL            shift and go to state 27
+    (               shift and go to state 15
+    [               shift and go to state 28
+
+    lpattern                       shift and go to state 51
+    ltuple_cont                    shift and go to state 53
+    lvar                           shift and go to state 19
+    llist                          shift and go to state 20
+    ltuple                         shift and go to state 21
+
+state 16
+
+    (6) args -> ( ) .
+
+    {               reduce using rule 6 (args -> ( ) .)
+
+
+state 17
+
+    (7) args -> ( pattern_list . )
+    (21) pattern_list -> pattern_list . , lpattern
+
+    )               shift and go to state 54
+    ,               shift and go to state 55
+
+
+state 18
+
+    (20) pattern_list -> lpattern .
+
+    )               reduce using rule 20 (pattern_list -> lpattern .)
+    ,               reduce using rule 20 (pattern_list -> lpattern .)
+
+
+state 19
+
+    (14) lpattern -> lvar .
+
+    )               reduce using rule 14 (lpattern -> lvar .)
+    ,               reduce using rule 14 (lpattern -> lvar .)
+    |               reduce using rule 14 (lpattern -> lvar .)
+    ]               reduce using rule 14 (lpattern -> lvar .)
+    =               reduce using rule 14 (lpattern -> lvar .)
+
+
+state 20
+
+    (15) lpattern -> llist .
+
+    )               reduce using rule 15 (lpattern -> llist .)
+    ,               reduce using rule 15 (lpattern -> llist .)
+    |               reduce using rule 15 (lpattern -> llist .)
+    ]               reduce using rule 15 (lpattern -> llist .)
+    =               reduce using rule 15 (lpattern -> llist .)
+
+
+state 21
+
+    (16) lpattern -> ltuple .
+
+    )               reduce using rule 16 (lpattern -> ltuple .)
+    ,               reduce using rule 16 (lpattern -> ltuple .)
+    |               reduce using rule 16 (lpattern -> ltuple .)
+    ]               reduce using rule 16 (lpattern -> ltuple .)
+    =               reduce using rule 16 (lpattern -> ltuple .)
+
+
+state 22
+
+    (26) lvar -> ID .
+
+    )               reduce using rule 26 (lvar -> ID .)
+    ,               reduce using rule 26 (lvar -> ID .)
+    |               reduce using rule 26 (lvar -> ID .)
+    ]               reduce using rule 26 (lvar -> ID .)
+    =               reduce using rule 26 (lvar -> ID .)
+
+
+state 23
+
+    (27) lvar -> | . SPECIALID |
+
+    SPECIALID       shift and go to state 56
+
+
+state 24
+
+    (28) lvar -> STRING .
+
+    )               reduce using rule 28 (lvar -> STRING .)
+    ,               reduce using rule 28 (lvar -> STRING .)
+    |               reduce using rule 28 (lvar -> STRING .)
+    ]               reduce using rule 28 (lvar -> STRING .)
+    =               reduce using rule 28 (lvar -> STRING .)
+
+
+state 25
+
+    (29) lvar -> NUM .
+
+    )               reduce using rule 29 (lvar -> NUM .)
+    ,               reduce using rule 29 (lvar -> NUM .)
+    |               reduce using rule 29 (lvar -> NUM .)
+    ]               reduce using rule 29 (lvar -> NUM .)
+    =               reduce using rule 29 (lvar -> NUM .)
+
+
+state 26
+
+    (30) lvar -> CHAR .
+
+    )               reduce using rule 30 (lvar -> CHAR .)
+    ,               reduce using rule 30 (lvar -> CHAR .)
+    |               reduce using rule 30 (lvar -> CHAR .)
+    ]               reduce using rule 30 (lvar -> CHAR .)
+    =               reduce using rule 30 (lvar -> CHAR .)
+
+
+state 27
+
+    (31) lvar -> BOOL .
+
+    )               reduce using rule 31 (lvar -> BOOL .)
+    ,               reduce using rule 31 (lvar -> BOOL .)
+    |               reduce using rule 31 (lvar -> BOOL .)
+    ]               reduce using rule 31 (lvar -> BOOL .)
+    =               reduce using rule 31 (lvar -> BOOL .)
+
+
+state 28
+
+    (17) llist -> [ . ]
+    (18) llist -> [ . pattern_list ]
+    (19) llist -> [ . lpattern | lpattern ]
+    (20) pattern_list -> . lpattern
+    (21) pattern_list -> . pattern_list , lpattern
+    (14) lpattern -> . lvar
+    (15) lpattern -> . llist
+    (16) lpattern -> . ltuple
+    (26) lvar -> . ID
+    (27) lvar -> . | SPECIALID |
+    (28) lvar -> . STRING
+    (29) lvar -> . NUM
+    (30) lvar -> . CHAR
+    (31) lvar -> . BOOL
+    (32) lvar -> . ( lpattern )
+    (17) llist -> . [ ]
+    (18) llist -> . [ pattern_list ]
+    (19) llist -> . [ lpattern | lpattern ]
+    (22) ltuple -> . ( )
+    (23) ltuple -> . ( ltuple_cont )
+
+    ]               shift and go to state 57
+    ID              shift and go to state 22
+    |               shift and go to state 23
+    STRING          shift and go to state 24
+    NUM             shift and go to state 25
+    CHAR            shift and go to state 26
+    BOOL            shift and go to state 27
+    (               shift and go to state 15
+    [               shift and go to state 28
+
+    pattern_list                   shift and go to state 58
+    lpattern                       shift and go to state 59
+    lvar                           shift and go to state 19
+    llist                          shift and go to state 20
+    ltuple                         shift and go to state 21
+
+state 29
+
+    (9) prefix -> | SPECIALID | .
+
+    (               reduce using rule 9 (prefix -> | SPECIALID | .)
+
+
+state 30
+
+    (42) lambda -> FDEF . ( ) { expression }
+    (43) lambda -> FDEF . ( pattern_list ) { expression }
+
+    (               shift and go to state 60
+
+
+state 31
+
+    (4) function -> FDEF prefix args { compound . }
+    (34) compound -> compound . infix expression
+    (37) infix -> . ` ID `
+    (38) infix -> . SPECIALID
+
+    }               shift and go to state 61
+    `               shift and go to state 63
+    SPECIALID       shift and go to state 64
+
+    infix                          shift and go to state 62
+
+state 32
+
+    (5) function -> FDEF prefix args { let_block . compound }
+    (33) compound -> . expression
+    (34) compound -> . compound infix expression
+    (35) compound -> . ( infix expression )
+    (36) compound -> . ( expression infix )
+    (39) expression -> . multivar
+    (40) expression -> . lambda
+    (41) expression -> . conditional
+    (49) multivar -> . primaryvar
+    (50) multivar -> . rlist
+    (51) multivar -> . rtuple
+    (52) multivar -> . multivar ( exp_list )
+    (42) lambda -> . FDEF ( ) { expression }
+    (43) lambda -> . FDEF ( pattern_list ) { expression }
+    (44) conditional -> . COND { cond , ELSE : expression }
+    (45) conditional -> . IF expression THEN expression ELSE expression
+    (53) primaryvar -> . ID
+    (54) primaryvar -> . | SPECIALID |
+    (55) primaryvar -> . STRING
+    (56) primaryvar -> . NUM
+    (57) primaryvar -> . CHAR
+    (58) primaryvar -> . BOOL
+    (59) primaryvar -> . ( expression )
+    (64) rlist -> . [ ]
+    (65) rlist -> . [ exp_list ]
+    (66) rlist -> . [ expression | expression ]
+    (67) rlist -> . [ expression RANGER expression ]
+    (60) rtuple -> . ( )
+    (61) rtuple -> . ( rtuple_cont )
+
+    (               shift and go to state 34
+    FDEF            shift and go to state 30
+    COND            shift and go to state 42
+    IF              shift and go to state 43
+    ID              shift and go to state 44
+    |               shift and go to state 45
+    STRING          shift and go to state 46
+    NUM             shift and go to state 47
+    CHAR            shift and go to state 48
+    BOOL            shift and go to state 49
+    [               shift and go to state 50
+
+    compound                       shift and go to state 65
+    expression                     shift and go to state 33
+    multivar                       shift and go to state 36
+    lambda                         shift and go to state 37
+    conditional                    shift and go to state 38
+    primaryvar                     shift and go to state 39
+    rlist                          shift and go to state 40
+    rtuple                         shift and go to state 41
+
+state 33
+
+    (33) compound -> expression .
+
+    }               reduce using rule 33 (compound -> expression .)
+    `               reduce using rule 33 (compound -> expression .)
+    SPECIALID       reduce using rule 33 (compound -> expression .)
+    ,               reduce using rule 33 (compound -> expression .)
+
+
+state 34
+
+    (35) compound -> ( . infix expression )
+    (36) compound -> ( . expression infix )
+    (59) primaryvar -> ( . expression )
+    (60) rtuple -> ( . )
+    (61) rtuple -> ( . rtuple_cont )
+    (37) infix -> . ` ID `
+    (38) infix -> . SPECIALID
+    (39) expression -> . multivar
+    (40) expression -> . lambda
+    (41) expression -> . conditional
+    (62) rtuple_cont -> . expression , expression
+    (63) rtuple_cont -> . rtuple_cont , expression
+    (49) multivar -> . primaryvar
+    (50) multivar -> . rlist
+    (51) multivar -> . rtuple
+    (52) multivar -> . multivar ( exp_list )
+    (42) lambda -> . FDEF ( ) { expression }
+    (43) lambda -> . FDEF ( pattern_list ) { expression }
+    (44) conditional -> . COND { cond , ELSE : expression }
+    (45) conditional -> . IF expression THEN expression ELSE expression
+    (53) primaryvar -> . ID
+    (54) primaryvar -> . | SPECIALID |
+    (55) primaryvar -> . STRING
+    (56) primaryvar -> . NUM
+    (57) primaryvar -> . CHAR
+    (58) primaryvar -> . BOOL
+    (59) primaryvar -> . ( expression )
+    (64) rlist -> . [ ]
+    (65) rlist -> . [ exp_list ]
+    (66) rlist -> . [ expression | expression ]
+    (67) rlist -> . [ expression RANGER expression ]
+    (60) rtuple -> . ( )
+    (61) rtuple -> . ( rtuple_cont )
+
+    )               shift and go to state 69
+    `               shift and go to state 63
+    SPECIALID       shift and go to state 64
+    FDEF            shift and go to state 30
+    COND            shift and go to state 42
+    IF              shift and go to state 43
+    ID              shift and go to state 44
+    |               shift and go to state 45
+    STRING          shift and go to state 46
+    NUM             shift and go to state 47
+    CHAR            shift and go to state 48
+    BOOL            shift and go to state 49
+    (               shift and go to state 66
+    [               shift and go to state 50
+
+    infix                          shift and go to state 67
+    expression                     shift and go to state 68
+    rtuple_cont                    shift and go to state 70
+    multivar                       shift and go to state 36
+    lambda                         shift and go to state 37
+    conditional                    shift and go to state 38
+    primaryvar                     shift and go to state 39
+    rlist                          shift and go to state 40
+    rtuple                         shift and go to state 41
+
+state 35
+
+    (10) let_block -> LET . { let_cont }
+
+    {               shift and go to state 71
+
+
+state 36
+
+    (39) expression -> multivar .
+    (52) multivar -> multivar . ( exp_list )
+
+    }               reduce using rule 39 (expression -> multivar .)
+    `               reduce using rule 39 (expression -> multivar .)
+    SPECIALID       reduce using rule 39 (expression -> multivar .)
+    )               reduce using rule 39 (expression -> multivar .)
+    ,               reduce using rule 39 (expression -> multivar .)
+    THEN            reduce using rule 39 (expression -> multivar .)
+    |               reduce using rule 39 (expression -> multivar .)
+    RANGER          reduce using rule 39 (expression -> multivar .)
+    ]               reduce using rule 39 (expression -> multivar .)
+    :               reduce using rule 39 (expression -> multivar .)
+    ELSE            reduce using rule 39 (expression -> multivar .)
+    (               shift and go to state 72
+
+
+state 37
+
+    (40) expression -> lambda .
+
+    }               reduce using rule 40 (expression -> lambda .)
+    `               reduce using rule 40 (expression -> lambda .)
+    SPECIALID       reduce using rule 40 (expression -> lambda .)
+    )               reduce using rule 40 (expression -> lambda .)
+    ,               reduce using rule 40 (expression -> lambda .)
+    THEN            reduce using rule 40 (expression -> lambda .)
+    |               reduce using rule 40 (expression -> lambda .)
+    RANGER          reduce using rule 40 (expression -> lambda .)
+    ]               reduce using rule 40 (expression -> lambda .)
+    :               reduce using rule 40 (expression -> lambda .)
+    ELSE            reduce using rule 40 (expression -> lambda .)
+
+
+state 38
+
+    (41) expression -> conditional .
+
+    }               reduce using rule 41 (expression -> conditional .)
+    `               reduce using rule 41 (expression -> conditional .)
+    SPECIALID       reduce using rule 41 (expression -> conditional .)
+    )               reduce using rule 41 (expression -> conditional .)
+    ,               reduce using rule 41 (expression -> conditional .)
+    THEN            reduce using rule 41 (expression -> conditional .)
+    |               reduce using rule 41 (expression -> conditional .)
+    RANGER          reduce using rule 41 (expression -> conditional .)
+    ]               reduce using rule 41 (expression -> conditional .)
+    :               reduce using rule 41 (expression -> conditional .)
+    ELSE            reduce using rule 41 (expression -> conditional .)
+
+
+state 39
+
+    (49) multivar -> primaryvar .
+
+    (               reduce using rule 49 (multivar -> primaryvar .)
+    }               reduce using rule 49 (multivar -> primaryvar .)
+    `               reduce using rule 49 (multivar -> primaryvar .)
+    SPECIALID       reduce using rule 49 (multivar -> primaryvar .)
+    )               reduce using rule 49 (multivar -> primaryvar .)
+    ,               reduce using rule 49 (multivar -> primaryvar .)
+    THEN            reduce using rule 49 (multivar -> primaryvar .)
+    |               reduce using rule 49 (multivar -> primaryvar .)
+    RANGER          reduce using rule 49 (multivar -> primaryvar .)
+    ]               reduce using rule 49 (multivar -> primaryvar .)
+    :               reduce using rule 49 (multivar -> primaryvar .)
+    ELSE            reduce using rule 49 (multivar -> primaryvar .)
+
+
+state 40
+
+    (50) multivar -> rlist .
+
+    (               reduce using rule 50 (multivar -> rlist .)
+    }               reduce using rule 50 (multivar -> rlist .)
+    `               reduce using rule 50 (multivar -> rlist .)
+    SPECIALID       reduce using rule 50 (multivar -> rlist .)
+    )               reduce using rule 50 (multivar -> rlist .)
+    ,               reduce using rule 50 (multivar -> rlist .)
+    THEN            reduce using rule 50 (multivar -> rlist .)
+    |               reduce using rule 50 (multivar -> rlist .)
+    RANGER          reduce using rule 50 (multivar -> rlist .)
+    ]               reduce using rule 50 (multivar -> rlist .)
+    :               reduce using rule 50 (multivar -> rlist .)
+    ELSE            reduce using rule 50 (multivar -> rlist .)
+
+
+state 41
+
+    (51) multivar -> rtuple .
+
+    (               reduce using rule 51 (multivar -> rtuple .)
+    }               reduce using rule 51 (multivar -> rtuple .)
+    `               reduce using rule 51 (multivar -> rtuple .)
+    SPECIALID       reduce using rule 51 (multivar -> rtuple .)
+    )               reduce using rule 51 (multivar -> rtuple .)
+    ,               reduce using rule 51 (multivar -> rtuple .)
+    THEN            reduce using rule 51 (multivar -> rtuple .)
+    |               reduce using rule 51 (multivar -> rtuple .)
+    RANGER          reduce using rule 51 (multivar -> rtuple .)
+    ]               reduce using rule 51 (multivar -> rtuple .)
+    :               reduce using rule 51 (multivar -> rtuple .)
+    ELSE            reduce using rule 51 (multivar -> rtuple .)
+
+
+state 42
+
+    (44) conditional -> COND . { cond , ELSE : expression }
+
+    {               shift and go to state 73
+
+
+state 43
+
+    (45) conditional -> IF . expression THEN expression ELSE expression
+    (39) expression -> . multivar
+    (40) expression -> . lambda
+    (41) expression -> . conditional
+    (49) multivar -> . primaryvar
+    (50) multivar -> . rlist
+    (51) multivar -> . rtuple
+    (52) multivar -> . multivar ( exp_list )
+    (42) lambda -> . FDEF ( ) { expression }
+    (43) lambda -> . FDEF ( pattern_list ) { expression }
+    (44) conditional -> . COND { cond , ELSE : expression }
+    (45) conditional -> . IF expression THEN expression ELSE expression
+    (53) primaryvar -> . ID
+    (54) primaryvar -> . | SPECIALID |
+    (55) primaryvar -> . STRING
+    (56) primaryvar -> . NUM
+    (57) primaryvar -> . CHAR
+    (58) primaryvar -> . BOOL
+    (59) primaryvar -> . ( expression )
+    (64) rlist -> . [ ]
+    (65) rlist -> . [ exp_list ]
+    (66) rlist -> . [ expression | expression ]
+    (67) rlist -> . [ expression RANGER expression ]
+    (60) rtuple -> . ( )
+    (61) rtuple -> . ( rtuple_cont )
+
+    FDEF            shift and go to state 30
+    COND            shift and go to state 42
+    IF              shift and go to state 43
+    ID              shift and go to state 44
+    |               shift and go to state 45
+    STRING          shift and go to state 46
+    NUM             shift and go to state 47
+    CHAR            shift and go to state 48
+    BOOL            shift and go to state 49
+    (               shift and go to state 66
+    [               shift and go to state 50
+
+    expression                     shift and go to state 74
+    multivar                       shift and go to state 36
+    lambda                         shift and go to state 37
+    conditional                    shift and go to state 38
+    primaryvar                     shift and go to state 39
+    rlist                          shift and go to state 40
+    rtuple                         shift and go to state 41
+
+state 44
+
+    (53) primaryvar -> ID .
+
+    (               reduce using rule 53 (primaryvar -> ID .)
+    }               reduce using rule 53 (primaryvar -> ID .)
+    `               reduce using rule 53 (primaryvar -> ID .)
+    SPECIALID       reduce using rule 53 (primaryvar -> ID .)
+    )               reduce using rule 53 (primaryvar -> ID .)
+    ,               reduce using rule 53 (primaryvar -> ID .)
+    THEN            reduce using rule 53 (primaryvar -> ID .)
+    |               reduce using rule 53 (primaryvar -> ID .)
+    RANGER          reduce using rule 53 (primaryvar -> ID .)
+    ]               reduce using rule 53 (primaryvar -> ID .)
+    :               reduce using rule 53 (primaryvar -> ID .)
+    ELSE            reduce using rule 53 (primaryvar -> ID .)
+
+
+state 45
+
+    (54) primaryvar -> | . SPECIALID |
+
+    SPECIALID       shift and go to state 75
+
+
+state 46
+
+    (55) primaryvar -> STRING .
+
+    (               reduce using rule 55 (primaryvar -> STRING .)
+    }               reduce using rule 55 (primaryvar -> STRING .)
+    `               reduce using rule 55 (primaryvar -> STRING .)
+    SPECIALID       reduce using rule 55 (primaryvar -> STRING .)
+    )               reduce using rule 55 (primaryvar -> STRING .)
+    ,               reduce using rule 55 (primaryvar -> STRING .)
+    THEN            reduce using rule 55 (primaryvar -> STRING .)
+    |               reduce using rule 55 (primaryvar -> STRING .)
+    RANGER          reduce using rule 55 (primaryvar -> STRING .)
+    ]               reduce using rule 55 (primaryvar -> STRING .)
+    :               reduce using rule 55 (primaryvar -> STRING .)
+    ELSE            reduce using rule 55 (primaryvar -> STRING .)
+
+
+state 47
+
+    (56) primaryvar -> NUM .
+
+    (               reduce using rule 56 (primaryvar -> NUM .)
+    }               reduce using rule 56 (primaryvar -> NUM .)
+    `               reduce using rule 56 (primaryvar -> NUM .)
+    SPECIALID       reduce using rule 56 (primaryvar -> NUM .)
+    )               reduce using rule 56 (primaryvar -> NUM .)
+    ,               reduce using rule 56 (primaryvar -> NUM .)
+    THEN            reduce using rule 56 (primaryvar -> NUM .)
+    |               reduce using rule 56 (primaryvar -> NUM .)
+    RANGER          reduce using rule 56 (primaryvar -> NUM .)
+    ]               reduce using rule 56 (primaryvar -> NUM .)
+    :               reduce using rule 56 (primaryvar -> NUM .)
+    ELSE            reduce using rule 56 (primaryvar -> NUM .)
+
+
+state 48
+
+    (57) primaryvar -> CHAR .
+
+    (               reduce using rule 57 (primaryvar -> CHAR .)
+    }               reduce using rule 57 (primaryvar -> CHAR .)
+    `               reduce using rule 57 (primaryvar -> CHAR .)
+    SPECIALID       reduce using rule 57 (primaryvar -> CHAR .)
+    )               reduce using rule 57 (primaryvar -> CHAR .)
+    ,               reduce using rule 57 (primaryvar -> CHAR .)
+    THEN            reduce using rule 57 (primaryvar -> CHAR .)
+    |               reduce using rule 57 (primaryvar -> CHAR .)
+    RANGER          reduce using rule 57 (primaryvar -> CHAR .)
+    ]               reduce using rule 57 (primaryvar -> CHAR .)
+    :               reduce using rule 57 (primaryvar -> CHAR .)
+    ELSE            reduce using rule 57 (primaryvar -> CHAR .)
+
+
+state 49
+
+    (58) primaryvar -> BOOL .
+
+    (               reduce using rule 58 (primaryvar -> BOOL .)
+    }               reduce using rule 58 (primaryvar -> BOOL .)
+    `               reduce using rule 58 (primaryvar -> BOOL .)
+    SPECIALID       reduce using rule 58 (primaryvar -> BOOL .)
+    )               reduce using rule 58 (primaryvar -> BOOL .)
+    ,               reduce using rule 58 (primaryvar -> BOOL .)
+    THEN            reduce using rule 58 (primaryvar -> BOOL .)
+    |               reduce using rule 58 (primaryvar -> BOOL .)
+    RANGER          reduce using rule 58 (primaryvar -> BOOL .)
+    ]               reduce using rule 58 (primaryvar -> BOOL .)
+    :               reduce using rule 58 (primaryvar -> BOOL .)
+    ELSE            reduce using rule 58 (primaryvar -> BOOL .)
+
+
+state 50
+
+    (64) rlist -> [ . ]
+    (65) rlist -> [ . exp_list ]
+    (66) rlist -> [ . expression | expression ]
+    (67) rlist -> [ . expression RANGER expression ]
+    (68) exp_list -> . expression
+    (69) exp_list -> . exp_list , expression
+    (39) expression -> . multivar
+    (40) expression -> . lambda
+    (41) expression -> . conditional
+    (49) multivar -> . primaryvar
+    (50) multivar -> . rlist
+    (51) multivar -> . rtuple
+    (52) multivar -> . multivar ( exp_list )
+    (42) lambda -> . FDEF ( ) { expression }
+    (43) lambda -> . FDEF ( pattern_list ) { expression }
+    (44) conditional -> . COND { cond , ELSE : expression }
+    (45) conditional -> . IF expression THEN expression ELSE expression
+    (53) primaryvar -> . ID
+    (54) primaryvar -> . | SPECIALID |
+    (55) primaryvar -> . STRING
+    (56) primaryvar -> . NUM
+    (57) primaryvar -> . CHAR
+    (58) primaryvar -> . BOOL
+    (59) primaryvar -> . ( expression )
+    (64) rlist -> . [ ]
+    (65) rlist -> . [ exp_list ]
+    (66) rlist -> . [ expression | expression ]
+    (67) rlist -> . [ expression RANGER expression ]
+    (60) rtuple -> . ( )
+    (61) rtuple -> . ( rtuple_cont )
+
+    ]               shift and go to state 76
+    FDEF            shift and go to state 30
+    COND            shift and go to state 42
+    IF              shift and go to state 43
+    ID              shift and go to state 44
+    |               shift and go to state 45
+    STRING          shift and go to state 46
+    NUM             shift and go to state 47
+    CHAR            shift and go to state 48
+    BOOL            shift and go to state 49
+    (               shift and go to state 66
+    [               shift and go to state 50
+
+    exp_list                       shift and go to state 77
+    expression                     shift and go to state 78
+    multivar                       shift and go to state 36
+    lambda                         shift and go to state 37
+    conditional                    shift and go to state 38
+    primaryvar                     shift and go to state 39
+    rlist                          shift and go to state 40
+    rtuple                         shift and go to state 41
+
+state 51
+
+    (32) lvar -> ( lpattern . )
+    (24) ltuple_cont -> lpattern . , lpattern
+
+    )               shift and go to state 79
+    ,               shift and go to state 80
+
+
+state 52
+
+    (22) ltuple -> ( ) .
+
+    )               reduce using rule 22 (ltuple -> ( ) .)
+    ,               reduce using rule 22 (ltuple -> ( ) .)
+    |               reduce using rule 22 (ltuple -> ( ) .)
+    ]               reduce using rule 22 (ltuple -> ( ) .)
+    =               reduce using rule 22 (ltuple -> ( ) .)
+
+
+state 53
+
+    (23) ltuple -> ( ltuple_cont . )
+    (25) ltuple_cont -> ltuple_cont . , lpattern
+
+    )               shift and go to state 81
+    ,               shift and go to state 82
+
+
+state 54
+
+    (7) args -> ( pattern_list ) .
+
+    {               reduce using rule 7 (args -> ( pattern_list ) .)
+
+
+state 55
+
+    (21) pattern_list -> pattern_list , . lpattern
+    (14) lpattern -> . lvar
+    (15) lpattern -> . llist
+    (16) lpattern -> . ltuple
+    (26) lvar -> . ID
+    (27) lvar -> . | SPECIALID |
+    (28) lvar -> . STRING
+    (29) lvar -> . NUM
+    (30) lvar -> . CHAR
+    (31) lvar -> . BOOL
+    (32) lvar -> . ( lpattern )
+    (17) llist -> . [ ]
+    (18) llist -> . [ pattern_list ]
+    (19) llist -> . [ lpattern | lpattern ]
+    (22) ltuple -> . ( )
+    (23) ltuple -> . ( ltuple_cont )
+
+    ID              shift and go to state 22
+    |               shift and go to state 23
+    STRING          shift and go to state 24
+    NUM             shift and go to state 25
+    CHAR            shift and go to state 26
+    BOOL            shift and go to state 27
+    (               shift and go to state 15
+    [               shift and go to state 28
+
+    lpattern                       shift and go to state 83
+    lvar                           shift and go to state 19
+    llist                          shift and go to state 20
+    ltuple                         shift and go to state 21
+
+state 56
+
+    (27) lvar -> | SPECIALID . |
+
+    |               shift and go to state 84
+
+
+state 57
+
+    (17) llist -> [ ] .
+
+    )               reduce using rule 17 (llist -> [ ] .)
+    ,               reduce using rule 17 (llist -> [ ] .)
+    |               reduce using rule 17 (llist -> [ ] .)
+    ]               reduce using rule 17 (llist -> [ ] .)
+    =               reduce using rule 17 (llist -> [ ] .)
+
+
+state 58
+
+    (18) llist -> [ pattern_list . ]
+    (21) pattern_list -> pattern_list . , lpattern
+
+    ]               shift and go to state 85
+    ,               shift and go to state 55
+
+
+state 59
+
+    (19) llist -> [ lpattern . | lpattern ]
+    (20) pattern_list -> lpattern .
+
+    |               shift and go to state 86
+    ]               reduce using rule 20 (pattern_list -> lpattern .)
+    ,               reduce using rule 20 (pattern_list -> lpattern .)
+
+
+state 60
+
+    (42) lambda -> FDEF ( . ) { expression }
+    (43) lambda -> FDEF ( . pattern_list ) { expression }
+    (20) pattern_list -> . lpattern
+    (21) pattern_list -> . pattern_list , lpattern
+    (14) lpattern -> . lvar
+    (15) lpattern -> . llist
+    (16) lpattern -> . ltuple
+    (26) lvar -> . ID
+    (27) lvar -> . | SPECIALID |
+    (28) lvar -> . STRING
+    (29) lvar -> . NUM
+    (30) lvar -> . CHAR
+    (31) lvar -> . BOOL
+    (32) lvar -> . ( lpattern )
+    (17) llist -> . [ ]
+    (18) llist -> . [ pattern_list ]
+    (19) llist -> . [ lpattern | lpattern ]
+    (22) ltuple -> . ( )
+    (23) ltuple -> . ( ltuple_cont )
+
+    )               shift and go to state 87
+    ID              shift and go to state 22
+    |               shift and go to state 23
+    STRING          shift and go to state 24
+    NUM             shift and go to state 25
+    CHAR            shift and go to state 26
+    BOOL            shift and go to state 27
+    (               shift and go to state 15
+    [               shift and go to state 28
+
+    pattern_list                   shift and go to state 88
+    lpattern                       shift and go to state 18
+    lvar                           shift and go to state 19
+    llist                          shift and go to state 20
+    ltuple                         shift and go to state 21
+
+state 61
+
+    (4) function -> FDEF prefix args { compound } .
+
+    END             reduce using rule 4 (function -> FDEF prefix args { compound } .)
+    FDEF            reduce using rule 4 (function -> FDEF prefix args { compound } .)
+
+
+state 62
+
+    (34) compound -> compound infix . expression
+    (39) expression -> . multivar
+    (40) expression -> . lambda
+    (41) expression -> . conditional
+    (49) multivar -> . primaryvar
+    (50) multivar -> . rlist
+    (51) multivar -> . rtuple
+    (52) multivar -> . multivar ( exp_list )
+    (42) lambda -> . FDEF ( ) { expression }
+    (43) lambda -> . FDEF ( pattern_list ) { expression }
+    (44) conditional -> . COND { cond , ELSE : expression }
+    (45) conditional -> . IF expression THEN expression ELSE expression
+    (53) primaryvar -> . ID
+    (54) primaryvar -> . | SPECIALID |
+    (55) primaryvar -> . STRING
+    (56) primaryvar -> . NUM
+    (57) primaryvar -> . CHAR
+    (58) primaryvar -> . BOOL
+    (59) primaryvar -> . ( expression )
+    (64) rlist -> . [ ]
+    (65) rlist -> . [ exp_list ]
+    (66) rlist -> . [ expression | expression ]
+    (67) rlist -> . [ expression RANGER expression ]
+    (60) rtuple -> . ( )
+    (61) rtuple -> . ( rtuple_cont )
+
+    FDEF            shift and go to state 30
+    COND            shift and go to state 42
+    IF              shift and go to state 43
+    ID              shift and go to state 44
+    |               shift and go to state 45
+    STRING          shift and go to state 46
+    NUM             shift and go to state 47
+    CHAR            shift and go to state 48
+    BOOL            shift and go to state 49
+    (               shift and go to state 66
+    [               shift and go to state 50
+
+    expression                     shift and go to state 89
+    multivar                       shift and go to state 36
+    lambda                         shift and go to state 37
+    conditional                    shift and go to state 38
+    primaryvar                     shift and go to state 39
+    rlist                          shift and go to state 40
+    rtuple                         shift and go to state 41
+
+state 63
+
+    (37) infix -> ` . ID `
+
+    ID              shift and go to state 90
+
+
+state 64
+
+    (38) infix -> SPECIALID .
+
+    FDEF            reduce using rule 38 (infix -> SPECIALID .)
+    COND            reduce using rule 38 (infix -> SPECIALID .)
+    IF              reduce using rule 38 (infix -> SPECIALID .)
+    ID              reduce using rule 38 (infix -> SPECIALID .)
+    |               reduce using rule 38 (infix -> SPECIALID .)
+    STRING          reduce using rule 38 (infix -> SPECIALID .)
+    NUM             reduce using rule 38 (infix -> SPECIALID .)
+    CHAR            reduce using rule 38 (infix -> SPECIALID .)
+    BOOL            reduce using rule 38 (infix -> SPECIALID .)
+    (               reduce using rule 38 (infix -> SPECIALID .)
+    [               reduce using rule 38 (infix -> SPECIALID .)
+    )               reduce using rule 38 (infix -> SPECIALID .)
+
+
+state 65
+
+    (5) function -> FDEF prefix args { let_block compound . }
+    (34) compound -> compound . infix expression
+    (37) infix -> . ` ID `
+    (38) infix -> . SPECIALID
+
+    }               shift and go to state 91
+    `               shift and go to state 63
+    SPECIALID       shift and go to state 64
+
+    infix                          shift and go to state 62
+
+state 66
+
+    (59) primaryvar -> ( . expression )
+    (60) rtuple -> ( . )
+    (61) rtuple -> ( . rtuple_cont )
+    (39) expression -> . multivar
+    (40) expression -> . lambda
+    (41) expression -> . conditional
+    (62) rtuple_cont -> . expression , expression
+    (63) rtuple_cont -> . rtuple_cont , expression
+    (49) multivar -> . primaryvar
+    (50) multivar -> . rlist
+    (51) multivar -> . rtuple
+    (52) multivar -> . multivar ( exp_list )
+    (42) lambda -> . FDEF ( ) { expression }
+    (43) lambda -> . FDEF ( pattern_list ) { expression }
+    (44) conditional -> . COND { cond , ELSE : expression }
+    (45) conditional -> . IF expression THEN expression ELSE expression
+    (53) primaryvar -> . ID
+    (54) primaryvar -> . | SPECIALID |
+    (55) primaryvar -> . STRING
+    (56) primaryvar -> . NUM
+    (57) primaryvar -> . CHAR
+    (58) primaryvar -> . BOOL
+    (59) primaryvar -> . ( expression )
+    (64) rlist -> . [ ]
+    (65) rlist -> . [ exp_list ]
+    (66) rlist -> . [ expression | expression ]
+    (67) rlist -> . [ expression RANGER expression ]
+    (60) rtuple -> . ( )
+    (61) rtuple -> . ( rtuple_cont )
+
+    )               shift and go to state 69
+    FDEF            shift and go to state 30
+    COND            shift and go to state 42
+    IF              shift and go to state 43
+    ID              shift and go to state 44
+    |               shift and go to state 45
+    STRING          shift and go to state 46
+    NUM             shift and go to state 47
+    CHAR            shift and go to state 48
+    BOOL            shift and go to state 49
+    (               shift and go to state 66
+    [               shift and go to state 50
+
+    expression                     shift and go to state 92
+    rtuple_cont                    shift and go to state 70
+    multivar                       shift and go to state 36
+    lambda                         shift and go to state 37
+    conditional                    shift and go to state 38
+    primaryvar                     shift and go to state 39
+    rlist                          shift and go to state 40
+    rtuple                         shift and go to state 41
+
+state 67
+
+    (35) compound -> ( infix . expression )
+    (39) expression -> . multivar
+    (40) expression -> . lambda
+    (41) expression -> . conditional
+    (49) multivar -> . primaryvar
+    (50) multivar -> . rlist
+    (51) multivar -> . rtuple
+    (52) multivar -> . multivar ( exp_list )
+    (42) lambda -> . FDEF ( ) { expression }
+    (43) lambda -> . FDEF ( pattern_list ) { expression }
+    (44) conditional -> . COND { cond , ELSE : expression }
+    (45) conditional -> . IF expression THEN expression ELSE expression
+    (53) primaryvar -> . ID
+    (54) primaryvar -> . | SPECIALID |
+    (55) primaryvar -> . STRING
+    (56) primaryvar -> . NUM
+    (57) primaryvar -> . CHAR
+    (58) primaryvar -> . BOOL
+    (59) primaryvar -> . ( expression )
+    (64) rlist -> . [ ]
+    (65) rlist -> . [ exp_list ]
+    (66) rlist -> . [ expression | expression ]
+    (67) rlist -> . [ expression RANGER expression ]
+    (60) rtuple -> . ( )
+    (61) rtuple -> . ( rtuple_cont )
+
+    FDEF            shift and go to state 30
+    COND            shift and go to state 42
+    IF              shift and go to state 43
+    ID              shift and go to state 44
+    |               shift and go to state 45
+    STRING          shift and go to state 46
+    NUM             shift and go to state 47
+    CHAR            shift and go to state 48
+    BOOL            shift and go to state 49
+    (               shift and go to state 66
+    [               shift and go to state 50
+
+    expression                     shift and go to state 93
+    multivar                       shift and go to state 36
+    lambda                         shift and go to state 37
+    conditional                    shift and go to state 38
+    primaryvar                     shift and go to state 39
+    rlist                          shift and go to state 40
+    rtuple                         shift and go to state 41
+
+state 68
+
+    (36) compound -> ( expression . infix )
+    (59) primaryvar -> ( expression . )
+    (62) rtuple_cont -> expression . , expression
+    (37) infix -> . ` ID `
+    (38) infix -> . SPECIALID
+
+    )               shift and go to state 95
+    ,               shift and go to state 96
+    `               shift and go to state 63
+    SPECIALID       shift and go to state 64
+
+    infix                          shift and go to state 94
+
+state 69
+
+    (60) rtuple -> ( ) .
+
+    (               reduce using rule 60 (rtuple -> ( ) .)
+    }               reduce using rule 60 (rtuple -> ( ) .)
+    `               reduce using rule 60 (rtuple -> ( ) .)
+    SPECIALID       reduce using rule 60 (rtuple -> ( ) .)
+    )               reduce using rule 60 (rtuple -> ( ) .)
+    ,               reduce using rule 60 (rtuple -> ( ) .)
+    THEN            reduce using rule 60 (rtuple -> ( ) .)
+    |               reduce using rule 60 (rtuple -> ( ) .)
+    RANGER          reduce using rule 60 (rtuple -> ( ) .)
+    ]               reduce using rule 60 (rtuple -> ( ) .)
+    :               reduce using rule 60 (rtuple -> ( ) .)
+    ELSE            reduce using rule 60 (rtuple -> ( ) .)
+
+
+state 70
+
+    (61) rtuple -> ( rtuple_cont . )
+    (63) rtuple_cont -> rtuple_cont . , expression
+
+    )               shift and go to state 97
+    ,               shift and go to state 98
+
+
+state 71
+
+    (10) let_block -> LET { . let_cont }
+    (11) let_cont -> . assign
+    (12) let_cont -> . let_cont , assign
+    (13) assign -> . lpattern = compound
+    (14) lpattern -> . lvar
+    (15) lpattern -> . llist
+    (16) lpattern -> . ltuple
+    (26) lvar -> . ID
+    (27) lvar -> . | SPECIALID |
+    (28) lvar -> . STRING
+    (29) lvar -> . NUM
+    (30) lvar -> . CHAR
+    (31) lvar -> . BOOL
+    (32) lvar -> . ( lpattern )
+    (17) llist -> . [ ]
+    (18) llist -> . [ pattern_list ]
+    (19) llist -> . [ lpattern | lpattern ]
+    (22) ltuple -> . ( )
+    (23) ltuple -> . ( ltuple_cont )
+
+    ID              shift and go to state 22
+    |               shift and go to state 23
+    STRING          shift and go to state 24
+    NUM             shift and go to state 25
+    CHAR            shift and go to state 26
+    BOOL            shift and go to state 27
+    (               shift and go to state 15
+    [               shift and go to state 28
+
+    let_cont                       shift and go to state 99
+    assign                         shift and go to state 100
+    lpattern                       shift and go to state 101
+    lvar                           shift and go to state 19
+    llist                          shift and go to state 20
+    ltuple                         shift and go to state 21
+
+state 72
+
+    (52) multivar -> multivar ( . exp_list )
+    (68) exp_list -> . expression
+    (69) exp_list -> . exp_list , expression
+    (39) expression -> . multivar
+    (40) expression -> . lambda
+    (41) expression -> . conditional
+    (49) multivar -> . primaryvar
+    (50) multivar -> . rlist
+    (51) multivar -> . rtuple
+    (52) multivar -> . multivar ( exp_list )
+    (42) lambda -> . FDEF ( ) { expression }
+    (43) lambda -> . FDEF ( pattern_list ) { expression }
+    (44) conditional -> . COND { cond , ELSE : expression }
+    (45) conditional -> . IF expression THEN expression ELSE expression
+    (53) primaryvar -> . ID
+    (54) primaryvar -> . | SPECIALID |
+    (55) primaryvar -> . STRING
+    (56) primaryvar -> . NUM
+    (57) primaryvar -> . CHAR
+    (58) primaryvar -> . BOOL
+    (59) primaryvar -> . ( expression )
+    (64) rlist -> . [ ]
+    (65) rlist -> . [ exp_list ]
+    (66) rlist -> . [ expression | expression ]
+    (67) rlist -> . [ expression RANGER expression ]
+    (60) rtuple -> . ( )
+    (61) rtuple -> . ( rtuple_cont )
+
+    FDEF            shift and go to state 30
+    COND            shift and go to state 42
+    IF              shift and go to state 43
+    ID              shift and go to state 44
+    |               shift and go to state 45
+    STRING          shift and go to state 46
+    NUM             shift and go to state 47
+    CHAR            shift and go to state 48
+    BOOL            shift and go to state 49
+    (               shift and go to state 66
+    [               shift and go to state 50
+
+    multivar                       shift and go to state 36
+    exp_list                       shift and go to state 102
+    expression                     shift and go to state 103
+    lambda                         shift and go to state 37
+    conditional                    shift and go to state 38
+    primaryvar                     shift and go to state 39
+    rlist                          shift and go to state 40
+    rtuple                         shift and go to state 41
+
+state 73
+
+    (44) conditional -> COND { . cond , ELSE : expression }
+    (46) cond -> . cond_singl
+    (47) cond -> . cond , cond_singl
+    (48) cond_singl -> . expression : expression
+    (39) expression -> . multivar
+    (40) expression -> . lambda
+    (41) expression -> . conditional
+    (49) multivar -> . primaryvar
+    (50) multivar -> . rlist
+    (51) multivar -> . rtuple
+    (52) multivar -> . multivar ( exp_list )
+    (42) lambda -> . FDEF ( ) { expression }
+    (43) lambda -> . FDEF ( pattern_list ) { expression }
+    (44) conditional -> . COND { cond , ELSE : expression }
+    (45) conditional -> . IF expression THEN expression ELSE expression
+    (53) primaryvar -> . ID
+    (54) primaryvar -> . | SPECIALID |
+    (55) primaryvar -> . STRING
+    (56) primaryvar -> . NUM
+    (57) primaryvar -> . CHAR
+    (58) primaryvar -> . BOOL
+    (59) primaryvar -> . ( expression )
+    (64) rlist -> . [ ]
+    (65) rlist -> . [ exp_list ]
+    (66) rlist -> . [ expression | expression ]
+    (67) rlist -> . [ expression RANGER expression ]
+    (60) rtuple -> . ( )
+    (61) rtuple -> . ( rtuple_cont )
+
+    FDEF            shift and go to state 30
+    COND            shift and go to state 42
+    IF              shift and go to state 43
+    ID              shift and go to state 44
+    |               shift and go to state 45
+    STRING          shift and go to state 46
+    NUM             shift and go to state 47
+    CHAR            shift and go to state 48
+    BOOL            shift and go to state 49
+    (               shift and go to state 66
+    [               shift and go to state 50
+
+    cond                           shift and go to state 104
+    expression                     shift and go to state 105
+    cond_singl                     shift and go to state 106
+    multivar                       shift and go to state 36
+    lambda                         shift and go to state 37
+    conditional                    shift and go to state 38
+    primaryvar                     shift and go to state 39
+    rlist                          shift and go to state 40
+    rtuple                         shift and go to state 41
+
+state 74
+
+    (45) conditional -> IF expression . THEN expression ELSE expression
+
+    THEN            shift and go to state 107
+
+
+state 75
+
+    (54) primaryvar -> | SPECIALID . |
+
+    |               shift and go to state 108
+
+
+state 76
+
+    (64) rlist -> [ ] .
+
+    (               reduce using rule 64 (rlist -> [ ] .)
+    }               reduce using rule 64 (rlist -> [ ] .)
+    `               reduce using rule 64 (rlist -> [ ] .)
+    SPECIALID       reduce using rule 64 (rlist -> [ ] .)
+    )               reduce using rule 64 (rlist -> [ ] .)
+    ,               reduce using rule 64 (rlist -> [ ] .)
+    THEN            reduce using rule 64 (rlist -> [ ] .)
+    |               reduce using rule 64 (rlist -> [ ] .)
+    RANGER          reduce using rule 64 (rlist -> [ ] .)
+    ]               reduce using rule 64 (rlist -> [ ] .)
+    :               reduce using rule 64 (rlist -> [ ] .)
+    ELSE            reduce using rule 64 (rlist -> [ ] .)
+
+
+state 77
+
+    (65) rlist -> [ exp_list . ]
+    (69) exp_list -> exp_list . , expression
+
+    ]               shift and go to state 109
+    ,               shift and go to state 110
+
+
+state 78
+
+    (66) rlist -> [ expression . | expression ]
+    (67) rlist -> [ expression . RANGER expression ]
+    (68) exp_list -> expression .
+
+    |               shift and go to state 111
+    RANGER          shift and go to state 112
+    ]               reduce using rule 68 (exp_list -> expression .)
+    ,               reduce using rule 68 (exp_list -> expression .)
+
+
+state 79
+
+    (32) lvar -> ( lpattern ) .
+
+    )               reduce using rule 32 (lvar -> ( lpattern ) .)
+    ,               reduce using rule 32 (lvar -> ( lpattern ) .)
+    |               reduce using rule 32 (lvar -> ( lpattern ) .)
+    ]               reduce using rule 32 (lvar -> ( lpattern ) .)
+    =               reduce using rule 32 (lvar -> ( lpattern ) .)
+
+
+state 80
+
+    (24) ltuple_cont -> lpattern , . lpattern
+    (14) lpattern -> . lvar
+    (15) lpattern -> . llist
+    (16) lpattern -> . ltuple
+    (26) lvar -> . ID
+    (27) lvar -> . | SPECIALID |
+    (28) lvar -> . STRING
+    (29) lvar -> . NUM
+    (30) lvar -> . CHAR
+    (31) lvar -> . BOOL
+    (32) lvar -> . ( lpattern )
+    (17) llist -> . [ ]
+    (18) llist -> . [ pattern_list ]
+    (19) llist -> . [ lpattern | lpattern ]
+    (22) ltuple -> . ( )
+    (23) ltuple -> . ( ltuple_cont )
+
+    ID              shift and go to state 22
+    |               shift and go to state 23
+    STRING          shift and go to state 24
+    NUM             shift and go to state 25
+    CHAR            shift and go to state 26
+    BOOL            shift and go to state 27
+    (               shift and go to state 15
+    [               shift and go to state 28
+
+    lpattern                       shift and go to state 113
+    lvar                           shift and go to state 19
+    llist                          shift and go to state 20
+    ltuple                         shift and go to state 21
+
+state 81
+
+    (23) ltuple -> ( ltuple_cont ) .
+
+    )               reduce using rule 23 (ltuple -> ( ltuple_cont ) .)
+    ,               reduce using rule 23 (ltuple -> ( ltuple_cont ) .)
+    |               reduce using rule 23 (ltuple -> ( ltuple_cont ) .)
+    ]               reduce using rule 23 (ltuple -> ( ltuple_cont ) .)
+    =               reduce using rule 23 (ltuple -> ( ltuple_cont ) .)
+
+
+state 82
+
+    (25) ltuple_cont -> ltuple_cont , . lpattern
+    (14) lpattern -> . lvar
+    (15) lpattern -> . llist
+    (16) lpattern -> . ltuple
+    (26) lvar -> . ID
+    (27) lvar -> . | SPECIALID |
+    (28) lvar -> . STRING
+    (29) lvar -> . NUM
+    (30) lvar -> . CHAR
+    (31) lvar -> . BOOL
+    (32) lvar -> . ( lpattern )
+    (17) llist -> . [ ]
+    (18) llist -> . [ pattern_list ]
+    (19) llist -> . [ lpattern | lpattern ]
+    (22) ltuple -> . ( )
+    (23) ltuple -> . ( ltuple_cont )
+
+    ID              shift and go to state 22
+    |               shift and go to state 23
+    STRING          shift and go to state 24
+    NUM             shift and go to state 25
+    CHAR            shift and go to state 26
+    BOOL            shift and go to state 27
+    (               shift and go to state 15
+    [               shift and go to state 28
+
+    lpattern                       shift and go to state 114
+    lvar                           shift and go to state 19
+    llist                          shift and go to state 20
+    ltuple                         shift and go to state 21
+
+state 83
+
+    (21) pattern_list -> pattern_list , lpattern .
+
+    )               reduce using rule 21 (pattern_list -> pattern_list , lpattern .)
+    ,               reduce using rule 21 (pattern_list -> pattern_list , lpattern .)
+    ]               reduce using rule 21 (pattern_list -> pattern_list , lpattern .)
+
+
+state 84
+
+    (27) lvar -> | SPECIALID | .
+
+    )               reduce using rule 27 (lvar -> | SPECIALID | .)
+    ,               reduce using rule 27 (lvar -> | SPECIALID | .)
+    |               reduce using rule 27 (lvar -> | SPECIALID | .)
+    ]               reduce using rule 27 (lvar -> | SPECIALID | .)
+    =               reduce using rule 27 (lvar -> | SPECIALID | .)
+
+
+state 85
+
+    (18) llist -> [ pattern_list ] .
+
+    )               reduce using rule 18 (llist -> [ pattern_list ] .)
+    ,               reduce using rule 18 (llist -> [ pattern_list ] .)
+    |               reduce using rule 18 (llist -> [ pattern_list ] .)
+    ]               reduce using rule 18 (llist -> [ pattern_list ] .)
+    =               reduce using rule 18 (llist -> [ pattern_list ] .)
+
+
+state 86
+
+    (19) llist -> [ lpattern | . lpattern ]
+    (14) lpattern -> . lvar
+    (15) lpattern -> . llist
+    (16) lpattern -> . ltuple
+    (26) lvar -> . ID
+    (27) lvar -> . | SPECIALID |
+    (28) lvar -> . STRING
+    (29) lvar -> . NUM
+    (30) lvar -> . CHAR
+    (31) lvar -> . BOOL
+    (32) lvar -> . ( lpattern )
+    (17) llist -> . [ ]
+    (18) llist -> . [ pattern_list ]
+    (19) llist -> . [ lpattern | lpattern ]
+    (22) ltuple -> . ( )
+    (23) ltuple -> . ( ltuple_cont )
+
+    ID              shift and go to state 22
+    |               shift and go to state 23
+    STRING          shift and go to state 24
+    NUM             shift and go to state 25
+    CHAR            shift and go to state 26
+    BOOL            shift and go to state 27
+    (               shift and go to state 15
+    [               shift and go to state 28
+
+    lpattern                       shift and go to state 115
+    lvar                           shift and go to state 19
+    llist                          shift and go to state 20
+    ltuple                         shift and go to state 21
+
+state 87
+
+    (42) lambda -> FDEF ( ) . { expression }
+
+    {               shift and go to state 116
+
+
+state 88
+
+    (43) lambda -> FDEF ( pattern_list . ) { expression }
+    (21) pattern_list -> pattern_list . , lpattern
+
+    )               shift and go to state 117
+    ,               shift and go to state 55
+
+
+state 89
+
+    (34) compound -> compound infix expression .
+
+    }               reduce using rule 34 (compound -> compound infix expression .)
+    `               reduce using rule 34 (compound -> compound infix expression .)
+    SPECIALID       reduce using rule 34 (compound -> compound infix expression .)
+    ,               reduce using rule 34 (compound -> compound infix expression .)
+
+
+state 90
+
+    (37) infix -> ` ID . `
+
+    `               shift and go to state 118
+
+
+state 91
+
+    (5) function -> FDEF prefix args { let_block compound } .
+
+    END             reduce using rule 5 (function -> FDEF prefix args { let_block compound } .)
+    FDEF            reduce using rule 5 (function -> FDEF prefix args { let_block compound } .)
+
+
+state 92
+
+    (59) primaryvar -> ( expression . )
+    (62) rtuple_cont -> expression . , expression
+
+    )               shift and go to state 95
+    ,               shift and go to state 96
+
+
+state 93
+
+    (35) compound -> ( infix expression . )
+
+    )               shift and go to state 119
+
+
+state 94
+
+    (36) compound -> ( expression infix . )
+
+    )               shift and go to state 120
+
+
+state 95
+
+    (59) primaryvar -> ( expression ) .
+
+    (               reduce using rule 59 (primaryvar -> ( expression ) .)
+    }               reduce using rule 59 (primaryvar -> ( expression ) .)
+    `               reduce using rule 59 (primaryvar -> ( expression ) .)
+    SPECIALID       reduce using rule 59 (primaryvar -> ( expression ) .)
+    )               reduce using rule 59 (primaryvar -> ( expression ) .)
+    ,               reduce using rule 59 (primaryvar -> ( expression ) .)
+    THEN            reduce using rule 59 (primaryvar -> ( expression ) .)
+    |               reduce using rule 59 (primaryvar -> ( expression ) .)
+    RANGER          reduce using rule 59 (primaryvar -> ( expression ) .)
+    ]               reduce using rule 59 (primaryvar -> ( expression ) .)
+    :               reduce using rule 59 (primaryvar -> ( expression ) .)
+    ELSE            reduce using rule 59 (primaryvar -> ( expression ) .)
+
+
+state 96
+
+    (62) rtuple_cont -> expression , . expression
+    (39) expression -> . multivar
+    (40) expression -> . lambda
+    (41) expression -> . conditional
+    (49) multivar -> . primaryvar
+    (50) multivar -> . rlist
+    (51) multivar -> . rtuple
+    (52) multivar -> . multivar ( exp_list )
+    (42) lambda -> . FDEF ( ) { expression }
+    (43) lambda -> . FDEF ( pattern_list ) { expression }
+    (44) conditional -> . COND { cond , ELSE : expression }
+    (45) conditional -> . IF expression THEN expression ELSE expression
+    (53) primaryvar -> . ID
+    (54) primaryvar -> . | SPECIALID |
+    (55) primaryvar -> . STRING
+    (56) primaryvar -> . NUM
+    (57) primaryvar -> . CHAR
+    (58) primaryvar -> . BOOL
+    (59) primaryvar -> . ( expression )
+    (64) rlist -> . [ ]
+    (65) rlist -> . [ exp_list ]
+    (66) rlist -> . [ expression | expression ]
+    (67) rlist -> . [ expression RANGER expression ]
+    (60) rtuple -> . ( )
+    (61) rtuple -> . ( rtuple_cont )
+
+    FDEF            shift and go to state 30
+    COND            shift and go to state 42
+    IF              shift and go to state 43
+    ID              shift and go to state 44
+    |               shift and go to state 45
+    STRING          shift and go to state 46
+    NUM             shift and go to state 47
+    CHAR            shift and go to state 48
+    BOOL            shift and go to state 49
+    (               shift and go to state 66
+    [               shift and go to state 50
+
+    expression                     shift and go to state 121
+    multivar                       shift and go to state 36
+    lambda                         shift and go to state 37
+    conditional                    shift and go to state 38
+    primaryvar                     shift and go to state 39
+    rlist                          shift and go to state 40
+    rtuple                         shift and go to state 41
+
+state 97
+
+    (61) rtuple -> ( rtuple_cont ) .
+
+    (               reduce using rule 61 (rtuple -> ( rtuple_cont ) .)
+    }               reduce using rule 61 (rtuple -> ( rtuple_cont ) .)
+    `               reduce using rule 61 (rtuple -> ( rtuple_cont ) .)
+    SPECIALID       reduce using rule 61 (rtuple -> ( rtuple_cont ) .)
+    )               reduce using rule 61 (rtuple -> ( rtuple_cont ) .)
+    ,               reduce using rule 61 (rtuple -> ( rtuple_cont ) .)
+    THEN            reduce using rule 61 (rtuple -> ( rtuple_cont ) .)
+    |               reduce using rule 61 (rtuple -> ( rtuple_cont ) .)
+    RANGER          reduce using rule 61 (rtuple -> ( rtuple_cont ) .)
+    ]               reduce using rule 61 (rtuple -> ( rtuple_cont ) .)
+    :               reduce using rule 61 (rtuple -> ( rtuple_cont ) .)
+    ELSE            reduce using rule 61 (rtuple -> ( rtuple_cont ) .)
+
+
+state 98
+
+    (63) rtuple_cont -> rtuple_cont , . expression
+    (39) expression -> . multivar
+    (40) expression -> . lambda
+    (41) expression -> . conditional
+    (49) multivar -> . primaryvar
+    (50) multivar -> . rlist
+    (51) multivar -> . rtuple
+    (52) multivar -> . multivar ( exp_list )
+    (42) lambda -> . FDEF ( ) { expression }
+    (43) lambda -> . FDEF ( pattern_list ) { expression }
+    (44) conditional -> . COND { cond , ELSE : expression }
+    (45) conditional -> . IF expression THEN expression ELSE expression
+    (53) primaryvar -> . ID
+    (54) primaryvar -> . | SPECIALID |
+    (55) primaryvar -> . STRING
+    (56) primaryvar -> . NUM
+    (57) primaryvar -> . CHAR
+    (58) primaryvar -> . BOOL
+    (59) primaryvar -> . ( expression )
+    (64) rlist -> . [ ]
+    (65) rlist -> . [ exp_list ]
+    (66) rlist -> . [ expression | expression ]
+    (67) rlist -> . [ expression RANGER expression ]
+    (60) rtuple -> . ( )
+    (61) rtuple -> . ( rtuple_cont )
+
+    FDEF            shift and go to state 30
+    COND            shift and go to state 42
+    IF              shift and go to state 43
+    ID              shift and go to state 44
+    |               shift and go to state 45
+    STRING          shift and go to state 46
+    NUM             shift and go to state 47
+    CHAR            shift and go to state 48
+    BOOL            shift and go to state 49
+    (               shift and go to state 66
+    [               shift and go to state 50
+
+    expression                     shift and go to state 122
+    multivar                       shift and go to state 36
+    lambda                         shift and go to state 37
+    conditional                    shift and go to state 38
+    primaryvar                     shift and go to state 39
+    rlist                          shift and go to state 40
+    rtuple                         shift and go to state 41
+
+state 99
+
+    (10) let_block -> LET { let_cont . }
+    (12) let_cont -> let_cont . , assign
+
+    }               shift and go to state 123
+    ,               shift and go to state 124
+
+
+state 100
+
+    (11) let_cont -> assign .
+
+    }               reduce using rule 11 (let_cont -> assign .)
+    ,               reduce using rule 11 (let_cont -> assign .)
+
+
+state 101
+
+    (13) assign -> lpattern . = compound
+
+    =               shift and go to state 125
+
+
+state 102
+
+    (52) multivar -> multivar ( exp_list . )
+    (69) exp_list -> exp_list . , expression
+
+    )               shift and go to state 126
+    ,               shift and go to state 110
+
+
+state 103
+
+    (68) exp_list -> expression .
+
+    )               reduce using rule 68 (exp_list -> expression .)
+    ,               reduce using rule 68 (exp_list -> expression .)
+
+
+state 104
+
+    (44) conditional -> COND { cond . , ELSE : expression }
+    (47) cond -> cond . , cond_singl
+
+    ,               shift and go to state 127
+
+
+state 105
+
+    (48) cond_singl -> expression . : expression
+
+    :               shift and go to state 128
+
+
+state 106
+
+    (46) cond -> cond_singl .
+
+    ,               reduce using rule 46 (cond -> cond_singl .)
+
+
+state 107
+
+    (45) conditional -> IF expression THEN . expression ELSE expression
+    (39) expression -> . multivar
+    (40) expression -> . lambda
+    (41) expression -> . conditional
+    (49) multivar -> . primaryvar
+    (50) multivar -> . rlist
+    (51) multivar -> . rtuple
+    (52) multivar -> . multivar ( exp_list )
+    (42) lambda -> . FDEF ( ) { expression }
+    (43) lambda -> . FDEF ( pattern_list ) { expression }
+    (44) conditional -> . COND { cond , ELSE : expression }
+    (45) conditional -> . IF expression THEN expression ELSE expression
+    (53) primaryvar -> . ID
+    (54) primaryvar -> . | SPECIALID |
+    (55) primaryvar -> . STRING
+    (56) primaryvar -> . NUM
+    (57) primaryvar -> . CHAR
+    (58) primaryvar -> . BOOL
+    (59) primaryvar -> . ( expression )
+    (64) rlist -> . [ ]
+    (65) rlist -> . [ exp_list ]
+    (66) rlist -> . [ expression | expression ]
+    (67) rlist -> . [ expression RANGER expression ]
+    (60) rtuple -> . ( )
+    (61) rtuple -> . ( rtuple_cont )
+
+    FDEF            shift and go to state 30
+    COND            shift and go to state 42
+    IF              shift and go to state 43
+    ID              shift and go to state 44
+    |               shift and go to state 45
+    STRING          shift and go to state 46
+    NUM             shift and go to state 47
+    CHAR            shift and go to state 48
+    BOOL            shift and go to state 49
+    (               shift and go to state 66
+    [               shift and go to state 50
+
+    expression                     shift and go to state 129
+    multivar                       shift and go to state 36
+    lambda                         shift and go to state 37
+    conditional                    shift and go to state 38
+    primaryvar                     shift and go to state 39
+    rlist                          shift and go to state 40
+    rtuple                         shift and go to state 41
+
+state 108
+
+    (54) primaryvar -> | SPECIALID | .
+
+    (               reduce using rule 54 (primaryvar -> | SPECIALID | .)
+    }               reduce using rule 54 (primaryvar -> | SPECIALID | .)
+    `               reduce using rule 54 (primaryvar -> | SPECIALID | .)
+    SPECIALID       reduce using rule 54 (primaryvar -> | SPECIALID | .)
+    )               reduce using rule 54 (primaryvar -> | SPECIALID | .)
+    ,               reduce using rule 54 (primaryvar -> | SPECIALID | .)
+    THEN            reduce using rule 54 (primaryvar -> | SPECIALID | .)
+    |               reduce using rule 54 (primaryvar -> | SPECIALID | .)
+    RANGER          reduce using rule 54 (primaryvar -> | SPECIALID | .)
+    ]               reduce using rule 54 (primaryvar -> | SPECIALID | .)
+    :               reduce using rule 54 (primaryvar -> | SPECIALID | .)
+    ELSE            reduce using rule 54 (primaryvar -> | SPECIALID | .)
+
+
+state 109
+
+    (65) rlist -> [ exp_list ] .
+
+    (               reduce using rule 65 (rlist -> [ exp_list ] .)
+    }               reduce using rule 65 (rlist -> [ exp_list ] .)
+    `               reduce using rule 65 (rlist -> [ exp_list ] .)
+    SPECIALID       reduce using rule 65 (rlist -> [ exp_list ] .)
+    )               reduce using rule 65 (rlist -> [ exp_list ] .)
+    ,               reduce using rule 65 (rlist -> [ exp_list ] .)
+    THEN            reduce using rule 65 (rlist -> [ exp_list ] .)
+    |               reduce using rule 65 (rlist -> [ exp_list ] .)
+    RANGER          reduce using rule 65 (rlist -> [ exp_list ] .)
+    ]               reduce using rule 65 (rlist -> [ exp_list ] .)
+    :               reduce using rule 65 (rlist -> [ exp_list ] .)
+    ELSE            reduce using rule 65 (rlist -> [ exp_list ] .)
+
+
+state 110
+
+    (69) exp_list -> exp_list , . expression
+    (39) expression -> . multivar
+    (40) expression -> . lambda
+    (41) expression -> . conditional
+    (49) multivar -> . primaryvar
+    (50) multivar -> . rlist
+    (51) multivar -> . rtuple
+    (52) multivar -> . multivar ( exp_list )
+    (42) lambda -> . FDEF ( ) { expression }
+    (43) lambda -> . FDEF ( pattern_list ) { expression }
+    (44) conditional -> . COND { cond , ELSE : expression }
+    (45) conditional -> . IF expression THEN expression ELSE expression
+    (53) primaryvar -> . ID
+    (54) primaryvar -> . | SPECIALID |
+    (55) primaryvar -> . STRING
+    (56) primaryvar -> . NUM
+    (57) primaryvar -> . CHAR
+    (58) primaryvar -> . BOOL
+    (59) primaryvar -> . ( expression )
+    (64) rlist -> . [ ]
+    (65) rlist -> . [ exp_list ]
+    (66) rlist -> . [ expression | expression ]
+    (67) rlist -> . [ expression RANGER expression ]
+    (60) rtuple -> . ( )
+    (61) rtuple -> . ( rtuple_cont )
+
+    FDEF            shift and go to state 30
+    COND            shift and go to state 42
+    IF              shift and go to state 43
+    ID              shift and go to state 44
+    |               shift and go to state 45
+    STRING          shift and go to state 46
+    NUM             shift and go to state 47
+    CHAR            shift and go to state 48
+    BOOL            shift and go to state 49
+    (               shift and go to state 66
+    [               shift and go to state 50
+
+    expression                     shift and go to state 130
+    multivar                       shift and go to state 36
+    lambda                         shift and go to state 37
+    conditional                    shift and go to state 38
+    primaryvar                     shift and go to state 39
+    rlist                          shift and go to state 40
+    rtuple                         shift and go to state 41
+
+state 111
+
+    (66) rlist -> [ expression | . expression ]
+    (39) expression -> . multivar
+    (40) expression -> . lambda
+    (41) expression -> . conditional
+    (49) multivar -> . primaryvar
+    (50) multivar -> . rlist
+    (51) multivar -> . rtuple
+    (52) multivar -> . multivar ( exp_list )
+    (42) lambda -> . FDEF ( ) { expression }
+    (43) lambda -> . FDEF ( pattern_list ) { expression }
+    (44) conditional -> . COND { cond , ELSE : expression }
+    (45) conditional -> . IF expression THEN expression ELSE expression
+    (53) primaryvar -> . ID
+    (54) primaryvar -> . | SPECIALID |
+    (55) primaryvar -> . STRING
+    (56) primaryvar -> . NUM
+    (57) primaryvar -> . CHAR
+    (58) primaryvar -> . BOOL
+    (59) primaryvar -> . ( expression )
+    (64) rlist -> . [ ]
+    (65) rlist -> . [ exp_list ]
+    (66) rlist -> . [ expression | expression ]
+    (67) rlist -> . [ expression RANGER expression ]
+    (60) rtuple -> . ( )
+    (61) rtuple -> . ( rtuple_cont )
+
+    FDEF            shift and go to state 30
+    COND            shift and go to state 42
+    IF              shift and go to state 43
+    ID              shift and go to state 44
+    |               shift and go to state 45
+    STRING          shift and go to state 46
+    NUM             shift and go to state 47
+    CHAR            shift and go to state 48
+    BOOL            shift and go to state 49
+    (               shift and go to state 66
+    [               shift and go to state 50
+
+    expression                     shift and go to state 131
+    multivar                       shift and go to state 36
+    lambda                         shift and go to state 37
+    conditional                    shift and go to state 38
+    primaryvar                     shift and go to state 39
+    rlist                          shift and go to state 40
+    rtuple                         shift and go to state 41
+
+state 112
+
+    (67) rlist -> [ expression RANGER . expression ]
+    (39) expression -> . multivar
+    (40) expression -> . lambda
+    (41) expression -> . conditional
+    (49) multivar -> . primaryvar
+    (50) multivar -> . rlist
+    (51) multivar -> . rtuple
+    (52) multivar -> . multivar ( exp_list )
+    (42) lambda -> . FDEF ( ) { expression }
+    (43) lambda -> . FDEF ( pattern_list ) { expression }
+    (44) conditional -> . COND { cond , ELSE : expression }
+    (45) conditional -> . IF expression THEN expression ELSE expression
+    (53) primaryvar -> . ID
+    (54) primaryvar -> . | SPECIALID |
+    (55) primaryvar -> . STRING
+    (56) primaryvar -> . NUM
+    (57) primaryvar -> . CHAR
+    (58) primaryvar -> . BOOL
+    (59) primaryvar -> . ( expression )
+    (64) rlist -> . [ ]
+    (65) rlist -> . [ exp_list ]
+    (66) rlist -> . [ expression | expression ]
+    (67) rlist -> . [ expression RANGER expression ]
+    (60) rtuple -> . ( )
+    (61) rtuple -> . ( rtuple_cont )
+
+    FDEF            shift and go to state 30
+    COND            shift and go to state 42
+    IF              shift and go to state 43
+    ID              shift and go to state 44
+    |               shift and go to state 45
+    STRING          shift and go to state 46
+    NUM             shift and go to state 47
+    CHAR            shift and go to state 48
+    BOOL            shift and go to state 49
+    (               shift and go to state 66
+    [               shift and go to state 50
+
+    expression                     shift and go to state 132
+    multivar                       shift and go to state 36
+    lambda                         shift and go to state 37
+    conditional                    shift and go to state 38
+    primaryvar                     shift and go to state 39
+    rlist                          shift and go to state 40
+    rtuple                         shift and go to state 41
+
+state 113
+
+    (24) ltuple_cont -> lpattern , lpattern .
+
+    )               reduce using rule 24 (ltuple_cont -> lpattern , lpattern .)
+    ,               reduce using rule 24 (ltuple_cont -> lpattern , lpattern .)
+
+
+state 114
+
+    (25) ltuple_cont -> ltuple_cont , lpattern .
+
+    )               reduce using rule 25 (ltuple_cont -> ltuple_cont , lpattern .)
+    ,               reduce using rule 25 (ltuple_cont -> ltuple_cont , lpattern .)
+
+
+state 115
+
+    (19) llist -> [ lpattern | lpattern . ]
+
+    ]               shift and go to state 133
+
+
+state 116
+
+    (42) lambda -> FDEF ( ) { . expression }
+    (39) expression -> . multivar
+    (40) expression -> . lambda
+    (41) expression -> . conditional
+    (49) multivar -> . primaryvar
+    (50) multivar -> . rlist
+    (51) multivar -> . rtuple
+    (52) multivar -> . multivar ( exp_list )
+    (42) lambda -> . FDEF ( ) { expression }
+    (43) lambda -> . FDEF ( pattern_list ) { expression }
+    (44) conditional -> . COND { cond , ELSE : expression }
+    (45) conditional -> . IF expression THEN expression ELSE expression
+    (53) primaryvar -> . ID
+    (54) primaryvar -> . | SPECIALID |
+    (55) primaryvar -> . STRING
+    (56) primaryvar -> . NUM
+    (57) primaryvar -> . CHAR
+    (58) primaryvar -> . BOOL
+    (59) primaryvar -> . ( expression )
+    (64) rlist -> . [ ]
+    (65) rlist -> . [ exp_list ]
+    (66) rlist -> . [ expression | expression ]
+    (67) rlist -> . [ expression RANGER expression ]
+    (60) rtuple -> . ( )
+    (61) rtuple -> . ( rtuple_cont )
+
+    FDEF            shift and go to state 30
+    COND            shift and go to state 42
+    IF              shift and go to state 43
+    ID              shift and go to state 44
+    |               shift and go to state 45
+    STRING          shift and go to state 46
+    NUM             shift and go to state 47
+    CHAR            shift and go to state 48
+    BOOL            shift and go to state 49
+    (               shift and go to state 66
+    [               shift and go to state 50
+
+    expression                     shift and go to state 134
+    multivar                       shift and go to state 36
+    lambda                         shift and go to state 37
+    conditional                    shift and go to state 38
+    primaryvar                     shift and go to state 39
+    rlist                          shift and go to state 40
+    rtuple                         shift and go to state 41
+
+state 117
+
+    (43) lambda -> FDEF ( pattern_list ) . { expression }
+
+    {               shift and go to state 135
+
+
+state 118
+
+    (37) infix -> ` ID ` .
+
+    FDEF            reduce using rule 37 (infix -> ` ID ` .)
+    COND            reduce using rule 37 (infix -> ` ID ` .)
+    IF              reduce using rule 37 (infix -> ` ID ` .)
+    ID              reduce using rule 37 (infix -> ` ID ` .)
+    |               reduce using rule 37 (infix -> ` ID ` .)
+    STRING          reduce using rule 37 (infix -> ` ID ` .)
+    NUM             reduce using rule 37 (infix -> ` ID ` .)
+    CHAR            reduce using rule 37 (infix -> ` ID ` .)
+    BOOL            reduce using rule 37 (infix -> ` ID ` .)
+    (               reduce using rule 37 (infix -> ` ID ` .)
+    [               reduce using rule 37 (infix -> ` ID ` .)
+    )               reduce using rule 37 (infix -> ` ID ` .)
+
+
+state 119
+
+    (35) compound -> ( infix expression ) .
+
+    }               reduce using rule 35 (compound -> ( infix expression ) .)
+    `               reduce using rule 35 (compound -> ( infix expression ) .)
+    SPECIALID       reduce using rule 35 (compound -> ( infix expression ) .)
+    ,               reduce using rule 35 (compound -> ( infix expression ) .)
+
+
+state 120
+
+    (36) compound -> ( expression infix ) .
+
+    }               reduce using rule 36 (compound -> ( expression infix ) .)
+    `               reduce using rule 36 (compound -> ( expression infix ) .)
+    SPECIALID       reduce using rule 36 (compound -> ( expression infix ) .)
+    ,               reduce using rule 36 (compound -> ( expression infix ) .)
+
+
+state 121
+
+    (62) rtuple_cont -> expression , expression .
+
+    )               reduce using rule 62 (rtuple_cont -> expression , expression .)
+    ,               reduce using rule 62 (rtuple_cont -> expression , expression .)
+
+
+state 122
+
+    (63) rtuple_cont -> rtuple_cont , expression .
+
+    )               reduce using rule 63 (rtuple_cont -> rtuple_cont , expression .)
+    ,               reduce using rule 63 (rtuple_cont -> rtuple_cont , expression .)
+
+
+state 123
+
+    (10) let_block -> LET { let_cont } .
+
+    (               reduce using rule 10 (let_block -> LET { let_cont } .)
+    FDEF            reduce using rule 10 (let_block -> LET { let_cont } .)
+    COND            reduce using rule 10 (let_block -> LET { let_cont } .)
+    IF              reduce using rule 10 (let_block -> LET { let_cont } .)
+    ID              reduce using rule 10 (let_block -> LET { let_cont } .)
+    |               reduce using rule 10 (let_block -> LET { let_cont } .)
+    STRING          reduce using rule 10 (let_block -> LET { let_cont } .)
+    NUM             reduce using rule 10 (let_block -> LET { let_cont } .)
+    CHAR            reduce using rule 10 (let_block -> LET { let_cont } .)
+    BOOL            reduce using rule 10 (let_block -> LET { let_cont } .)
+    [               reduce using rule 10 (let_block -> LET { let_cont } .)
+
+
+state 124
+
+    (12) let_cont -> let_cont , . assign
+    (13) assign -> . lpattern = compound
+    (14) lpattern -> . lvar
+    (15) lpattern -> . llist
+    (16) lpattern -> . ltuple
+    (26) lvar -> . ID
+    (27) lvar -> . | SPECIALID |
+    (28) lvar -> . STRING
+    (29) lvar -> . NUM
+    (30) lvar -> . CHAR
+    (31) lvar -> . BOOL
+    (32) lvar -> . ( lpattern )
+    (17) llist -> . [ ]
+    (18) llist -> . [ pattern_list ]
+    (19) llist -> . [ lpattern | lpattern ]
+    (22) ltuple -> . ( )
+    (23) ltuple -> . ( ltuple_cont )
+
+    ID              shift and go to state 22
+    |               shift and go to state 23
+    STRING          shift and go to state 24
+    NUM             shift and go to state 25
+    CHAR            shift and go to state 26
+    BOOL            shift and go to state 27
+    (               shift and go to state 15
+    [               shift and go to state 28
+
+    assign                         shift and go to state 136
+    lpattern                       shift and go to state 101
+    lvar                           shift and go to state 19
+    llist                          shift and go to state 20
+    ltuple                         shift and go to state 21
+
+state 125
+
+    (13) assign -> lpattern = . compound
+    (33) compound -> . expression
+    (34) compound -> . compound infix expression
+    (35) compound -> . ( infix expression )
+    (36) compound -> . ( expression infix )
+    (39) expression -> . multivar
+    (40) expression -> . lambda
+    (41) expression -> . conditional
+    (49) multivar -> . primaryvar
+    (50) multivar -> . rlist
+    (51) multivar -> . rtuple
+    (52) multivar -> . multivar ( exp_list )
+    (42) lambda -> . FDEF ( ) { expression }
+    (43) lambda -> . FDEF ( pattern_list ) { expression }
+    (44) conditional -> . COND { cond , ELSE : expression }
+    (45) conditional -> . IF expression THEN expression ELSE expression
+    (53) primaryvar -> . ID
+    (54) primaryvar -> . | SPECIALID |
+    (55) primaryvar -> . STRING
+    (56) primaryvar -> . NUM
+    (57) primaryvar -> . CHAR
+    (58) primaryvar -> . BOOL
+    (59) primaryvar -> . ( expression )
+    (64) rlist -> . [ ]
+    (65) rlist -> . [ exp_list ]
+    (66) rlist -> . [ expression | expression ]
+    (67) rlist -> . [ expression RANGER expression ]
+    (60) rtuple -> . ( )
+    (61) rtuple -> . ( rtuple_cont )
+
+    (               shift and go to state 34
+    FDEF            shift and go to state 30
+    COND            shift and go to state 42
+    IF              shift and go to state 43
+    ID              shift and go to state 44
+    |               shift and go to state 45
+    STRING          shift and go to state 46
+    NUM             shift and go to state 47
+    CHAR            shift and go to state 48
+    BOOL            shift and go to state 49
+    [               shift and go to state 50
+
+    compound                       shift and go to state 137
+    expression                     shift and go to state 33
+    multivar                       shift and go to state 36
+    lambda                         shift and go to state 37
+    conditional                    shift and go to state 38
+    primaryvar                     shift and go to state 39
+    rlist                          shift and go to state 40
+    rtuple                         shift and go to state 41
+
+state 126
+
+    (52) multivar -> multivar ( exp_list ) .
+
+    (               reduce using rule 52 (multivar -> multivar ( exp_list ) .)
+    }               reduce using rule 52 (multivar -> multivar ( exp_list ) .)
+    `               reduce using rule 52 (multivar -> multivar ( exp_list ) .)
+    SPECIALID       reduce using rule 52 (multivar -> multivar ( exp_list ) .)
+    )               reduce using rule 52 (multivar -> multivar ( exp_list ) .)
+    ,               reduce using rule 52 (multivar -> multivar ( exp_list ) .)
+    THEN            reduce using rule 52 (multivar -> multivar ( exp_list ) .)
+    |               reduce using rule 52 (multivar -> multivar ( exp_list ) .)
+    RANGER          reduce using rule 52 (multivar -> multivar ( exp_list ) .)
+    ]               reduce using rule 52 (multivar -> multivar ( exp_list ) .)
+    :               reduce using rule 52 (multivar -> multivar ( exp_list ) .)
+    ELSE            reduce using rule 52 (multivar -> multivar ( exp_list ) .)
+
+
+state 127
+
+    (44) conditional -> COND { cond , . ELSE : expression }
+    (47) cond -> cond , . cond_singl
+    (48) cond_singl -> . expression : expression
+    (39) expression -> . multivar
+    (40) expression -> . lambda
+    (41) expression -> . conditional
+    (49) multivar -> . primaryvar
+    (50) multivar -> . rlist
+    (51) multivar -> . rtuple
+    (52) multivar -> . multivar ( exp_list )
+    (42) lambda -> . FDEF ( ) { expression }
+    (43) lambda -> . FDEF ( pattern_list ) { expression }
+    (44) conditional -> . COND { cond , ELSE : expression }
+    (45) conditional -> . IF expression THEN expression ELSE expression
+    (53) primaryvar -> . ID
+    (54) primaryvar -> . | SPECIALID |
+    (55) primaryvar -> . STRING
+    (56) primaryvar -> . NUM
+    (57) primaryvar -> . CHAR
+    (58) primaryvar -> . BOOL
+    (59) primaryvar -> . ( expression )
+    (64) rlist -> . [ ]
+    (65) rlist -> . [ exp_list ]
+    (66) rlist -> . [ expression | expression ]
+    (67) rlist -> . [ expression RANGER expression ]
+    (60) rtuple -> . ( )
+    (61) rtuple -> . ( rtuple_cont )
+
+    ELSE            shift and go to state 138
+    FDEF            shift and go to state 30
+    COND            shift and go to state 42
+    IF              shift and go to state 43
+    ID              shift and go to state 44
+    |               shift and go to state 45
+    STRING          shift and go to state 46
+    NUM             shift and go to state 47
+    CHAR            shift and go to state 48
+    BOOL            shift and go to state 49
+    (               shift and go to state 66
+    [               shift and go to state 50
+
+    expression                     shift and go to state 105
+    cond_singl                     shift and go to state 139
+    multivar                       shift and go to state 36
+    lambda                         shift and go to state 37
+    conditional                    shift and go to state 38
+    primaryvar                     shift and go to state 39
+    rlist                          shift and go to state 40
+    rtuple                         shift and go to state 41
+
+state 128
+
+    (48) cond_singl -> expression : . expression
+    (39) expression -> . multivar
+    (40) expression -> . lambda
+    (41) expression -> . conditional
+    (49) multivar -> . primaryvar
+    (50) multivar -> . rlist
+    (51) multivar -> . rtuple
+    (52) multivar -> . multivar ( exp_list )
+    (42) lambda -> . FDEF ( ) { expression }
+    (43) lambda -> . FDEF ( pattern_list ) { expression }
+    (44) conditional -> . COND { cond , ELSE : expression }
+    (45) conditional -> . IF expression THEN expression ELSE expression
+    (53) primaryvar -> . ID
+    (54) primaryvar -> . | SPECIALID |
+    (55) primaryvar -> . STRING
+    (56) primaryvar -> . NUM
+    (57) primaryvar -> . CHAR
+    (58) primaryvar -> . BOOL
+    (59) primaryvar -> . ( expression )
+    (64) rlist -> . [ ]
+    (65) rlist -> . [ exp_list ]
+    (66) rlist -> . [ expression | expression ]
+    (67) rlist -> . [ expression RANGER expression ]
+    (60) rtuple -> . ( )
+    (61) rtuple -> . ( rtuple_cont )
+
+    FDEF            shift and go to state 30
+    COND            shift and go to state 42
+    IF              shift and go to state 43
+    ID              shift and go to state 44
+    |               shift and go to state 45
+    STRING          shift and go to state 46
+    NUM             shift and go to state 47
+    CHAR            shift and go to state 48
+    BOOL            shift and go to state 49
+    (               shift and go to state 66
+    [               shift and go to state 50
+
+    expression                     shift and go to state 140
+    multivar                       shift and go to state 36
+    lambda                         shift and go to state 37
+    conditional                    shift and go to state 38
+    primaryvar                     shift and go to state 39
+    rlist                          shift and go to state 40
+    rtuple                         shift and go to state 41
+
+state 129
+
+    (45) conditional -> IF expression THEN expression . ELSE expression
+
+    ELSE            shift and go to state 141
+
+
+state 130
+
+    (69) exp_list -> exp_list , expression .
+
+    ]               reduce using rule 69 (exp_list -> exp_list , expression .)
+    ,               reduce using rule 69 (exp_list -> exp_list , expression .)
+    )               reduce using rule 69 (exp_list -> exp_list , expression .)
+
+
+state 131
+
+    (66) rlist -> [ expression | expression . ]
+
+    ]               shift and go to state 142
+
+
+state 132
+
+    (67) rlist -> [ expression RANGER expression . ]
+
+    ]               shift and go to state 143
+
+
+state 133
+
+    (19) llist -> [ lpattern | lpattern ] .
+
+    )               reduce using rule 19 (llist -> [ lpattern | lpattern ] .)
+    ,               reduce using rule 19 (llist -> [ lpattern | lpattern ] .)
+    |               reduce using rule 19 (llist -> [ lpattern | lpattern ] .)
+    ]               reduce using rule 19 (llist -> [ lpattern | lpattern ] .)
+    =               reduce using rule 19 (llist -> [ lpattern | lpattern ] .)
+
+
+state 134
+
+    (42) lambda -> FDEF ( ) { expression . }
+
+    }               shift and go to state 144
+
+
+state 135
+
+    (43) lambda -> FDEF ( pattern_list ) { . expression }
+    (39) expression -> . multivar
+    (40) expression -> . lambda
+    (41) expression -> . conditional
+    (49) multivar -> . primaryvar
+    (50) multivar -> . rlist
+    (51) multivar -> . rtuple
+    (52) multivar -> . multivar ( exp_list )
+    (42) lambda -> . FDEF ( ) { expression }
+    (43) lambda -> . FDEF ( pattern_list ) { expression }
+    (44) conditional -> . COND { cond , ELSE : expression }
+    (45) conditional -> . IF expression THEN expression ELSE expression
+    (53) primaryvar -> . ID
+    (54) primaryvar -> . | SPECIALID |
+    (55) primaryvar -> . STRING
+    (56) primaryvar -> . NUM
+    (57) primaryvar -> . CHAR
+    (58) primaryvar -> . BOOL
+    (59) primaryvar -> . ( expression )
+    (64) rlist -> . [ ]
+    (65) rlist -> . [ exp_list ]
+    (66) rlist -> . [ expression | expression ]
+    (67) rlist -> . [ expression RANGER expression ]
+    (60) rtuple -> . ( )
+    (61) rtuple -> . ( rtuple_cont )
+
+    FDEF            shift and go to state 30
+    COND            shift and go to state 42
+    IF              shift and go to state 43
+    ID              shift and go to state 44
+    |               shift and go to state 45
+    STRING          shift and go to state 46
+    NUM             shift and go to state 47
+    CHAR            shift and go to state 48
+    BOOL            shift and go to state 49
+    (               shift and go to state 66
+    [               shift and go to state 50
+
+    expression                     shift and go to state 145
+    multivar                       shift and go to state 36
+    lambda                         shift and go to state 37
+    conditional                    shift and go to state 38
+    primaryvar                     shift and go to state 39
+    rlist                          shift and go to state 40
+    rtuple                         shift and go to state 41
+
+state 136
+
+    (12) let_cont -> let_cont , assign .
+
+    }               reduce using rule 12 (let_cont -> let_cont , assign .)
+    ,               reduce using rule 12 (let_cont -> let_cont , assign .)
+
+
+state 137
+
+    (13) assign -> lpattern = compound .
+    (34) compound -> compound . infix expression
+    (37) infix -> . ` ID `
+    (38) infix -> . SPECIALID
+
+    }               reduce using rule 13 (assign -> lpattern = compound .)
+    ,               reduce using rule 13 (assign -> lpattern = compound .)
+    `               shift and go to state 63
+    SPECIALID       shift and go to state 64
+
+    infix                          shift and go to state 62
+
+state 138
+
+    (44) conditional -> COND { cond , ELSE . : expression }
+
+    :               shift and go to state 146
+
+
+state 139
+
+    (47) cond -> cond , cond_singl .
+
+    ,               reduce using rule 47 (cond -> cond , cond_singl .)
+
+
+state 140
+
+    (48) cond_singl -> expression : expression .
+
+    ,               reduce using rule 48 (cond_singl -> expression : expression .)
+
+
+state 141
+
+    (45) conditional -> IF expression THEN expression ELSE . expression
+    (39) expression -> . multivar
+    (40) expression -> . lambda
+    (41) expression -> . conditional
+    (49) multivar -> . primaryvar
+    (50) multivar -> . rlist
+    (51) multivar -> . rtuple
+    (52) multivar -> . multivar ( exp_list )
+    (42) lambda -> . FDEF ( ) { expression }
+    (43) lambda -> . FDEF ( pattern_list ) { expression }
+    (44) conditional -> . COND { cond , ELSE : expression }
+    (45) conditional -> . IF expression THEN expression ELSE expression
+    (53) primaryvar -> . ID
+    (54) primaryvar -> . | SPECIALID |
+    (55) primaryvar -> . STRING
+    (56) primaryvar -> . NUM
+    (57) primaryvar -> . CHAR
+    (58) primaryvar -> . BOOL
+    (59) primaryvar -> . ( expression )
+    (64) rlist -> . [ ]
+    (65) rlist -> . [ exp_list ]
+    (66) rlist -> . [ expression | expression ]
+    (67) rlist -> . [ expression RANGER expression ]
+    (60) rtuple -> . ( )
+    (61) rtuple -> . ( rtuple_cont )
+
+    FDEF            shift and go to state 30
+    COND            shift and go to state 42
+    IF              shift and go to state 43
+    ID              shift and go to state 44
+    |               shift and go to state 45
+    STRING          shift and go to state 46
+    NUM             shift and go to state 47
+    CHAR            shift and go to state 48
+    BOOL            shift and go to state 49
+    (               shift and go to state 66
+    [               shift and go to state 50
+
+    expression                     shift and go to state 147
+    multivar                       shift and go to state 36
+    lambda                         shift and go to state 37
+    conditional                    shift and go to state 38
+    primaryvar                     shift and go to state 39
+    rlist                          shift and go to state 40
+    rtuple                         shift and go to state 41
+
+state 142
+
+    (66) rlist -> [ expression | expression ] .
+
+    (               reduce using rule 66 (rlist -> [ expression | expression ] .)
+    }               reduce using rule 66 (rlist -> [ expression | expression ] .)
+    `               reduce using rule 66 (rlist -> [ expression | expression ] .)
+    SPECIALID       reduce using rule 66 (rlist -> [ expression | expression ] .)
+    )               reduce using rule 66 (rlist -> [ expression | expression ] .)
+    ,               reduce using rule 66 (rlist -> [ expression | expression ] .)
+    THEN            reduce using rule 66 (rlist -> [ expression | expression ] .)
+    |               reduce using rule 66 (rlist -> [ expression | expression ] .)
+    RANGER          reduce using rule 66 (rlist -> [ expression | expression ] .)
+    ]               reduce using rule 66 (rlist -> [ expression | expression ] .)
+    :               reduce using rule 66 (rlist -> [ expression | expression ] .)
+    ELSE            reduce using rule 66 (rlist -> [ expression | expression ] .)
+
+
+state 143
+
+    (67) rlist -> [ expression RANGER expression ] .
+
+    (               reduce using rule 67 (rlist -> [ expression RANGER expression ] .)
+    }               reduce using rule 67 (rlist -> [ expression RANGER expression ] .)
+    `               reduce using rule 67 (rlist -> [ expression RANGER expression ] .)
+    SPECIALID       reduce using rule 67 (rlist -> [ expression RANGER expression ] .)
+    )               reduce using rule 67 (rlist -> [ expression RANGER expression ] .)
+    ,               reduce using rule 67 (rlist -> [ expression RANGER expression ] .)
+    THEN            reduce using rule 67 (rlist -> [ expression RANGER expression ] .)
+    |               reduce using rule 67 (rlist -> [ expression RANGER expression ] .)
+    RANGER          reduce using rule 67 (rlist -> [ expression RANGER expression ] .)
+    ]               reduce using rule 67 (rlist -> [ expression RANGER expression ] .)
+    :               reduce using rule 67 (rlist -> [ expression RANGER expression ] .)
+    ELSE            reduce using rule 67 (rlist -> [ expression RANGER expression ] .)
+
+
+state 144
+
+    (42) lambda -> FDEF ( ) { expression } .
+
+    }               reduce using rule 42 (lambda -> FDEF ( ) { expression } .)
+    `               reduce using rule 42 (lambda -> FDEF ( ) { expression } .)
+    SPECIALID       reduce using rule 42 (lambda -> FDEF ( ) { expression } .)
+    )               reduce using rule 42 (lambda -> FDEF ( ) { expression } .)
+    ,               reduce using rule 42 (lambda -> FDEF ( ) { expression } .)
+    THEN            reduce using rule 42 (lambda -> FDEF ( ) { expression } .)
+    |               reduce using rule 42 (lambda -> FDEF ( ) { expression } .)
+    RANGER          reduce using rule 42 (lambda -> FDEF ( ) { expression } .)
+    ]               reduce using rule 42 (lambda -> FDEF ( ) { expression } .)
+    :               reduce using rule 42 (lambda -> FDEF ( ) { expression } .)
+    ELSE            reduce using rule 42 (lambda -> FDEF ( ) { expression } .)
+
+
+state 145
+
+    (43) lambda -> FDEF ( pattern_list ) { expression . }
+
+    }               shift and go to state 148
+
+
+state 146
+
+    (44) conditional -> COND { cond , ELSE : . expression }
+    (39) expression -> . multivar
+    (40) expression -> . lambda
+    (41) expression -> . conditional
+    (49) multivar -> . primaryvar
+    (50) multivar -> . rlist
+    (51) multivar -> . rtuple
+    (52) multivar -> . multivar ( exp_list )
+    (42) lambda -> . FDEF ( ) { expression }
+    (43) lambda -> . FDEF ( pattern_list ) { expression }
+    (44) conditional -> . COND { cond , ELSE : expression }
+    (45) conditional -> . IF expression THEN expression ELSE expression
+    (53) primaryvar -> . ID
+    (54) primaryvar -> . | SPECIALID |
+    (55) primaryvar -> . STRING
+    (56) primaryvar -> . NUM
+    (57) primaryvar -> . CHAR
+    (58) primaryvar -> . BOOL
+    (59) primaryvar -> . ( expression )
+    (64) rlist -> . [ ]
+    (65) rlist -> . [ exp_list ]
+    (66) rlist -> . [ expression | expression ]
+    (67) rlist -> . [ expression RANGER expression ]
+    (60) rtuple -> . ( )
+    (61) rtuple -> . ( rtuple_cont )
+
+    FDEF            shift and go to state 30
+    COND            shift and go to state 42
+    IF              shift and go to state 43
+    ID              shift and go to state 44
+    |               shift and go to state 45
+    STRING          shift and go to state 46
+    NUM             shift and go to state 47
+    CHAR            shift and go to state 48
+    BOOL            shift and go to state 49
+    (               shift and go to state 66
+    [               shift and go to state 50
+
+    expression                     shift and go to state 149
+    multivar                       shift and go to state 36
+    lambda                         shift and go to state 37
+    conditional                    shift and go to state 38
+    primaryvar                     shift and go to state 39
+    rlist                          shift and go to state 40
+    rtuple                         shift and go to state 41
+
+state 147
+
+    (45) conditional -> IF expression THEN expression ELSE expression .
+
+    }               reduce using rule 45 (conditional -> IF expression THEN expression ELSE expression .)
+    `               reduce using rule 45 (conditional -> IF expression THEN expression ELSE expression .)
+    SPECIALID       reduce using rule 45 (conditional -> IF expression THEN expression ELSE expression .)
+    )               reduce using rule 45 (conditional -> IF expression THEN expression ELSE expression .)
+    ,               reduce using rule 45 (conditional -> IF expression THEN expression ELSE expression .)
+    THEN            reduce using rule 45 (conditional -> IF expression THEN expression ELSE expression .)
+    |               reduce using rule 45 (conditional -> IF expression THEN expression ELSE expression .)
+    RANGER          reduce using rule 45 (conditional -> IF expression THEN expression ELSE expression .)
+    ]               reduce using rule 45 (conditional -> IF expression THEN expression ELSE expression .)
+    :               reduce using rule 45 (conditional -> IF expression THEN expression ELSE expression .)
+    ELSE            reduce using rule 45 (conditional -> IF expression THEN expression ELSE expression .)
+
+
+state 148
+
+    (43) lambda -> FDEF ( pattern_list ) { expression } .
+
+    }               reduce using rule 43 (lambda -> FDEF ( pattern_list ) { expression } .)
+    `               reduce using rule 43 (lambda -> FDEF ( pattern_list ) { expression } .)
+    SPECIALID       reduce using rule 43 (lambda -> FDEF ( pattern_list ) { expression } .)
+    )               reduce using rule 43 (lambda -> FDEF ( pattern_list ) { expression } .)
+    ,               reduce using rule 43 (lambda -> FDEF ( pattern_list ) { expression } .)
+    THEN            reduce using rule 43 (lambda -> FDEF ( pattern_list ) { expression } .)
+    |               reduce using rule 43 (lambda -> FDEF ( pattern_list ) { expression } .)
+    RANGER          reduce using rule 43 (lambda -> FDEF ( pattern_list ) { expression } .)
+    ]               reduce using rule 43 (lambda -> FDEF ( pattern_list ) { expression } .)
+    :               reduce using rule 43 (lambda -> FDEF ( pattern_list ) { expression } .)
+    ELSE            reduce using rule 43 (lambda -> FDEF ( pattern_list ) { expression } .)
+
+
+state 149
+
+    (44) conditional -> COND { cond , ELSE : expression . }
+
+    }               shift and go to state 150
+
+
+state 150
+
+    (44) conditional -> COND { cond , ELSE : expression } .
+
+    }               reduce using rule 44 (conditional -> COND { cond , ELSE : expression } .)
+    `               reduce using rule 44 (conditional -> COND { cond , ELSE : expression } .)
+    SPECIALID       reduce using rule 44 (conditional -> COND { cond , ELSE : expression } .)
+    )               reduce using rule 44 (conditional -> COND { cond , ELSE : expression } .)
+    ,               reduce using rule 44 (conditional -> COND { cond , ELSE : expression } .)
+    THEN            reduce using rule 44 (conditional -> COND { cond , ELSE : expression } .)
+    |               reduce using rule 44 (conditional -> COND { cond , ELSE : expression } .)
+    RANGER          reduce using rule 44 (conditional -> COND { cond , ELSE : expression } .)
+    ]               reduce using rule 44 (conditional -> COND { cond , ELSE : expression } .)
+    :               reduce using rule 44 (conditional -> COND { cond , ELSE : expression } .)
+    ELSE            reduce using rule 44 (conditional -> COND { cond , ELSE : expression } .)
 

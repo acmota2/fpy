@@ -15,115 +15,103 @@ fdef bla([]) {
 
 def p_grammar_tester(p):
     '''
-    program         : BEGIN code END
+    all             : BEGIN body END
 
-    code            : func
-                    | code func
+    body            : function
+                    | body function
 
-    func            : FDEF ID '(' scope ')' '{' body '}'
-                    | FDEF ID '(' scope args ')' '{' body '}'
+    function        : FDEF prefix args '{' compound '}'
+                    | FDEF prefix args '{' let_block compound '}'
 
-    scope           :
+    args            : '(' ')'
+                    | '(' pattern_list ')'
 
-    args            : lvar
-                    | args ',' lvar
+    prefix          : ID
+                    | '|' SPECIALID '|'
 
-    lvar            : multi_var
+    let_block       : LET '{' let_cont '}'
+
+    let_cont        : assign
+                    | let_cont ',' assign
+
+    assign          : lpattern '=' compound
+
+    lpattern        : lvar
                     | llist
                     | ltuple
 
     llist           : '[' ']'
-                    | '[' llist_cont ']'
-    llist_cont      : lvar  
-                    | llist_cont ',' lvar
-                    | lvar '|' llist
+                    | '[' pattern_list ']'
+                    | '[' lpattern '|' lpattern ']'
+
+    pattern_list    : lpattern
+                    | pattern_list ',' lpattern
 
     ltuple          : '(' ')'
-                    | '(' ltuple_cont ',' lvar ')'
-    ltuple_cont     : lvar
-                    | ltuple_cont ',' lvar
+                    | '(' ltuple_cont ')'
 
-    body            : exp
-                    | statement body
+    ltuple_cont     : lpattern ',' lpattern
+                    | ltuple_cont ',' lpattern
 
-    statement       : assign
-                    | reassign
-    assign          : lvar ASSIGN exp
-    reassign        : lvar '=' exp
-
-    exp             : rvar
-                    | eval
-                    | aritm
-                    | cond
-                    | lambda
-
-    lambda          : '[' ']' '{' exp '}'
-                    | '[' args ']' '{' exp '}'
-
-    cond            : COND '{' condition '}'
-                    | IF eval THEN exp ELSE exp
-    condition       : condition_cont ELSE ':' exp
-    condition_cont  : evalexp
-                    | evalexp ',' condition_cont
-
-    evalexp         : eval ':' exp
-
-    eval            : cond_exp logic_op eval
-                    | ID
-
-    logic_op        : AND
-                    | OR
-
-    cond_exp        : exp cond_op cond_exp
-                    | '(' eval ')'
-
-    cond_op         : EQ
-                    | '<'
-                    | '>'
-                    | LTE
-                    | GTE
-                    | DIF
-
-    aritm           : ID
+    lvar            : ID
+                    | '|' SPECIALID '|'
+                    | STRING
                     | NUM
-                    | ID aritm_op aritm
-                    | NUM aritm_op aritm
-                    | '(' aritm ')'
+                    | CHAR
+                    | BOOL
+                    | '(' lpattern ')'
 
-    aritm_op        : '+'
-                    | '-'
-                    | '*'
-                    | '/'
-                    | '%'
-                    | POW
-                    | INTDIV
+    compound        : expression
+                    | compound infix expression
+                    | '(' infix expression ')'
+                    | '(' expression infix ')'
 
-    rvar            : multi_var
+    infix           : '`' ID '`'
+                    | SPECIALID
+
+    expression      : multivar
+                    | lambda
+                    | conditional
+
+    lambda          : FDEF '(' ')' '{' expression '}' 
+                    | FDEF '(' pattern_list ')' '{' expression '}'
+
+    conditional     : COND '{' cond ',' ELSE ':' expression '}'
+                    | IF expression THEN expression ELSE expression
+
+    cond            : cond_singl
+                    | cond ',' cond_singl
+
+    cond_singl      : expression ':' expression
+
+    multivar        : primaryvar
                     | rlist
                     | rtuple
-                    | func_call
+                    | multivar '(' exp_list ')'
 
-    rlist           : '[' ']'
-                    | '[' rlist_cont ']'
-    rlist_cont      : exp
-                    | rlist_cont ',' exp
-                    | exp '|' rlist
+    primaryvar      : ID
+                    | '|' SPECIALID '|'
+                    | STRING
+                    | NUM
+                    | CHAR
+                    | BOOL
+                    | '(' expression ')'
 
     rtuple          : '(' ')'
-                    | '(' rtuple_cont ',' exp ')'
-    rtuple_cont     : exp
-                    | rtuple_cont ',' exp
+                    | '(' rtuple_cont ')'
 
-    func_call       : ID '(' ')'
-                    | ID '(' func_call_cont ')'
-    func_call_cont  : exp
-                    | func_call_cont ',' exp
+    rtuple_cont     : expression ',' expression
+                    | rtuple_cont ',' expression
 
-    multi_var       : ID
-                    | NUM
-                    | STRING
-                    | CHAR
+    rlist           : '[' ']'
+                    | '[' exp_list ']'
+                    | '[' expression '|' expression ']'
+                    | '[' expression RANGER expression ']'
+
+    exp_list        : expression
+                    | exp_list ',' expression
     '''
+    print('Worked!', p)
 
 
 def p_error(p):

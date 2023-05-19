@@ -13,7 +13,7 @@ tokens = [
     # limits
     'BEGIN','END',
     # vars
-    'ID','SPECIALID','NUM','STRING','CHAR','BOOL',
+    'ID','SPECIALID','INT','FLOAT','STRING','CHAR','BOOL',
     # cond
     'COND',
     # range
@@ -57,12 +57,12 @@ def t_fpy_newline(t):
     t.lexer.lineno += 1
 
 def t_BEGIN(t):
-    r'(\'{3}fpy|\"{3}fpy)'
+    r'(.|\n)*(\'{3}fpy|\"{3}fpy)'
     t.lexer.begin('fpy')
     return t
 
 def t_fpy_END(t):
-     r'((\'{3})|(\"{3}))'
+     r'((\'{3})|(\"{3}))(.|\n)*'
      t.lexer.begin('INITIAL')
      return t
 
@@ -72,8 +72,10 @@ def t_fpy_ID(t):
     return t
 
 
-def t_fpy_NUM(t):
-    r'(-\+)?\d+(.\d+)?'
+t_fpy_INT = r'\d+'
+
+def t_fpy_FLOAT(t):
+    r'\d+.\d+(e\d+)?'
     return t
 
 def t_fpy_STRING(t):

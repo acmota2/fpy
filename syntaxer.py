@@ -336,7 +336,7 @@ def p_var(p):
            | NUM
            | STRING
            | CHAR'''
-    p[0] = sem.var(
+    p[0] = sem.variable(
         type=p[1].token().type,
         var=p[1])
 

@@ -3,16 +3,6 @@ import ply.lex as lex
 from lexer import tokens, literals
 import sys
 
-"""TESTE
-
-'''fpy
-fdef bla([]) {
-	[]
-}
-'''
-
-"""
-
 def p_grammar_tester(p):
     '''
     all             : BEGIN body END
@@ -56,7 +46,8 @@ def p_grammar_tester(p):
     lvar            : ID
                     | '[' SPECIALID ']'
                     | STRING
-                    | NUM
+                    | INT
+                    | FLOAT
                     | CHAR
                     | BOOL
                     | '(' lpattern ')'
@@ -95,7 +86,7 @@ def p_grammar_tester(p):
     primaryvar      : ID
                     | '[' SPECIALID ']'
                     | STRING
-                    | NUM
+                    | INT
                     | CHAR
                     | BOOL
                     | '(' expression ')'

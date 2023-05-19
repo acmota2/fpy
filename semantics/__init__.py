@@ -1,4 +1,4 @@
-from .var import var
+from .variable import var
 from .eval import eval
 from .func import func
 from .ltuple import ltuple
@@ -11,5 +11,4 @@ from .lambda_ import lambda_
 from .llist import llist
 from .func_call import func_call
 from .args import args
-from .aritm import aritm
 from .rlist import rlist

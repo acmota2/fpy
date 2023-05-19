@@ -4,4 +4,4 @@ class body:
             print('Error on body')
         else:
             self.type = type
-            self.statements = [content]
+            self.statements = {content}

@@ -1,4 +1,4 @@
-class var:
+class variable:
     def __init__(self, type=None, var=None):
         self.type = type
         self.var = [var]

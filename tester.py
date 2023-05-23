@@ -31,17 +31,6 @@ def p_grammar_tester(p):
     returntype      : 
                     | RARROW typedesc
 
-    let_block       : LET '{' let_cont '}'
-
-    let_cont        : assign
-                    | let_cont ',' assign
-
-    assign          : lpattern annotation '=' conditional
-
-    lpattern        : lvar
-                    | llist
-                    | ltuple
-
     annotation      : 
                     | ':' typedesc
 
@@ -64,6 +53,17 @@ def p_grammar_tester(p):
                     | BOOL
                     | ID
                     | '[' typedesc ']'
+
+    let_block       : LET '{' let_cont '}'
+
+    let_cont        : assign
+                    | let_cont ',' assign
+
+    assign          : lpattern annotation '=' conditional
+
+    lpattern        : lvar
+                    | llist
+                    | ltuple
 
     llist           : '[' ']'
                     | '[' pattern_list ']'
@@ -122,6 +122,7 @@ def p_grammar_tester(p):
                     | INTT
                     | FLOATT
                     | CHART
+                    | STRINGT
                     | BOOLT
                     | '(' conditional ')'
 
@@ -145,7 +146,7 @@ def p_error(p):
     if not p:
         pass
     # obviamente, erros provisórios
-    print(f"Deu erro em '{p}' on line {p.lexer.lineno}")
+    print(f"Deu erro em '{p}' on line {p.lineno}")
     while True:
         tok = parser.token()
         if not tok or tok.type == 'RBRACE':

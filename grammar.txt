@@ -16,13 +16,6 @@ prefix          : ID
                 | '[' SPECIALID ']'
 returntype      : 
                 | RARROW typedesc
-let_block       : LET '{' let_cont '}'
-let_cont        : assign
-                | let_cont ',' assign
-assign          : lpattern annotation '=' conditional
-lpattern        : lvar
-                | llist
-                | ltuple
 annotation      : 
                 | ':' typedesc
 typedesc        : typeid
@@ -30,8 +23,7 @@ typedesc        : typeid
                 | function_type
                 | '(' tuple_type ')'
 typeclass       : TYPECLASS ID
-function_type   : '(' ')' RARROW typedesc
-                | '(' typedesc ')' RARROW typedesc
+function_type   : '(' typedesc ')' RARROW typedesc
                 | '(' tuple_type ')' RARROW typedesc
 tuple_type      : typeid ',' typeid
                 | tuple_type ',' typeid
@@ -41,6 +33,13 @@ typeid          : INT
                 | BOOL
                 | ID
                 | '[' typedesc ']'
+let_block       : LET '{' let_cont '}'
+let_cont        : assign
+                | let_cont ',' assign
+assign          : lpattern annotation '=' conditional
+lpattern        : lvar
+                | llist
+                | ltuple
 llist           : '[' ']'
                 | '[' pattern_list ']'
                 | '[' lpattern '|' lpattern ']'
@@ -62,8 +61,8 @@ conditional     : compound
                 | IF conditional THEN conditional ELSE conditional
 compound        : expression
                 | compound infix expression
-                | '[' compound infix ']'
-                | '[' infix expression ']'
+                | '(' compound infix ')'
+                | '(' infix expression ')'
 infix           : '`' ID '`'
                 | SPECIALID
 expression      : multivar

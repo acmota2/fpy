@@ -7,6 +7,9 @@ case $1 in
     'lex_test')
         python lexer.py
         ;;
+    'type_test')
+        python syntaxer.py
+        ;;
     *)
         python main.py
         ;;

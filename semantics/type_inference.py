@@ -1,5 +1,3 @@
-import errors as err
-
 from typing import List
 
 class singleton:
@@ -44,12 +42,14 @@ class singleton:
 
 class typeclass:
     generic_name = "t"
-    generic_count = 0
+    generic_count = -1
     name = ""
 
-    def __init__(self, generic=f"{generic_name}{generic_count}"):
+    def __init__(self, generic=None):
         self.name = self.name
-        self.generic = generic
+        self.generic = generic \
+            if generic \
+            else f"{self.generic_name}{self.generic_count}"
         typeclass.generic_count += 1
 
     def __eq__(self, other):
@@ -101,10 +101,12 @@ class Eq(Any_):
     generic_name = "t"
     generic_count = 0
 
-    def __init__(self, generic=f"{generic_name}{generic_count}"):
+    def __init__(self, generic=None):
         self.name = self.name
-        self.generic = generic
-        Eq.generic_count += 1
+        self.generic = generic \
+            if generic \
+            else f"{self.generic_name}{typeclass.generic_count}"
+        typeclass.generic_count += 1
     pass
 
 
@@ -113,11 +115,12 @@ class Ord(Eq):
     generic_name = "t"
     generic_count = 0
 
-    def __init__(self, generic=f"{generic_name}{generic_count}"):
+    def __init__(self, generic=None):
         self.name = self.name
-        self.generic = generic
+        self.generic = generic \
+            if generic \
+            else f"{self.generic_name}{typeclass.generic_count}"
         Ord.generic_count += 1
-
     pass
 
 
@@ -126,10 +129,12 @@ class Num(Ord):
     generic_name = "t"
     generic_count = 0
 
-    def __init__(self, generic=f"{generic_name}{generic_count}"):
+    def __init__(self, generic=None):
         self.name = self.name
-        self.generic = generic
-        Num.generic_count += 1
+        self.generic = generic \
+            if generic \
+            else f"{self.generic_name}{typeclass.generic_count}"
+        typeclass.generic_count += 1
 
     pass
 

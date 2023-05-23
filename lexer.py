@@ -1,5 +1,8 @@
 import ply.lex as lex
 import sys
+import re
+
+arrow_matcher = re.compile(r'\-\>')
 
 reserved = {
     'if': 'IF',
@@ -7,17 +10,26 @@ reserved = {
     'else': 'ELSE',
     'fdef': 'FDEF',
     'let': 'LET',
+    'int':'INT',
+    'float':'FLOAT',
+    'char':'CHAR',
+    'bool':'BOOL',
+    'alias':'ALIAS',
 }
 
 tokens = [
     # limits
     'BEGIN','END',
+    # types
+    'TYPECLASS','INTT','FLOATT','STRINGT','CHART','BOOLT',
     # vars
-    'ID','SPECIALID','INT','FLOAT','STRING','CHAR','BOOL',
+    'ID','SPECIALID',
     # cond
     'COND',
     # range
     'RANGER',
+    # arrows
+    'RARROW',
 ] + list(reserved.values())
 
 literals = ['[',']','(',')','{','}',',','=','|',':','`']
@@ -30,9 +42,20 @@ t_ignore = ' \t\n'
 
 t_fpy_ignore = '\t\r\n '
 
-t_fpy_ignore_COMMENT = r'\#.*'
+def t_fpy_ignore_COMMENT(t):
+    r'\#.*'
+    pass
 
-t_fpy_SPECIALID = r"(([\!@#$%\^&\*\-\/\\.;<>|\+]\=*)|(\=\=+))+"
+def t_fpy_SPECIALID(t):
+    r"(([\!@$%\^&\*\-\/\\.;<>|\+]\=*)|(\=([\!@#$%\^&\*\-\/\\.;<>|\+\=])+))+"
+    t.type = 'RARROW' if arrow_matcher.match(t.value) else 'SPECIALID'
+    return t
+
+t_fpy_TYPECLASS = r"[A-Z]\w*"
+
+def t_fpy_RARROW(t):
+    r'->'
+    return t
 
 def t_fpy_RANGER(t):
     r'\.\.'
@@ -71,27 +94,22 @@ def t_fpy_ID(t):
     t.type = reserved.get(t.value,'ID')
     return t
 
+t_fpy_INTT = r'\d+'
 
-t_fpy_INT = r'\d+'
-
-def t_fpy_FLOAT(t):
-    r'\d+.\d+(e\d+)?'
+def t_fpy_FLOATT(t):
+    r'\d+.\d+((e|E)\d+)?'
     return t
 
-def t_fpy_STRING(t):
+def t_fpy_STRINGT(t):
     r'\"[^\"]*\"'
     return t
 
-def t_fpy_CHAR(t):
+def t_fpy_CHART(t):
     r'\'[^\']\''
     return t
 
-def t_fpy_BOOL(t):
+def t_fpy_BOOLT(t):
     r'True|False'
-    return t
-
-def t_fpy_ASSIGN(t):
-    r':='
     return t
 
 t_fpy_COND = r'\[\?\.\.\?\]'

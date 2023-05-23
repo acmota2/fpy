@@ -1,3 +1,6 @@
+'''fpy
+# functional
+
 fdef foldl(_,acc,[]) { acc }
 fdef foldl(f,acc,[h|t]) {
     foldl(f,f(acc,h),t)
@@ -14,7 +17,7 @@ fdef map(f,[h|t]) {
     [ f(h) | map(f,t) ]
 }
 
-fdef filter(_,[]) { [] }
+fdef filter(_,[]: Eq) -> [a] { [] }
 fdef filter(f,[h|t]) {
     [?..?] {
         f(h): filter(f,t),
@@ -31,22 +34,13 @@ fdef uncurry(f,(a,b)) {
 }
 
 fdef [.](f,g,a) {
-    f(g(a))
+    f . g
 }
 
-fdef [><](f,g,(a,b)) {
-    (f(a), g(b))
-}
+# lists
 
-fdef fact(0) { 1 }
-fdef fact(n) {
-    n * fact(n - 1)
+fdef [++]([],_) { [] }
+fdef [++]([h|t]: [a], l: [a]) {
+    [h | t ++ l]
 }
-
-fdef enumFromTo(n,m) {
-    [?..?] {
-        m < n: [],
-        else: [n | enumFromTo(n+1, m)]
-    }
-}
-
+'''

@@ -1,0 +1,4155 @@
+Created by PLY version 3.11 (http://www.dabeaz.com/ply)
+
+Grammar
+
+Rule 0     S' -> all
+Rule 1     all -> <empty>
+Rule 2     all -> BEGIN END
+Rule 3     all -> BEGIN body END
+Rule 4     body -> statement
+Rule 5     body -> body statement
+Rule 6     statement -> function
+Rule 7     statement -> ALIAS ID = typedesc
+Rule 8     statement -> LET ID annotation = conditional
+Rule 9     function -> FDEF prefix args returntype { compound }
+Rule 10    function -> FDEF prefix args returntype { let_block compound }
+Rule 11    args -> ( )
+Rule 12    args -> ( arg_list )
+Rule 13    arg_list -> lpattern annotation
+Rule 14    arg_list -> arg_list , lpattern annotation
+Rule 15    prefix -> ID
+Rule 16    prefix -> [ SPECIALID ]
+Rule 17    returntype -> <empty>
+Rule 18    returntype -> RARROW typedesc
+Rule 19    let_block -> LET { let_cont }
+Rule 20    let_cont -> assign
+Rule 21    let_cont -> let_cont , assign
+Rule 22    assign -> lpattern annotation = conditional
+Rule 23    lpattern -> lvar
+Rule 24    lpattern -> llist
+Rule 25    lpattern -> ltuple
+Rule 26    annotation -> <empty>
+Rule 27    annotation -> : typedesc
+Rule 28    typedesc -> typeid
+Rule 29    typedesc -> typeclass
+Rule 30    typedesc -> function_type
+Rule 31    typedesc -> ( tuple_type )
+Rule 32    typeclass -> TYPECLASS ID
+Rule 33    function_type -> ( ) RARROW typedesc
+Rule 34    function_type -> ( typedesc ) RARROW typedesc
+Rule 35    function_type -> ( tuple_type ) RARROW typedesc
+Rule 36    tuple_type -> typeid , typeid
+Rule 37    tuple_type -> tuple_type , typeid
+Rule 38    typeid -> INT
+Rule 39    typeid -> FLOAT
+Rule 40    typeid -> CHAR
+Rule 41    typeid -> BOOL
+Rule 42    typeid -> ID
+Rule 43    typeid -> [ typedesc ]
+Rule 44    llist -> [ ]
+Rule 45    llist -> [ pattern_list ]
+Rule 46    llist -> [ lpattern | lpattern ]
+Rule 47    pattern_list -> lpattern
+Rule 48    pattern_list -> pattern_list , lpattern
+Rule 49    ltuple -> ( )
+Rule 50    ltuple -> ( ltuple_cont )
+Rule 51    ltuple_cont -> lpattern , lpattern
+Rule 52    ltuple_cont -> ltuple_cont , lpattern
+Rule 53    lvar -> ID
+Rule 54    lvar -> [ SPECIALID ]
+Rule 55    lvar -> STRINGT
+Rule 56    lvar -> INTT
+Rule 57    lvar -> FLOATT
+Rule 58    lvar -> CHART
+Rule 59    lvar -> BOOLT
+Rule 60    lvar -> ( lpattern )
+Rule 61    conditional -> compound
+Rule 62    conditional -> IF conditional THEN conditional ELSE conditional
+Rule 63    compound -> expression
+Rule 64    compound -> compound infix expression
+Rule 65    compound -> ( compound infix )
+Rule 66    compound -> ( infix expression )
+Rule 67    infix -> ` ID `
+Rule 68    infix -> SPECIALID
+Rule 69    expression -> multivar
+Rule 70    expression -> lambda
+Rule 71    expression -> cond_block
+Rule 72    cond_block -> COND { cond , ELSE : conditional }
+Rule 73    cond -> cond_singl
+Rule 74    cond -> cond , cond_singl
+Rule 75    cond_singl -> conditional : conditional
+Rule 76    lambda -> FDEF ( ) { conditional }
+Rule 77    lambda -> FDEF ( pattern_list ) { conditional }
+Rule 78    multivar -> primaryvar
+Rule 79    multivar -> rlist
+Rule 80    multivar -> rtuple
+Rule 81    multivar -> multivar ( condition_list )
+Rule 82    primaryvar -> ID
+Rule 83    primaryvar -> [ SPECIALID ]
+Rule 84    primaryvar -> INTT
+Rule 85    primaryvar -> FLOATT
+Rule 86    primaryvar -> CHART
+Rule 87    primaryvar -> BOOLT
+Rule 88    primaryvar -> ( conditional )
+Rule 89    rtuple -> ( )
+Rule 90    rtuple -> ( rtuple_cont )
+Rule 91    rtuple_cont -> conditional , conditional
+Rule 92    rtuple_cont -> rtuple_cont , conditional
+Rule 93    rlist -> [ ]
+Rule 94    rlist -> [ condition_list ]
+Rule 95    rlist -> [ conditional | conditional ]
+Rule 96    rlist -> [ conditional RANGER conditional ]
+Rule 97    condition_list -> conditional
+Rule 98    condition_list -> condition_list , conditional
+
+Terminals, with rules where they appear
+
+(                    : 11 12 31 33 34 35 49 50 60 65 66 76 77 81 88 89 90
+)                    : 11 12 31 33 34 35 49 50 60 65 66 76 77 81 88 89 90
+,                    : 14 21 36 37 48 51 52 72 74 91 92 98
+:                    : 27 72 75
+=                    : 7 8 22
+ALIAS                : 7
+BEGIN                : 2 3
+BOOL                 : 41
+BOOLT                : 59 87
+CHAR                 : 40
+CHART                : 58 86
+COND                 : 72
+ELSE                 : 62 72
+END                  : 2 3
+FDEF                 : 9 10 76 77
+FLOAT                : 39
+FLOATT               : 57 85
+ID                   : 7 8 15 32 42 53 67 82
+IF                   : 62
+INT                  : 38
+INTT                 : 56 84
+LET                  : 8 19
+RANGER               : 96
+RARROW               : 18 33 34 35
+SPECIALID            : 16 54 68 83
+STRINGT              : 55
+THEN                 : 62
+TYPECLASS            : 32
+[                    : 16 43 44 45 46 54 83 93 94 95 96
+]                    : 16 43 44 45 46 54 83 93 94 95 96
+`                    : 67 67
+error                : 
+{                    : 9 10 19 72 76 77
+|                    : 46 95
+}                    : 9 10 19 72 76 77
+
+Nonterminals, with rules where they appear
+
+all                  : 0
+annotation           : 8 13 14 22
+arg_list             : 12 14
+args                 : 9 10
+assign               : 20 21
+body                 : 3 5
+compound             : 9 10 61 64 65
+cond                 : 72 74
+cond_block           : 71
+cond_singl           : 73 74
+condition_list       : 81 94 98
+conditional          : 8 22 62 62 62 72 75 75 76 77 88 91 91 92 95 95 96 96 97 98
+expression           : 63 64 66
+function             : 6
+function_type        : 30
+infix                : 64 65 66
+lambda               : 70
+let_block            : 10
+let_cont             : 19 21
+llist                : 24
+lpattern             : 13 14 22 46 46 47 48 51 51 52 60
+ltuple               : 25
+ltuple_cont          : 50 52
+lvar                 : 23
+multivar             : 69 81
+pattern_list         : 45 48 77
+prefix               : 9 10
+primaryvar           : 78
+returntype           : 9 10
+rlist                : 79
+rtuple               : 80
+rtuple_cont          : 90 92
+statement            : 4 5
+tuple_type           : 31 35 37
+typeclass            : 29
+typedesc             : 7 18 27 33 34 34 35 43
+typeid               : 28 36 36 37
+
+Parsing method: LALR
+
+state 0
+
+    (0) S' -> . all
+    (1) all -> .
+    (2) all -> . BEGIN END
+    (3) all -> . BEGIN body END
+
+    $end            reduce using rule 1 (all -> .)
+    BEGIN           shift and go to state 2
+
+    all                            shift and go to state 1
+
+state 1
+
+    (0) S' -> all .
+
+
+
+state 2
+
+    (2) all -> BEGIN . END
+    (3) all -> BEGIN . body END
+    (4) body -> . statement
+    (5) body -> . body statement
+    (6) statement -> . function
+    (7) statement -> . ALIAS ID = typedesc
+    (8) statement -> . LET ID annotation = conditional
+    (9) function -> . FDEF prefix args returntype { compound }
+    (10) function -> . FDEF prefix args returntype { let_block compound }
+
+    END             shift and go to state 3
+    ALIAS           shift and go to state 7
+    LET             shift and go to state 8
+    FDEF            shift and go to state 9
+
+    body                           shift and go to state 4
+    statement                      shift and go to state 5
+    function                       shift and go to state 6
+
+state 3
+
+    (2) all -> BEGIN END .
+
+    $end            reduce using rule 2 (all -> BEGIN END .)
+
+
+state 4
+
+    (3) all -> BEGIN body . END
+    (5) body -> body . statement
+    (6) statement -> . function
+    (7) statement -> . ALIAS ID = typedesc
+    (8) statement -> . LET ID annotation = conditional
+    (9) function -> . FDEF prefix args returntype { compound }
+    (10) function -> . FDEF prefix args returntype { let_block compound }
+
+    END             shift and go to state 10
+    ALIAS           shift and go to state 7
+    LET             shift and go to state 8
+    FDEF            shift and go to state 9
+
+    statement                      shift and go to state 11
+    function                       shift and go to state 6
+
+state 5
+
+    (4) body -> statement .
+
+    END             reduce using rule 4 (body -> statement .)
+    ALIAS           reduce using rule 4 (body -> statement .)
+    LET             reduce using rule 4 (body -> statement .)
+    FDEF            reduce using rule 4 (body -> statement .)
+
+
+state 6
+
+    (6) statement -> function .
+
+    END             reduce using rule 6 (statement -> function .)
+    ALIAS           reduce using rule 6 (statement -> function .)
+    LET             reduce using rule 6 (statement -> function .)
+    FDEF            reduce using rule 6 (statement -> function .)
+
+
+state 7
+
+    (7) statement -> ALIAS . ID = typedesc
+
+    ID              shift and go to state 12
+
+
+state 8
+
+    (8) statement -> LET . ID annotation = conditional
+
+    ID              shift and go to state 13
+
+
+state 9
+
+    (9) function -> FDEF . prefix args returntype { compound }
+    (10) function -> FDEF . prefix args returntype { let_block compound }
+    (15) prefix -> . ID
+    (16) prefix -> . [ SPECIALID ]
+
+    ID              shift and go to state 15
+    [               shift and go to state 16
+
+    prefix                         shift and go to state 14
+
+state 10
+
+    (3) all -> BEGIN body END .
+
+    $end            reduce using rule 3 (all -> BEGIN body END .)
+
+
+state 11
+
+    (5) body -> body statement .
+
+    END             reduce using rule 5 (body -> body statement .)
+    ALIAS           reduce using rule 5 (body -> body statement .)
+    LET             reduce using rule 5 (body -> body statement .)
+    FDEF            reduce using rule 5 (body -> body statement .)
+
+
+state 12
+
+    (7) statement -> ALIAS ID . = typedesc
+
+    =               shift and go to state 17
+
+
+state 13
+
+    (8) statement -> LET ID . annotation = conditional
+    (26) annotation -> .
+    (27) annotation -> . : typedesc
+
+    =               reduce using rule 26 (annotation -> .)
+    :               shift and go to state 19
+
+    annotation                     shift and go to state 18
+
+state 14
+
+    (9) function -> FDEF prefix . args returntype { compound }
+    (10) function -> FDEF prefix . args returntype { let_block compound }
+    (11) args -> . ( )
+    (12) args -> . ( arg_list )
+
+    (               shift and go to state 21
+
+    args                           shift and go to state 20
+
+state 15
+
+    (15) prefix -> ID .
+
+    (               reduce using rule 15 (prefix -> ID .)
+
+
+state 16
+
+    (16) prefix -> [ . SPECIALID ]
+
+    SPECIALID       shift and go to state 22
+
+
+state 17
+
+    (7) statement -> ALIAS ID = . typedesc
+    (28) typedesc -> . typeid
+    (29) typedesc -> . typeclass
+    (30) typedesc -> . function_type
+    (31) typedesc -> . ( tuple_type )
+    (38) typeid -> . INT
+    (39) typeid -> . FLOAT
+    (40) typeid -> . CHAR
+    (41) typeid -> . BOOL
+    (42) typeid -> . ID
+    (43) typeid -> . [ typedesc ]
+    (32) typeclass -> . TYPECLASS ID
+    (33) function_type -> . ( ) RARROW typedesc
+    (34) function_type -> . ( typedesc ) RARROW typedesc
+    (35) function_type -> . ( tuple_type ) RARROW typedesc
+
+    (               shift and go to state 28
+    INT             shift and go to state 29
+    FLOAT           shift and go to state 30
+    CHAR            shift and go to state 31
+    BOOL            shift and go to state 32
+    ID              shift and go to state 23
+    [               shift and go to state 33
+    TYPECLASS       shift and go to state 34
+
+    typedesc                       shift and go to state 24
+    typeid                         shift and go to state 25
+    typeclass                      shift and go to state 26
+    function_type                  shift and go to state 27
+
+state 18
+
+    (8) statement -> LET ID annotation . = conditional
+
+    =               shift and go to state 35
+
+
+state 19
+
+    (27) annotation -> : . typedesc
+    (28) typedesc -> . typeid
+    (29) typedesc -> . typeclass
+    (30) typedesc -> . function_type
+    (31) typedesc -> . ( tuple_type )
+    (38) typeid -> . INT
+    (39) typeid -> . FLOAT
+    (40) typeid -> . CHAR
+    (41) typeid -> . BOOL
+    (42) typeid -> . ID
+    (43) typeid -> . [ typedesc ]
+    (32) typeclass -> . TYPECLASS ID
+    (33) function_type -> . ( ) RARROW typedesc
+    (34) function_type -> . ( typedesc ) RARROW typedesc
+    (35) function_type -> . ( tuple_type ) RARROW typedesc
+
+    (               shift and go to state 28
+    INT             shift and go to state 29
+    FLOAT           shift and go to state 30
+    CHAR            shift and go to state 31
+    BOOL            shift and go to state 32
+    ID              shift and go to state 23
+    [               shift and go to state 33
+    TYPECLASS       shift and go to state 34
+
+    typedesc                       shift and go to state 36
+    typeid                         shift and go to state 25
+    typeclass                      shift and go to state 26
+    function_type                  shift and go to state 27
+
+state 20
+
+    (9) function -> FDEF prefix args . returntype { compound }
+    (10) function -> FDEF prefix args . returntype { let_block compound }
+    (17) returntype -> .
+    (18) returntype -> . RARROW typedesc
+
+    {               reduce using rule 17 (returntype -> .)
+    RARROW          shift and go to state 38
+
+    returntype                     shift and go to state 37
+
+state 21
+
+    (11) args -> ( . )
+    (12) args -> ( . arg_list )
+    (13) arg_list -> . lpattern annotation
+    (14) arg_list -> . arg_list , lpattern annotation
+    (23) lpattern -> . lvar
+    (24) lpattern -> . llist
+    (25) lpattern -> . ltuple
+    (53) lvar -> . ID
+    (54) lvar -> . [ SPECIALID ]
+    (55) lvar -> . STRINGT
+    (56) lvar -> . INTT
+    (57) lvar -> . FLOATT
+    (58) lvar -> . CHART
+    (59) lvar -> . BOOLT
+    (60) lvar -> . ( lpattern )
+    (44) llist -> . [ ]
+    (45) llist -> . [ pattern_list ]
+    (46) llist -> . [ lpattern | lpattern ]
+    (49) ltuple -> . ( )
+    (50) ltuple -> . ( ltuple_cont )
+
+    )               shift and go to state 40
+    ID              shift and go to state 46
+    [               shift and go to state 47
+    STRINGT         shift and go to state 48
+    INTT            shift and go to state 49
+    FLOATT          shift and go to state 50
+    CHART           shift and go to state 51
+    BOOLT           shift and go to state 52
+    (               shift and go to state 39
+
+    arg_list                       shift and go to state 41
+    lpattern                       shift and go to state 42
+    lvar                           shift and go to state 43
+    llist                          shift and go to state 44
+    ltuple                         shift and go to state 45
+
+state 22
+
+    (16) prefix -> [ SPECIALID . ]
+
+    ]               shift and go to state 53
+
+
+state 23
+
+    (42) typeid -> ID .
+
+    END             reduce using rule 42 (typeid -> ID .)
+    ALIAS           reduce using rule 42 (typeid -> ID .)
+    LET             reduce using rule 42 (typeid -> ID .)
+    FDEF            reduce using rule 42 (typeid -> ID .)
+    =               reduce using rule 42 (typeid -> ID .)
+    )               reduce using rule 42 (typeid -> ID .)
+    ,               reduce using rule 42 (typeid -> ID .)
+    ]               reduce using rule 42 (typeid -> ID .)
+    {               reduce using rule 42 (typeid -> ID .)
+
+
+state 24
+
+    (7) statement -> ALIAS ID = typedesc .
+
+    END             reduce using rule 7 (statement -> ALIAS ID = typedesc .)
+    ALIAS           reduce using rule 7 (statement -> ALIAS ID = typedesc .)
+    LET             reduce using rule 7 (statement -> ALIAS ID = typedesc .)
+    FDEF            reduce using rule 7 (statement -> ALIAS ID = typedesc .)
+
+
+state 25
+
+    (28) typedesc -> typeid .
+
+    END             reduce using rule 28 (typedesc -> typeid .)
+    ALIAS           reduce using rule 28 (typedesc -> typeid .)
+    LET             reduce using rule 28 (typedesc -> typeid .)
+    FDEF            reduce using rule 28 (typedesc -> typeid .)
+    =               reduce using rule 28 (typedesc -> typeid .)
+    )               reduce using rule 28 (typedesc -> typeid .)
+    ,               reduce using rule 28 (typedesc -> typeid .)
+    ]               reduce using rule 28 (typedesc -> typeid .)
+    {               reduce using rule 28 (typedesc -> typeid .)
+
+
+state 26
+
+    (29) typedesc -> typeclass .
+
+    END             reduce using rule 29 (typedesc -> typeclass .)
+    ALIAS           reduce using rule 29 (typedesc -> typeclass .)
+    LET             reduce using rule 29 (typedesc -> typeclass .)
+    FDEF            reduce using rule 29 (typedesc -> typeclass .)
+    =               reduce using rule 29 (typedesc -> typeclass .)
+    )               reduce using rule 29 (typedesc -> typeclass .)
+    ,               reduce using rule 29 (typedesc -> typeclass .)
+    ]               reduce using rule 29 (typedesc -> typeclass .)
+    {               reduce using rule 29 (typedesc -> typeclass .)
+
+
+state 27
+
+    (30) typedesc -> function_type .
+
+    END             reduce using rule 30 (typedesc -> function_type .)
+    ALIAS           reduce using rule 30 (typedesc -> function_type .)
+    LET             reduce using rule 30 (typedesc -> function_type .)
+    FDEF            reduce using rule 30 (typedesc -> function_type .)
+    =               reduce using rule 30 (typedesc -> function_type .)
+    )               reduce using rule 30 (typedesc -> function_type .)
+    ,               reduce using rule 30 (typedesc -> function_type .)
+    ]               reduce using rule 30 (typedesc -> function_type .)
+    {               reduce using rule 30 (typedesc -> function_type .)
+
+
+state 28
+
+    (31) typedesc -> ( . tuple_type )
+    (33) function_type -> ( . ) RARROW typedesc
+    (34) function_type -> ( . typedesc ) RARROW typedesc
+    (35) function_type -> ( . tuple_type ) RARROW typedesc
+    (36) tuple_type -> . typeid , typeid
+    (37) tuple_type -> . tuple_type , typeid
+    (28) typedesc -> . typeid
+    (29) typedesc -> . typeclass
+    (30) typedesc -> . function_type
+    (31) typedesc -> . ( tuple_type )
+    (38) typeid -> . INT
+    (39) typeid -> . FLOAT
+    (40) typeid -> . CHAR
+    (41) typeid -> . BOOL
+    (42) typeid -> . ID
+    (43) typeid -> . [ typedesc ]
+    (32) typeclass -> . TYPECLASS ID
+    (33) function_type -> . ( ) RARROW typedesc
+    (34) function_type -> . ( typedesc ) RARROW typedesc
+    (35) function_type -> . ( tuple_type ) RARROW typedesc
+
+    )               shift and go to state 55
+    (               shift and go to state 28
+    INT             shift and go to state 29
+    FLOAT           shift and go to state 30
+    CHAR            shift and go to state 31
+    BOOL            shift and go to state 32
+    ID              shift and go to state 23
+    [               shift and go to state 33
+    TYPECLASS       shift and go to state 34
+
+    tuple_type                     shift and go to state 54
+    typedesc                       shift and go to state 56
+    typeid                         shift and go to state 57
+    typeclass                      shift and go to state 26
+    function_type                  shift and go to state 27
+
+state 29
+
+    (38) typeid -> INT .
+
+    END             reduce using rule 38 (typeid -> INT .)
+    ALIAS           reduce using rule 38 (typeid -> INT .)
+    LET             reduce using rule 38 (typeid -> INT .)
+    FDEF            reduce using rule 38 (typeid -> INT .)
+    =               reduce using rule 38 (typeid -> INT .)
+    )               reduce using rule 38 (typeid -> INT .)
+    ,               reduce using rule 38 (typeid -> INT .)
+    ]               reduce using rule 38 (typeid -> INT .)
+    {               reduce using rule 38 (typeid -> INT .)
+
+
+state 30
+
+    (39) typeid -> FLOAT .
+
+    END             reduce using rule 39 (typeid -> FLOAT .)
+    ALIAS           reduce using rule 39 (typeid -> FLOAT .)
+    LET             reduce using rule 39 (typeid -> FLOAT .)
+    FDEF            reduce using rule 39 (typeid -> FLOAT .)
+    =               reduce using rule 39 (typeid -> FLOAT .)
+    )               reduce using rule 39 (typeid -> FLOAT .)
+    ,               reduce using rule 39 (typeid -> FLOAT .)
+    ]               reduce using rule 39 (typeid -> FLOAT .)
+    {               reduce using rule 39 (typeid -> FLOAT .)
+
+
+state 31
+
+    (40) typeid -> CHAR .
+
+    END             reduce using rule 40 (typeid -> CHAR .)
+    ALIAS           reduce using rule 40 (typeid -> CHAR .)
+    LET             reduce using rule 40 (typeid -> CHAR .)
+    FDEF            reduce using rule 40 (typeid -> CHAR .)
+    =               reduce using rule 40 (typeid -> CHAR .)
+    )               reduce using rule 40 (typeid -> CHAR .)
+    ,               reduce using rule 40 (typeid -> CHAR .)
+    ]               reduce using rule 40 (typeid -> CHAR .)
+    {               reduce using rule 40 (typeid -> CHAR .)
+
+
+state 32
+
+    (41) typeid -> BOOL .
+
+    END             reduce using rule 41 (typeid -> BOOL .)
+    ALIAS           reduce using rule 41 (typeid -> BOOL .)
+    LET             reduce using rule 41 (typeid -> BOOL .)
+    FDEF            reduce using rule 41 (typeid -> BOOL .)
+    =               reduce using rule 41 (typeid -> BOOL .)
+    )               reduce using rule 41 (typeid -> BOOL .)
+    ,               reduce using rule 41 (typeid -> BOOL .)
+    ]               reduce using rule 41 (typeid -> BOOL .)
+    {               reduce using rule 41 (typeid -> BOOL .)
+
+
+state 33
+
+    (43) typeid -> [ . typedesc ]
+    (28) typedesc -> . typeid
+    (29) typedesc -> . typeclass
+    (30) typedesc -> . function_type
+    (31) typedesc -> . ( tuple_type )
+    (38) typeid -> . INT
+    (39) typeid -> . FLOAT
+    (40) typeid -> . CHAR
+    (41) typeid -> . BOOL
+    (42) typeid -> . ID
+    (43) typeid -> . [ typedesc ]
+    (32) typeclass -> . TYPECLASS ID
+    (33) function_type -> . ( ) RARROW typedesc
+    (34) function_type -> . ( typedesc ) RARROW typedesc
+    (35) function_type -> . ( tuple_type ) RARROW typedesc
+
+    (               shift and go to state 28
+    INT             shift and go to state 29
+    FLOAT           shift and go to state 30
+    CHAR            shift and go to state 31
+    BOOL            shift and go to state 32
+    ID              shift and go to state 23
+    [               shift and go to state 33
+    TYPECLASS       shift and go to state 34
+
+    typedesc                       shift and go to state 58
+    typeid                         shift and go to state 25
+    typeclass                      shift and go to state 26
+    function_type                  shift and go to state 27
+
+state 34
+
+    (32) typeclass -> TYPECLASS . ID
+
+    ID              shift and go to state 59
+
+
+state 35
+
+    (8) statement -> LET ID annotation = . conditional
+    (61) conditional -> . compound
+    (62) conditional -> . IF conditional THEN conditional ELSE conditional
+    (63) compound -> . expression
+    (64) compound -> . compound infix expression
+    (65) compound -> . ( compound infix )
+    (66) compound -> . ( infix expression )
+    (69) expression -> . multivar
+    (70) expression -> . lambda
+    (71) expression -> . cond_block
+    (78) multivar -> . primaryvar
+    (79) multivar -> . rlist
+    (80) multivar -> . rtuple
+    (81) multivar -> . multivar ( condition_list )
+    (76) lambda -> . FDEF ( ) { conditional }
+    (77) lambda -> . FDEF ( pattern_list ) { conditional }
+    (72) cond_block -> . COND { cond , ELSE : conditional }
+    (82) primaryvar -> . ID
+    (83) primaryvar -> . [ SPECIALID ]
+    (84) primaryvar -> . INTT
+    (85) primaryvar -> . FLOATT
+    (86) primaryvar -> . CHART
+    (87) primaryvar -> . BOOLT
+    (88) primaryvar -> . ( conditional )
+    (93) rlist -> . [ ]
+    (94) rlist -> . [ condition_list ]
+    (95) rlist -> . [ conditional | conditional ]
+    (96) rlist -> . [ conditional RANGER conditional ]
+    (89) rtuple -> . ( )
+    (90) rtuple -> . ( rtuple_cont )
+
+    IF              shift and go to state 63
+    (               shift and go to state 65
+    FDEF            shift and go to state 72
+    COND            shift and go to state 73
+    ID              shift and go to state 60
+    [               shift and go to state 74
+    INTT            shift and go to state 75
+    FLOATT          shift and go to state 76
+    CHART           shift and go to state 77
+    BOOLT           shift and go to state 78
+
+    conditional                    shift and go to state 61
+    compound                       shift and go to state 62
+    expression                     shift and go to state 64
+    multivar                       shift and go to state 66
+    lambda                         shift and go to state 67
+    cond_block                     shift and go to state 68
+    primaryvar                     shift and go to state 69
+    rlist                          shift and go to state 70
+    rtuple                         shift and go to state 71
+
+state 36
+
+    (27) annotation -> : typedesc .
+
+    =               reduce using rule 27 (annotation -> : typedesc .)
+    )               reduce using rule 27 (annotation -> : typedesc .)
+    ,               reduce using rule 27 (annotation -> : typedesc .)
+
+
+state 37
+
+    (9) function -> FDEF prefix args returntype . { compound }
+    (10) function -> FDEF prefix args returntype . { let_block compound }
+
+    {               shift and go to state 79
+
+
+state 38
+
+    (18) returntype -> RARROW . typedesc
+    (28) typedesc -> . typeid
+    (29) typedesc -> . typeclass
+    (30) typedesc -> . function_type
+    (31) typedesc -> . ( tuple_type )
+    (38) typeid -> . INT
+    (39) typeid -> . FLOAT
+    (40) typeid -> . CHAR
+    (41) typeid -> . BOOL
+    (42) typeid -> . ID
+    (43) typeid -> . [ typedesc ]
+    (32) typeclass -> . TYPECLASS ID
+    (33) function_type -> . ( ) RARROW typedesc
+    (34) function_type -> . ( typedesc ) RARROW typedesc
+    (35) function_type -> . ( tuple_type ) RARROW typedesc
+
+    (               shift and go to state 28
+    INT             shift and go to state 29
+    FLOAT           shift and go to state 30
+    CHAR            shift and go to state 31
+    BOOL            shift and go to state 32
+    ID              shift and go to state 23
+    [               shift and go to state 33
+    TYPECLASS       shift and go to state 34
+
+    typedesc                       shift and go to state 80
+    typeid                         shift and go to state 25
+    typeclass                      shift and go to state 26
+    function_type                  shift and go to state 27
+
+state 39
+
+    (60) lvar -> ( . lpattern )
+    (49) ltuple -> ( . )
+    (50) ltuple -> ( . ltuple_cont )
+    (23) lpattern -> . lvar
+    (24) lpattern -> . llist
+    (25) lpattern -> . ltuple
+    (51) ltuple_cont -> . lpattern , lpattern
+    (52) ltuple_cont -> . ltuple_cont , lpattern
+    (53) lvar -> . ID
+    (54) lvar -> . [ SPECIALID ]
+    (55) lvar -> . STRINGT
+    (56) lvar -> . INTT
+    (57) lvar -> . FLOATT
+    (58) lvar -> . CHART
+    (59) lvar -> . BOOLT
+    (60) lvar -> . ( lpattern )
+    (44) llist -> . [ ]
+    (45) llist -> . [ pattern_list ]
+    (46) llist -> . [ lpattern | lpattern ]
+    (49) ltuple -> . ( )
+    (50) ltuple -> . ( ltuple_cont )
+
+    )               shift and go to state 82
+    ID              shift and go to state 46
+    [               shift and go to state 47
+    STRINGT         shift and go to state 48
+    INTT            shift and go to state 49
+    FLOATT          shift and go to state 50
+    CHART           shift and go to state 51
+    BOOLT           shift and go to state 52
+    (               shift and go to state 39
+
+    lpattern                       shift and go to state 81
+    ltuple_cont                    shift and go to state 83
+    lvar                           shift and go to state 43
+    llist                          shift and go to state 44
+    ltuple                         shift and go to state 45
+
+state 40
+
+    (11) args -> ( ) .
+
+    RARROW          reduce using rule 11 (args -> ( ) .)
+    {               reduce using rule 11 (args -> ( ) .)
+
+
+state 41
+
+    (12) args -> ( arg_list . )
+    (14) arg_list -> arg_list . , lpattern annotation
+
+    )               shift and go to state 84
+    ,               shift and go to state 85
+
+
+state 42
+
+    (13) arg_list -> lpattern . annotation
+    (26) annotation -> .
+    (27) annotation -> . : typedesc
+
+    )               reduce using rule 26 (annotation -> .)
+    ,               reduce using rule 26 (annotation -> .)
+    :               shift and go to state 19
+
+    annotation                     shift and go to state 86
+
+state 43
+
+    (23) lpattern -> lvar .
+
+    :               reduce using rule 23 (lpattern -> lvar .)
+    )               reduce using rule 23 (lpattern -> lvar .)
+    ,               reduce using rule 23 (lpattern -> lvar .)
+    |               reduce using rule 23 (lpattern -> lvar .)
+    ]               reduce using rule 23 (lpattern -> lvar .)
+    =               reduce using rule 23 (lpattern -> lvar .)
+
+
+state 44
+
+    (24) lpattern -> llist .
+
+    :               reduce using rule 24 (lpattern -> llist .)
+    )               reduce using rule 24 (lpattern -> llist .)
+    ,               reduce using rule 24 (lpattern -> llist .)
+    |               reduce using rule 24 (lpattern -> llist .)
+    ]               reduce using rule 24 (lpattern -> llist .)
+    =               reduce using rule 24 (lpattern -> llist .)
+
+
+state 45
+
+    (25) lpattern -> ltuple .
+
+    :               reduce using rule 25 (lpattern -> ltuple .)
+    )               reduce using rule 25 (lpattern -> ltuple .)
+    ,               reduce using rule 25 (lpattern -> ltuple .)
+    |               reduce using rule 25 (lpattern -> ltuple .)
+    ]               reduce using rule 25 (lpattern -> ltuple .)
+    =               reduce using rule 25 (lpattern -> ltuple .)
+
+
+state 46
+
+    (53) lvar -> ID .
+
+    :               reduce using rule 53 (lvar -> ID .)
+    )               reduce using rule 53 (lvar -> ID .)
+    ,               reduce using rule 53 (lvar -> ID .)
+    |               reduce using rule 53 (lvar -> ID .)
+    ]               reduce using rule 53 (lvar -> ID .)
+    =               reduce using rule 53 (lvar -> ID .)
+
+
+state 47
+
+    (54) lvar -> [ . SPECIALID ]
+    (44) llist -> [ . ]
+    (45) llist -> [ . pattern_list ]
+    (46) llist -> [ . lpattern | lpattern ]
+    (47) pattern_list -> . lpattern
+    (48) pattern_list -> . pattern_list , lpattern
+    (23) lpattern -> . lvar
+    (24) lpattern -> . llist
+    (25) lpattern -> . ltuple
+    (53) lvar -> . ID
+    (54) lvar -> . [ SPECIALID ]
+    (55) lvar -> . STRINGT
+    (56) lvar -> . INTT
+    (57) lvar -> . FLOATT
+    (58) lvar -> . CHART
+    (59) lvar -> . BOOLT
+    (60) lvar -> . ( lpattern )
+    (44) llist -> . [ ]
+    (45) llist -> . [ pattern_list ]
+    (46) llist -> . [ lpattern | lpattern ]
+    (49) ltuple -> . ( )
+    (50) ltuple -> . ( ltuple_cont )
+
+    SPECIALID       shift and go to state 87
+    ]               shift and go to state 88
+    ID              shift and go to state 46
+    [               shift and go to state 47
+    STRINGT         shift and go to state 48
+    INTT            shift and go to state 49
+    FLOATT          shift and go to state 50
+    CHART           shift and go to state 51
+    BOOLT           shift and go to state 52
+    (               shift and go to state 39
+
+    pattern_list                   shift and go to state 89
+    lpattern                       shift and go to state 90
+    lvar                           shift and go to state 43
+    llist                          shift and go to state 44
+    ltuple                         shift and go to state 45
+
+state 48
+
+    (55) lvar -> STRINGT .
+
+    :               reduce using rule 55 (lvar -> STRINGT .)
+    )               reduce using rule 55 (lvar -> STRINGT .)
+    ,               reduce using rule 55 (lvar -> STRINGT .)
+    |               reduce using rule 55 (lvar -> STRINGT .)
+    ]               reduce using rule 55 (lvar -> STRINGT .)
+    =               reduce using rule 55 (lvar -> STRINGT .)
+
+
+state 49
+
+    (56) lvar -> INTT .
+
+    :               reduce using rule 56 (lvar -> INTT .)
+    )               reduce using rule 56 (lvar -> INTT .)
+    ,               reduce using rule 56 (lvar -> INTT .)
+    |               reduce using rule 56 (lvar -> INTT .)
+    ]               reduce using rule 56 (lvar -> INTT .)
+    =               reduce using rule 56 (lvar -> INTT .)
+
+
+state 50
+
+    (57) lvar -> FLOATT .
+
+    :               reduce using rule 57 (lvar -> FLOATT .)
+    )               reduce using rule 57 (lvar -> FLOATT .)
+    ,               reduce using rule 57 (lvar -> FLOATT .)
+    |               reduce using rule 57 (lvar -> FLOATT .)
+    ]               reduce using rule 57 (lvar -> FLOATT .)
+    =               reduce using rule 57 (lvar -> FLOATT .)
+
+
+state 51
+
+    (58) lvar -> CHART .
+
+    :               reduce using rule 58 (lvar -> CHART .)
+    )               reduce using rule 58 (lvar -> CHART .)
+    ,               reduce using rule 58 (lvar -> CHART .)
+    |               reduce using rule 58 (lvar -> CHART .)
+    ]               reduce using rule 58 (lvar -> CHART .)
+    =               reduce using rule 58 (lvar -> CHART .)
+
+
+state 52
+
+    (59) lvar -> BOOLT .
+
+    :               reduce using rule 59 (lvar -> BOOLT .)
+    )               reduce using rule 59 (lvar -> BOOLT .)
+    ,               reduce using rule 59 (lvar -> BOOLT .)
+    |               reduce using rule 59 (lvar -> BOOLT .)
+    ]               reduce using rule 59 (lvar -> BOOLT .)
+    =               reduce using rule 59 (lvar -> BOOLT .)
+
+
+state 53
+
+    (16) prefix -> [ SPECIALID ] .
+
+    (               reduce using rule 16 (prefix -> [ SPECIALID ] .)
+
+
+state 54
+
+    (31) typedesc -> ( tuple_type . )
+    (35) function_type -> ( tuple_type . ) RARROW typedesc
+    (37) tuple_type -> tuple_type . , typeid
+
+    )               shift and go to state 91
+    ,               shift and go to state 92
+
+
+state 55
+
+    (33) function_type -> ( ) . RARROW typedesc
+
+    RARROW          shift and go to state 93
+
+
+state 56
+
+    (34) function_type -> ( typedesc . ) RARROW typedesc
+
+    )               shift and go to state 94
+
+
+state 57
+
+    (36) tuple_type -> typeid . , typeid
+    (28) typedesc -> typeid .
+
+    ,               shift and go to state 95
+    )               reduce using rule 28 (typedesc -> typeid .)
+
+
+state 58
+
+    (43) typeid -> [ typedesc . ]
+
+    ]               shift and go to state 96
+
+
+state 59
+
+    (32) typeclass -> TYPECLASS ID .
+
+    END             reduce using rule 32 (typeclass -> TYPECLASS ID .)
+    ALIAS           reduce using rule 32 (typeclass -> TYPECLASS ID .)
+    LET             reduce using rule 32 (typeclass -> TYPECLASS ID .)
+    FDEF            reduce using rule 32 (typeclass -> TYPECLASS ID .)
+    =               reduce using rule 32 (typeclass -> TYPECLASS ID .)
+    )               reduce using rule 32 (typeclass -> TYPECLASS ID .)
+    ,               reduce using rule 32 (typeclass -> TYPECLASS ID .)
+    ]               reduce using rule 32 (typeclass -> TYPECLASS ID .)
+    {               reduce using rule 32 (typeclass -> TYPECLASS ID .)
+
+
+state 60
+
+    (82) primaryvar -> ID .
+
+    (               reduce using rule 82 (primaryvar -> ID .)
+    `               reduce using rule 82 (primaryvar -> ID .)
+    SPECIALID       reduce using rule 82 (primaryvar -> ID .)
+    END             reduce using rule 82 (primaryvar -> ID .)
+    ALIAS           reduce using rule 82 (primaryvar -> ID .)
+    LET             reduce using rule 82 (primaryvar -> ID .)
+    FDEF            reduce using rule 82 (primaryvar -> ID .)
+    THEN            reduce using rule 82 (primaryvar -> ID .)
+    )               reduce using rule 82 (primaryvar -> ID .)
+    ,               reduce using rule 82 (primaryvar -> ID .)
+    |               reduce using rule 82 (primaryvar -> ID .)
+    RANGER          reduce using rule 82 (primaryvar -> ID .)
+    ]               reduce using rule 82 (primaryvar -> ID .)
+    }               reduce using rule 82 (primaryvar -> ID .)
+    :               reduce using rule 82 (primaryvar -> ID .)
+    ELSE            reduce using rule 82 (primaryvar -> ID .)
+
+
+state 61
+
+    (8) statement -> LET ID annotation = conditional .
+
+    END             reduce using rule 8 (statement -> LET ID annotation = conditional .)
+    ALIAS           reduce using rule 8 (statement -> LET ID annotation = conditional .)
+    LET             reduce using rule 8 (statement -> LET ID annotation = conditional .)
+    FDEF            reduce using rule 8 (statement -> LET ID annotation = conditional .)
+
+
+state 62
+
+    (61) conditional -> compound .
+    (64) compound -> compound . infix expression
+    (67) infix -> . ` ID `
+    (68) infix -> . SPECIALID
+
+    END             reduce using rule 61 (conditional -> compound .)
+    ALIAS           reduce using rule 61 (conditional -> compound .)
+    LET             reduce using rule 61 (conditional -> compound .)
+    FDEF            reduce using rule 61 (conditional -> compound .)
+    THEN            reduce using rule 61 (conditional -> compound .)
+    |               reduce using rule 61 (conditional -> compound .)
+    RANGER          reduce using rule 61 (conditional -> compound .)
+    ]               reduce using rule 61 (conditional -> compound .)
+    ,               reduce using rule 61 (conditional -> compound .)
+    )               reduce using rule 61 (conditional -> compound .)
+    :               reduce using rule 61 (conditional -> compound .)
+    ELSE            reduce using rule 61 (conditional -> compound .)
+    }               reduce using rule 61 (conditional -> compound .)
+    `               shift and go to state 98
+    SPECIALID       shift and go to state 99
+
+    infix                          shift and go to state 97
+
+state 63
+
+    (62) conditional -> IF . conditional THEN conditional ELSE conditional
+    (61) conditional -> . compound
+    (62) conditional -> . IF conditional THEN conditional ELSE conditional
+    (63) compound -> . expression
+    (64) compound -> . compound infix expression
+    (65) compound -> . ( compound infix )
+    (66) compound -> . ( infix expression )
+    (69) expression -> . multivar
+    (70) expression -> . lambda
+    (71) expression -> . cond_block
+    (78) multivar -> . primaryvar
+    (79) multivar -> . rlist
+    (80) multivar -> . rtuple
+    (81) multivar -> . multivar ( condition_list )
+    (76) lambda -> . FDEF ( ) { conditional }
+    (77) lambda -> . FDEF ( pattern_list ) { conditional }
+    (72) cond_block -> . COND { cond , ELSE : conditional }
+    (82) primaryvar -> . ID
+    (83) primaryvar -> . [ SPECIALID ]
+    (84) primaryvar -> . INTT
+    (85) primaryvar -> . FLOATT
+    (86) primaryvar -> . CHART
+    (87) primaryvar -> . BOOLT
+    (88) primaryvar -> . ( conditional )
+    (93) rlist -> . [ ]
+    (94) rlist -> . [ condition_list ]
+    (95) rlist -> . [ conditional | conditional ]
+    (96) rlist -> . [ conditional RANGER conditional ]
+    (89) rtuple -> . ( )
+    (90) rtuple -> . ( rtuple_cont )
+
+    IF              shift and go to state 63
+    (               shift and go to state 65
+    FDEF            shift and go to state 72
+    COND            shift and go to state 73
+    ID              shift and go to state 60
+    [               shift and go to state 74
+    INTT            shift and go to state 75
+    FLOATT          shift and go to state 76
+    CHART           shift and go to state 77
+    BOOLT           shift and go to state 78
+
+    conditional                    shift and go to state 100
+    compound                       shift and go to state 62
+    expression                     shift and go to state 64
+    multivar                       shift and go to state 66
+    lambda                         shift and go to state 67
+    cond_block                     shift and go to state 68
+    primaryvar                     shift and go to state 69
+    rlist                          shift and go to state 70
+    rtuple                         shift and go to state 71
+
+state 64
+
+    (63) compound -> expression .
+
+    `               reduce using rule 63 (compound -> expression .)
+    SPECIALID       reduce using rule 63 (compound -> expression .)
+    END             reduce using rule 63 (compound -> expression .)
+    ALIAS           reduce using rule 63 (compound -> expression .)
+    LET             reduce using rule 63 (compound -> expression .)
+    FDEF            reduce using rule 63 (compound -> expression .)
+    THEN            reduce using rule 63 (compound -> expression .)
+    )               reduce using rule 63 (compound -> expression .)
+    ,               reduce using rule 63 (compound -> expression .)
+    |               reduce using rule 63 (compound -> expression .)
+    RANGER          reduce using rule 63 (compound -> expression .)
+    ]               reduce using rule 63 (compound -> expression .)
+    }               reduce using rule 63 (compound -> expression .)
+    :               reduce using rule 63 (compound -> expression .)
+    ELSE            reduce using rule 63 (compound -> expression .)
+
+
+state 65
+
+    (65) compound -> ( . compound infix )
+    (66) compound -> ( . infix expression )
+    (88) primaryvar -> ( . conditional )
+    (89) rtuple -> ( . )
+    (90) rtuple -> ( . rtuple_cont )
+    (63) compound -> . expression
+    (64) compound -> . compound infix expression
+    (65) compound -> . ( compound infix )
+    (66) compound -> . ( infix expression )
+    (67) infix -> . ` ID `
+    (68) infix -> . SPECIALID
+    (61) conditional -> . compound
+    (62) conditional -> . IF conditional THEN conditional ELSE conditional
+    (91) rtuple_cont -> . conditional , conditional
+    (92) rtuple_cont -> . rtuple_cont , conditional
+    (69) expression -> . multivar
+    (70) expression -> . lambda
+    (71) expression -> . cond_block
+    (78) multivar -> . primaryvar
+    (79) multivar -> . rlist
+    (80) multivar -> . rtuple
+    (81) multivar -> . multivar ( condition_list )
+    (76) lambda -> . FDEF ( ) { conditional }
+    (77) lambda -> . FDEF ( pattern_list ) { conditional }
+    (72) cond_block -> . COND { cond , ELSE : conditional }
+    (82) primaryvar -> . ID
+    (83) primaryvar -> . [ SPECIALID ]
+    (84) primaryvar -> . INTT
+    (85) primaryvar -> . FLOATT
+    (86) primaryvar -> . CHART
+    (87) primaryvar -> . BOOLT
+    (88) primaryvar -> . ( conditional )
+    (93) rlist -> . [ ]
+    (94) rlist -> . [ condition_list ]
+    (95) rlist -> . [ conditional | conditional ]
+    (96) rlist -> . [ conditional RANGER conditional ]
+    (89) rtuple -> . ( )
+    (90) rtuple -> . ( rtuple_cont )
+
+    )               shift and go to state 103
+    (               shift and go to state 65
+    `               shift and go to state 98
+    SPECIALID       shift and go to state 99
+    IF              shift and go to state 63
+    FDEF            shift and go to state 72
+    COND            shift and go to state 73
+    ID              shift and go to state 60
+    [               shift and go to state 74
+    INTT            shift and go to state 75
+    FLOATT          shift and go to state 76
+    CHART           shift and go to state 77
+    BOOLT           shift and go to state 78
+
+    compound                       shift and go to state 101
+    infix                          shift and go to state 102
+    expression                     shift and go to state 64
+    conditional                    shift and go to state 104
+    rtuple_cont                    shift and go to state 105
+    multivar                       shift and go to state 66
+    lambda                         shift and go to state 67
+    cond_block                     shift and go to state 68
+    primaryvar                     shift and go to state 69
+    rlist                          shift and go to state 70
+    rtuple                         shift and go to state 71
+
+state 66
+
+    (69) expression -> multivar .
+    (81) multivar -> multivar . ( condition_list )
+
+    `               reduce using rule 69 (expression -> multivar .)
+    SPECIALID       reduce using rule 69 (expression -> multivar .)
+    END             reduce using rule 69 (expression -> multivar .)
+    ALIAS           reduce using rule 69 (expression -> multivar .)
+    LET             reduce using rule 69 (expression -> multivar .)
+    FDEF            reduce using rule 69 (expression -> multivar .)
+    THEN            reduce using rule 69 (expression -> multivar .)
+    )               reduce using rule 69 (expression -> multivar .)
+    ,               reduce using rule 69 (expression -> multivar .)
+    |               reduce using rule 69 (expression -> multivar .)
+    RANGER          reduce using rule 69 (expression -> multivar .)
+    ]               reduce using rule 69 (expression -> multivar .)
+    }               reduce using rule 69 (expression -> multivar .)
+    :               reduce using rule 69 (expression -> multivar .)
+    ELSE            reduce using rule 69 (expression -> multivar .)
+    (               shift and go to state 106
+
+
+state 67
+
+    (70) expression -> lambda .
+
+    `               reduce using rule 70 (expression -> lambda .)
+    SPECIALID       reduce using rule 70 (expression -> lambda .)
+    END             reduce using rule 70 (expression -> lambda .)
+    ALIAS           reduce using rule 70 (expression -> lambda .)
+    LET             reduce using rule 70 (expression -> lambda .)
+    FDEF            reduce using rule 70 (expression -> lambda .)
+    THEN            reduce using rule 70 (expression -> lambda .)
+    )               reduce using rule 70 (expression -> lambda .)
+    ,               reduce using rule 70 (expression -> lambda .)
+    |               reduce using rule 70 (expression -> lambda .)
+    RANGER          reduce using rule 70 (expression -> lambda .)
+    ]               reduce using rule 70 (expression -> lambda .)
+    }               reduce using rule 70 (expression -> lambda .)
+    :               reduce using rule 70 (expression -> lambda .)
+    ELSE            reduce using rule 70 (expression -> lambda .)
+
+
+state 68
+
+    (71) expression -> cond_block .
+
+    `               reduce using rule 71 (expression -> cond_block .)
+    SPECIALID       reduce using rule 71 (expression -> cond_block .)
+    END             reduce using rule 71 (expression -> cond_block .)
+    ALIAS           reduce using rule 71 (expression -> cond_block .)
+    LET             reduce using rule 71 (expression -> cond_block .)
+    FDEF            reduce using rule 71 (expression -> cond_block .)
+    THEN            reduce using rule 71 (expression -> cond_block .)
+    )               reduce using rule 71 (expression -> cond_block .)
+    ,               reduce using rule 71 (expression -> cond_block .)
+    |               reduce using rule 71 (expression -> cond_block .)
+    RANGER          reduce using rule 71 (expression -> cond_block .)
+    ]               reduce using rule 71 (expression -> cond_block .)
+    }               reduce using rule 71 (expression -> cond_block .)
+    :               reduce using rule 71 (expression -> cond_block .)
+    ELSE            reduce using rule 71 (expression -> cond_block .)
+
+
+state 69
+
+    (78) multivar -> primaryvar .
+
+    (               reduce using rule 78 (multivar -> primaryvar .)
+    `               reduce using rule 78 (multivar -> primaryvar .)
+    SPECIALID       reduce using rule 78 (multivar -> primaryvar .)
+    END             reduce using rule 78 (multivar -> primaryvar .)
+    ALIAS           reduce using rule 78 (multivar -> primaryvar .)
+    LET             reduce using rule 78 (multivar -> primaryvar .)
+    FDEF            reduce using rule 78 (multivar -> primaryvar .)
+    THEN            reduce using rule 78 (multivar -> primaryvar .)
+    )               reduce using rule 78 (multivar -> primaryvar .)
+    ,               reduce using rule 78 (multivar -> primaryvar .)
+    |               reduce using rule 78 (multivar -> primaryvar .)
+    RANGER          reduce using rule 78 (multivar -> primaryvar .)
+    ]               reduce using rule 78 (multivar -> primaryvar .)
+    }               reduce using rule 78 (multivar -> primaryvar .)
+    :               reduce using rule 78 (multivar -> primaryvar .)
+    ELSE            reduce using rule 78 (multivar -> primaryvar .)
+
+
+state 70
+
+    (79) multivar -> rlist .
+
+    (               reduce using rule 79 (multivar -> rlist .)
+    `               reduce using rule 79 (multivar -> rlist .)
+    SPECIALID       reduce using rule 79 (multivar -> rlist .)
+    END             reduce using rule 79 (multivar -> rlist .)
+    ALIAS           reduce using rule 79 (multivar -> rlist .)
+    LET             reduce using rule 79 (multivar -> rlist .)
+    FDEF            reduce using rule 79 (multivar -> rlist .)
+    THEN            reduce using rule 79 (multivar -> rlist .)
+    )               reduce using rule 79 (multivar -> rlist .)
+    ,               reduce using rule 79 (multivar -> rlist .)
+    |               reduce using rule 79 (multivar -> rlist .)
+    RANGER          reduce using rule 79 (multivar -> rlist .)
+    ]               reduce using rule 79 (multivar -> rlist .)
+    }               reduce using rule 79 (multivar -> rlist .)
+    :               reduce using rule 79 (multivar -> rlist .)
+    ELSE            reduce using rule 79 (multivar -> rlist .)
+
+
+state 71
+
+    (80) multivar -> rtuple .
+
+    (               reduce using rule 80 (multivar -> rtuple .)
+    `               reduce using rule 80 (multivar -> rtuple .)
+    SPECIALID       reduce using rule 80 (multivar -> rtuple .)
+    END             reduce using rule 80 (multivar -> rtuple .)
+    ALIAS           reduce using rule 80 (multivar -> rtuple .)
+    LET             reduce using rule 80 (multivar -> rtuple .)
+    FDEF            reduce using rule 80 (multivar -> rtuple .)
+    THEN            reduce using rule 80 (multivar -> rtuple .)
+    )               reduce using rule 80 (multivar -> rtuple .)
+    ,               reduce using rule 80 (multivar -> rtuple .)
+    |               reduce using rule 80 (multivar -> rtuple .)
+    RANGER          reduce using rule 80 (multivar -> rtuple .)
+    ]               reduce using rule 80 (multivar -> rtuple .)
+    }               reduce using rule 80 (multivar -> rtuple .)
+    :               reduce using rule 80 (multivar -> rtuple .)
+    ELSE            reduce using rule 80 (multivar -> rtuple .)
+
+
+state 72
+
+    (76) lambda -> FDEF . ( ) { conditional }
+    (77) lambda -> FDEF . ( pattern_list ) { conditional }
+
+    (               shift and go to state 107
+
+
+state 73
+
+    (72) cond_block -> COND . { cond , ELSE : conditional }
+
+    {               shift and go to state 108
+
+
+state 74
+
+    (83) primaryvar -> [ . SPECIALID ]
+    (93) rlist -> [ . ]
+    (94) rlist -> [ . condition_list ]
+    (95) rlist -> [ . conditional | conditional ]
+    (96) rlist -> [ . conditional RANGER conditional ]
+    (97) condition_list -> . conditional
+    (98) condition_list -> . condition_list , conditional
+    (61) conditional -> . compound
+    (62) conditional -> . IF conditional THEN conditional ELSE conditional
+    (63) compound -> . expression
+    (64) compound -> . compound infix expression
+    (65) compound -> . ( compound infix )
+    (66) compound -> . ( infix expression )
+    (69) expression -> . multivar
+    (70) expression -> . lambda
+    (71) expression -> . cond_block
+    (78) multivar -> . primaryvar
+    (79) multivar -> . rlist
+    (80) multivar -> . rtuple
+    (81) multivar -> . multivar ( condition_list )
+    (76) lambda -> . FDEF ( ) { conditional }
+    (77) lambda -> . FDEF ( pattern_list ) { conditional }
+    (72) cond_block -> . COND { cond , ELSE : conditional }
+    (82) primaryvar -> . ID
+    (83) primaryvar -> . [ SPECIALID ]
+    (84) primaryvar -> . INTT
+    (85) primaryvar -> . FLOATT
+    (86) primaryvar -> . CHART
+    (87) primaryvar -> . BOOLT
+    (88) primaryvar -> . ( conditional )
+    (93) rlist -> . [ ]
+    (94) rlist -> . [ condition_list ]
+    (95) rlist -> . [ conditional | conditional ]
+    (96) rlist -> . [ conditional RANGER conditional ]
+    (89) rtuple -> . ( )
+    (90) rtuple -> . ( rtuple_cont )
+
+    SPECIALID       shift and go to state 109
+    ]               shift and go to state 110
+    IF              shift and go to state 63
+    (               shift and go to state 65
+    FDEF            shift and go to state 72
+    COND            shift and go to state 73
+    ID              shift and go to state 60
+    [               shift and go to state 74
+    INTT            shift and go to state 75
+    FLOATT          shift and go to state 76
+    CHART           shift and go to state 77
+    BOOLT           shift and go to state 78
+
+    condition_list                 shift and go to state 111
+    conditional                    shift and go to state 112
+    compound                       shift and go to state 62
+    expression                     shift and go to state 64
+    multivar                       shift and go to state 66
+    lambda                         shift and go to state 67
+    cond_block                     shift and go to state 68
+    primaryvar                     shift and go to state 69
+    rlist                          shift and go to state 70
+    rtuple                         shift and go to state 71
+
+state 75
+
+    (84) primaryvar -> INTT .
+
+    (               reduce using rule 84 (primaryvar -> INTT .)
+    `               reduce using rule 84 (primaryvar -> INTT .)
+    SPECIALID       reduce using rule 84 (primaryvar -> INTT .)
+    END             reduce using rule 84 (primaryvar -> INTT .)
+    ALIAS           reduce using rule 84 (primaryvar -> INTT .)
+    LET             reduce using rule 84 (primaryvar -> INTT .)
+    FDEF            reduce using rule 84 (primaryvar -> INTT .)
+    THEN            reduce using rule 84 (primaryvar -> INTT .)
+    )               reduce using rule 84 (primaryvar -> INTT .)
+    ,               reduce using rule 84 (primaryvar -> INTT .)
+    |               reduce using rule 84 (primaryvar -> INTT .)
+    RANGER          reduce using rule 84 (primaryvar -> INTT .)
+    ]               reduce using rule 84 (primaryvar -> INTT .)
+    }               reduce using rule 84 (primaryvar -> INTT .)
+    :               reduce using rule 84 (primaryvar -> INTT .)
+    ELSE            reduce using rule 84 (primaryvar -> INTT .)
+
+
+state 76
+
+    (85) primaryvar -> FLOATT .
+
+    (               reduce using rule 85 (primaryvar -> FLOATT .)
+    `               reduce using rule 85 (primaryvar -> FLOATT .)
+    SPECIALID       reduce using rule 85 (primaryvar -> FLOATT .)
+    END             reduce using rule 85 (primaryvar -> FLOATT .)
+    ALIAS           reduce using rule 85 (primaryvar -> FLOATT .)
+    LET             reduce using rule 85 (primaryvar -> FLOATT .)
+    FDEF            reduce using rule 85 (primaryvar -> FLOATT .)
+    THEN            reduce using rule 85 (primaryvar -> FLOATT .)
+    )               reduce using rule 85 (primaryvar -> FLOATT .)
+    ,               reduce using rule 85 (primaryvar -> FLOATT .)
+    |               reduce using rule 85 (primaryvar -> FLOATT .)
+    RANGER          reduce using rule 85 (primaryvar -> FLOATT .)
+    ]               reduce using rule 85 (primaryvar -> FLOATT .)
+    }               reduce using rule 85 (primaryvar -> FLOATT .)
+    :               reduce using rule 85 (primaryvar -> FLOATT .)
+    ELSE            reduce using rule 85 (primaryvar -> FLOATT .)
+
+
+state 77
+
+    (86) primaryvar -> CHART .
+
+    (               reduce using rule 86 (primaryvar -> CHART .)
+    `               reduce using rule 86 (primaryvar -> CHART .)
+    SPECIALID       reduce using rule 86 (primaryvar -> CHART .)
+    END             reduce using rule 86 (primaryvar -> CHART .)
+    ALIAS           reduce using rule 86 (primaryvar -> CHART .)
+    LET             reduce using rule 86 (primaryvar -> CHART .)
+    FDEF            reduce using rule 86 (primaryvar -> CHART .)
+    THEN            reduce using rule 86 (primaryvar -> CHART .)
+    )               reduce using rule 86 (primaryvar -> CHART .)
+    ,               reduce using rule 86 (primaryvar -> CHART .)
+    |               reduce using rule 86 (primaryvar -> CHART .)
+    RANGER          reduce using rule 86 (primaryvar -> CHART .)
+    ]               reduce using rule 86 (primaryvar -> CHART .)
+    }               reduce using rule 86 (primaryvar -> CHART .)
+    :               reduce using rule 86 (primaryvar -> CHART .)
+    ELSE            reduce using rule 86 (primaryvar -> CHART .)
+
+
+state 78
+
+    (87) primaryvar -> BOOLT .
+
+    (               reduce using rule 87 (primaryvar -> BOOLT .)
+    `               reduce using rule 87 (primaryvar -> BOOLT .)
+    SPECIALID       reduce using rule 87 (primaryvar -> BOOLT .)
+    END             reduce using rule 87 (primaryvar -> BOOLT .)
+    ALIAS           reduce using rule 87 (primaryvar -> BOOLT .)
+    LET             reduce using rule 87 (primaryvar -> BOOLT .)
+    FDEF            reduce using rule 87 (primaryvar -> BOOLT .)
+    THEN            reduce using rule 87 (primaryvar -> BOOLT .)
+    )               reduce using rule 87 (primaryvar -> BOOLT .)
+    ,               reduce using rule 87 (primaryvar -> BOOLT .)
+    |               reduce using rule 87 (primaryvar -> BOOLT .)
+    RANGER          reduce using rule 87 (primaryvar -> BOOLT .)
+    ]               reduce using rule 87 (primaryvar -> BOOLT .)
+    }               reduce using rule 87 (primaryvar -> BOOLT .)
+    :               reduce using rule 87 (primaryvar -> BOOLT .)
+    ELSE            reduce using rule 87 (primaryvar -> BOOLT .)
+
+
+state 79
+
+    (9) function -> FDEF prefix args returntype { . compound }
+    (10) function -> FDEF prefix args returntype { . let_block compound }
+    (63) compound -> . expression
+    (64) compound -> . compound infix expression
+    (65) compound -> . ( compound infix )
+    (66) compound -> . ( infix expression )
+    (19) let_block -> . LET { let_cont }
+    (69) expression -> . multivar
+    (70) expression -> . lambda
+    (71) expression -> . cond_block
+    (78) multivar -> . primaryvar
+    (79) multivar -> . rlist
+    (80) multivar -> . rtuple
+    (81) multivar -> . multivar ( condition_list )
+    (76) lambda -> . FDEF ( ) { conditional }
+    (77) lambda -> . FDEF ( pattern_list ) { conditional }
+    (72) cond_block -> . COND { cond , ELSE : conditional }
+    (82) primaryvar -> . ID
+    (83) primaryvar -> . [ SPECIALID ]
+    (84) primaryvar -> . INTT
+    (85) primaryvar -> . FLOATT
+    (86) primaryvar -> . CHART
+    (87) primaryvar -> . BOOLT
+    (88) primaryvar -> . ( conditional )
+    (93) rlist -> . [ ]
+    (94) rlist -> . [ condition_list ]
+    (95) rlist -> . [ conditional | conditional ]
+    (96) rlist -> . [ conditional RANGER conditional ]
+    (89) rtuple -> . ( )
+    (90) rtuple -> . ( rtuple_cont )
+
+    (               shift and go to state 65
+    LET             shift and go to state 115
+    FDEF            shift and go to state 72
+    COND            shift and go to state 73
+    ID              shift and go to state 60
+    [               shift and go to state 74
+    INTT            shift and go to state 75
+    FLOATT          shift and go to state 76
+    CHART           shift and go to state 77
+    BOOLT           shift and go to state 78
+
+    compound                       shift and go to state 113
+    let_block                      shift and go to state 114
+    expression                     shift and go to state 64
+    multivar                       shift and go to state 66
+    lambda                         shift and go to state 67
+    cond_block                     shift and go to state 68
+    primaryvar                     shift and go to state 69
+    rlist                          shift and go to state 70
+    rtuple                         shift and go to state 71
+
+state 80
+
+    (18) returntype -> RARROW typedesc .
+
+    {               reduce using rule 18 (returntype -> RARROW typedesc .)
+
+
+state 81
+
+    (60) lvar -> ( lpattern . )
+    (51) ltuple_cont -> lpattern . , lpattern
+
+    )               shift and go to state 116
+    ,               shift and go to state 117
+
+
+state 82
+
+    (49) ltuple -> ( ) .
+
+    :               reduce using rule 49 (ltuple -> ( ) .)
+    )               reduce using rule 49 (ltuple -> ( ) .)
+    ,               reduce using rule 49 (ltuple -> ( ) .)
+    |               reduce using rule 49 (ltuple -> ( ) .)
+    ]               reduce using rule 49 (ltuple -> ( ) .)
+    =               reduce using rule 49 (ltuple -> ( ) .)
+
+
+state 83
+
+    (50) ltuple -> ( ltuple_cont . )
+    (52) ltuple_cont -> ltuple_cont . , lpattern
+
+    )               shift and go to state 118
+    ,               shift and go to state 119
+
+
+state 84
+
+    (12) args -> ( arg_list ) .
+
+    RARROW          reduce using rule 12 (args -> ( arg_list ) .)
+    {               reduce using rule 12 (args -> ( arg_list ) .)
+
+
+state 85
+
+    (14) arg_list -> arg_list , . lpattern annotation
+    (23) lpattern -> . lvar
+    (24) lpattern -> . llist
+    (25) lpattern -> . ltuple
+    (53) lvar -> . ID
+    (54) lvar -> . [ SPECIALID ]
+    (55) lvar -> . STRINGT
+    (56) lvar -> . INTT
+    (57) lvar -> . FLOATT
+    (58) lvar -> . CHART
+    (59) lvar -> . BOOLT
+    (60) lvar -> . ( lpattern )
+    (44) llist -> . [ ]
+    (45) llist -> . [ pattern_list ]
+    (46) llist -> . [ lpattern | lpattern ]
+    (49) ltuple -> . ( )
+    (50) ltuple -> . ( ltuple_cont )
+
+    ID              shift and go to state 46
+    [               shift and go to state 47
+    STRINGT         shift and go to state 48
+    INTT            shift and go to state 49
+    FLOATT          shift and go to state 50
+    CHART           shift and go to state 51
+    BOOLT           shift and go to state 52
+    (               shift and go to state 39
+
+    lpattern                       shift and go to state 120
+    lvar                           shift and go to state 43
+    llist                          shift and go to state 44
+    ltuple                         shift and go to state 45
+
+state 86
+
+    (13) arg_list -> lpattern annotation .
+
+    )               reduce using rule 13 (arg_list -> lpattern annotation .)
+    ,               reduce using rule 13 (arg_list -> lpattern annotation .)
+
+
+state 87
+
+    (54) lvar -> [ SPECIALID . ]
+
+    ]               shift and go to state 121
+
+
+state 88
+
+    (44) llist -> [ ] .
+
+    :               reduce using rule 44 (llist -> [ ] .)
+    )               reduce using rule 44 (llist -> [ ] .)
+    ,               reduce using rule 44 (llist -> [ ] .)
+    |               reduce using rule 44 (llist -> [ ] .)
+    ]               reduce using rule 44 (llist -> [ ] .)
+    =               reduce using rule 44 (llist -> [ ] .)
+
+
+state 89
+
+    (45) llist -> [ pattern_list . ]
+    (48) pattern_list -> pattern_list . , lpattern
+
+    ]               shift and go to state 122
+    ,               shift and go to state 123
+
+
+state 90
+
+    (46) llist -> [ lpattern . | lpattern ]
+    (47) pattern_list -> lpattern .
+
+    |               shift and go to state 124
+    ]               reduce using rule 47 (pattern_list -> lpattern .)
+    ,               reduce using rule 47 (pattern_list -> lpattern .)
+
+
+state 91
+
+    (31) typedesc -> ( tuple_type ) .
+    (35) function_type -> ( tuple_type ) . RARROW typedesc
+
+    END             reduce using rule 31 (typedesc -> ( tuple_type ) .)
+    ALIAS           reduce using rule 31 (typedesc -> ( tuple_type ) .)
+    LET             reduce using rule 31 (typedesc -> ( tuple_type ) .)
+    FDEF            reduce using rule 31 (typedesc -> ( tuple_type ) .)
+    =               reduce using rule 31 (typedesc -> ( tuple_type ) .)
+    )               reduce using rule 31 (typedesc -> ( tuple_type ) .)
+    ,               reduce using rule 31 (typedesc -> ( tuple_type ) .)
+    ]               reduce using rule 31 (typedesc -> ( tuple_type ) .)
+    {               reduce using rule 31 (typedesc -> ( tuple_type ) .)
+    RARROW          shift and go to state 125
+
+
+state 92
+
+    (37) tuple_type -> tuple_type , . typeid
+    (38) typeid -> . INT
+    (39) typeid -> . FLOAT
+    (40) typeid -> . CHAR
+    (41) typeid -> . BOOL
+    (42) typeid -> . ID
+    (43) typeid -> . [ typedesc ]
+
+    INT             shift and go to state 29
+    FLOAT           shift and go to state 30
+    CHAR            shift and go to state 31
+    BOOL            shift and go to state 32
+    ID              shift and go to state 23
+    [               shift and go to state 33
+
+    typeid                         shift and go to state 126
+
+state 93
+
+    (33) function_type -> ( ) RARROW . typedesc
+    (28) typedesc -> . typeid
+    (29) typedesc -> . typeclass
+    (30) typedesc -> . function_type
+    (31) typedesc -> . ( tuple_type )
+    (38) typeid -> . INT
+    (39) typeid -> . FLOAT
+    (40) typeid -> . CHAR
+    (41) typeid -> . BOOL
+    (42) typeid -> . ID
+    (43) typeid -> . [ typedesc ]
+    (32) typeclass -> . TYPECLASS ID
+    (33) function_type -> . ( ) RARROW typedesc
+    (34) function_type -> . ( typedesc ) RARROW typedesc
+    (35) function_type -> . ( tuple_type ) RARROW typedesc
+
+    (               shift and go to state 28
+    INT             shift and go to state 29
+    FLOAT           shift and go to state 30
+    CHAR            shift and go to state 31
+    BOOL            shift and go to state 32
+    ID              shift and go to state 23
+    [               shift and go to state 33
+    TYPECLASS       shift and go to state 34
+
+    typedesc                       shift and go to state 127
+    typeid                         shift and go to state 25
+    typeclass                      shift and go to state 26
+    function_type                  shift and go to state 27
+
+state 94
+
+    (34) function_type -> ( typedesc ) . RARROW typedesc
+
+    RARROW          shift and go to state 128
+
+
+state 95
+
+    (36) tuple_type -> typeid , . typeid
+    (38) typeid -> . INT
+    (39) typeid -> . FLOAT
+    (40) typeid -> . CHAR
+    (41) typeid -> . BOOL
+    (42) typeid -> . ID
+    (43) typeid -> . [ typedesc ]
+
+    INT             shift and go to state 29
+    FLOAT           shift and go to state 30
+    CHAR            shift and go to state 31
+    BOOL            shift and go to state 32
+    ID              shift and go to state 23
+    [               shift and go to state 33
+
+    typeid                         shift and go to state 129
+
+state 96
+
+    (43) typeid -> [ typedesc ] .
+
+    END             reduce using rule 43 (typeid -> [ typedesc ] .)
+    ALIAS           reduce using rule 43 (typeid -> [ typedesc ] .)
+    LET             reduce using rule 43 (typeid -> [ typedesc ] .)
+    FDEF            reduce using rule 43 (typeid -> [ typedesc ] .)
+    =               reduce using rule 43 (typeid -> [ typedesc ] .)
+    )               reduce using rule 43 (typeid -> [ typedesc ] .)
+    ,               reduce using rule 43 (typeid -> [ typedesc ] .)
+    ]               reduce using rule 43 (typeid -> [ typedesc ] .)
+    {               reduce using rule 43 (typeid -> [ typedesc ] .)
+
+
+state 97
+
+    (64) compound -> compound infix . expression
+    (69) expression -> . multivar
+    (70) expression -> . lambda
+    (71) expression -> . cond_block
+    (78) multivar -> . primaryvar
+    (79) multivar -> . rlist
+    (80) multivar -> . rtuple
+    (81) multivar -> . multivar ( condition_list )
+    (76) lambda -> . FDEF ( ) { conditional }
+    (77) lambda -> . FDEF ( pattern_list ) { conditional }
+    (72) cond_block -> . COND { cond , ELSE : conditional }
+    (82) primaryvar -> . ID
+    (83) primaryvar -> . [ SPECIALID ]
+    (84) primaryvar -> . INTT
+    (85) primaryvar -> . FLOATT
+    (86) primaryvar -> . CHART
+    (87) primaryvar -> . BOOLT
+    (88) primaryvar -> . ( conditional )
+    (93) rlist -> . [ ]
+    (94) rlist -> . [ condition_list ]
+    (95) rlist -> . [ conditional | conditional ]
+    (96) rlist -> . [ conditional RANGER conditional ]
+    (89) rtuple -> . ( )
+    (90) rtuple -> . ( rtuple_cont )
+
+    FDEF            shift and go to state 72
+    COND            shift and go to state 73
+    ID              shift and go to state 60
+    [               shift and go to state 74
+    INTT            shift and go to state 75
+    FLOATT          shift and go to state 76
+    CHART           shift and go to state 77
+    BOOLT           shift and go to state 78
+    (               shift and go to state 131
+
+    expression                     shift and go to state 130
+    multivar                       shift and go to state 66
+    lambda                         shift and go to state 67
+    cond_block                     shift and go to state 68
+    primaryvar                     shift and go to state 69
+    rlist                          shift and go to state 70
+    rtuple                         shift and go to state 71
+
+state 98
+
+    (67) infix -> ` . ID `
+
+    ID              shift and go to state 132
+
+
+state 99
+
+    (68) infix -> SPECIALID .
+
+    FDEF            reduce using rule 68 (infix -> SPECIALID .)
+    COND            reduce using rule 68 (infix -> SPECIALID .)
+    ID              reduce using rule 68 (infix -> SPECIALID .)
+    [               reduce using rule 68 (infix -> SPECIALID .)
+    INTT            reduce using rule 68 (infix -> SPECIALID .)
+    FLOATT          reduce using rule 68 (infix -> SPECIALID .)
+    CHART           reduce using rule 68 (infix -> SPECIALID .)
+    BOOLT           reduce using rule 68 (infix -> SPECIALID .)
+    (               reduce using rule 68 (infix -> SPECIALID .)
+    )               reduce using rule 68 (infix -> SPECIALID .)
+
+
+state 100
+
+    (62) conditional -> IF conditional . THEN conditional ELSE conditional
+
+    THEN            shift and go to state 133
+
+
+state 101
+
+    (65) compound -> ( compound . infix )
+    (64) compound -> compound . infix expression
+    (61) conditional -> compound .
+    (67) infix -> . ` ID `
+    (68) infix -> . SPECIALID
+
+    )               reduce using rule 61 (conditional -> compound .)
+    ,               reduce using rule 61 (conditional -> compound .)
+    `               shift and go to state 98
+    SPECIALID       shift and go to state 99
+
+    infix                          shift and go to state 134
+
+state 102
+
+    (66) compound -> ( infix . expression )
+    (69) expression -> . multivar
+    (70) expression -> . lambda
+    (71) expression -> . cond_block
+    (78) multivar -> . primaryvar
+    (79) multivar -> . rlist
+    (80) multivar -> . rtuple
+    (81) multivar -> . multivar ( condition_list )
+    (76) lambda -> . FDEF ( ) { conditional }
+    (77) lambda -> . FDEF ( pattern_list ) { conditional }
+    (72) cond_block -> . COND { cond , ELSE : conditional }
+    (82) primaryvar -> . ID
+    (83) primaryvar -> . [ SPECIALID ]
+    (84) primaryvar -> . INTT
+    (85) primaryvar -> . FLOATT
+    (86) primaryvar -> . CHART
+    (87) primaryvar -> . BOOLT
+    (88) primaryvar -> . ( conditional )
+    (93) rlist -> . [ ]
+    (94) rlist -> . [ condition_list ]
+    (95) rlist -> . [ conditional | conditional ]
+    (96) rlist -> . [ conditional RANGER conditional ]
+    (89) rtuple -> . ( )
+    (90) rtuple -> . ( rtuple_cont )
+
+    FDEF            shift and go to state 72
+    COND            shift and go to state 73
+    ID              shift and go to state 60
+    [               shift and go to state 74
+    INTT            shift and go to state 75
+    FLOATT          shift and go to state 76
+    CHART           shift and go to state 77
+    BOOLT           shift and go to state 78
+    (               shift and go to state 131
+
+    expression                     shift and go to state 135
+    multivar                       shift and go to state 66
+    lambda                         shift and go to state 67
+    cond_block                     shift and go to state 68
+    primaryvar                     shift and go to state 69
+    rlist                          shift and go to state 70
+    rtuple                         shift and go to state 71
+
+state 103
+
+    (89) rtuple -> ( ) .
+
+    (               reduce using rule 89 (rtuple -> ( ) .)
+    `               reduce using rule 89 (rtuple -> ( ) .)
+    SPECIALID       reduce using rule 89 (rtuple -> ( ) .)
+    END             reduce using rule 89 (rtuple -> ( ) .)
+    ALIAS           reduce using rule 89 (rtuple -> ( ) .)
+    LET             reduce using rule 89 (rtuple -> ( ) .)
+    FDEF            reduce using rule 89 (rtuple -> ( ) .)
+    THEN            reduce using rule 89 (rtuple -> ( ) .)
+    )               reduce using rule 89 (rtuple -> ( ) .)
+    ,               reduce using rule 89 (rtuple -> ( ) .)
+    |               reduce using rule 89 (rtuple -> ( ) .)
+    RANGER          reduce using rule 89 (rtuple -> ( ) .)
+    ]               reduce using rule 89 (rtuple -> ( ) .)
+    }               reduce using rule 89 (rtuple -> ( ) .)
+    :               reduce using rule 89 (rtuple -> ( ) .)
+    ELSE            reduce using rule 89 (rtuple -> ( ) .)
+
+
+state 104
+
+    (88) primaryvar -> ( conditional . )
+    (91) rtuple_cont -> conditional . , conditional
+
+    )               shift and go to state 136
+    ,               shift and go to state 137
+
+
+state 105
+
+    (90) rtuple -> ( rtuple_cont . )
+    (92) rtuple_cont -> rtuple_cont . , conditional
+
+    )               shift and go to state 138
+    ,               shift and go to state 139
+
+
+state 106
+
+    (81) multivar -> multivar ( . condition_list )
+    (97) condition_list -> . conditional
+    (98) condition_list -> . condition_list , conditional
+    (61) conditional -> . compound
+    (62) conditional -> . IF conditional THEN conditional ELSE conditional
+    (63) compound -> . expression
+    (64) compound -> . compound infix expression
+    (65) compound -> . ( compound infix )
+    (66) compound -> . ( infix expression )
+    (69) expression -> . multivar
+    (70) expression -> . lambda
+    (71) expression -> . cond_block
+    (78) multivar -> . primaryvar
+    (79) multivar -> . rlist
+    (80) multivar -> . rtuple
+    (81) multivar -> . multivar ( condition_list )
+    (76) lambda -> . FDEF ( ) { conditional }
+    (77) lambda -> . FDEF ( pattern_list ) { conditional }
+    (72) cond_block -> . COND { cond , ELSE : conditional }
+    (82) primaryvar -> . ID
+    (83) primaryvar -> . [ SPECIALID ]
+    (84) primaryvar -> . INTT
+    (85) primaryvar -> . FLOATT
+    (86) primaryvar -> . CHART
+    (87) primaryvar -> . BOOLT
+    (88) primaryvar -> . ( conditional )
+    (93) rlist -> . [ ]
+    (94) rlist -> . [ condition_list ]
+    (95) rlist -> . [ conditional | conditional ]
+    (96) rlist -> . [ conditional RANGER conditional ]
+    (89) rtuple -> . ( )
+    (90) rtuple -> . ( rtuple_cont )
+
+    IF              shift and go to state 63
+    (               shift and go to state 65
+    FDEF            shift and go to state 72
+    COND            shift and go to state 73
+    ID              shift and go to state 60
+    [               shift and go to state 74
+    INTT            shift and go to state 75
+    FLOATT          shift and go to state 76
+    CHART           shift and go to state 77
+    BOOLT           shift and go to state 78
+
+    multivar                       shift and go to state 66
+    condition_list                 shift and go to state 140
+    conditional                    shift and go to state 141
+    compound                       shift and go to state 62
+    expression                     shift and go to state 64
+    lambda                         shift and go to state 67
+    cond_block                     shift and go to state 68
+    primaryvar                     shift and go to state 69
+    rlist                          shift and go to state 70
+    rtuple                         shift and go to state 71
+
+state 107
+
+    (76) lambda -> FDEF ( . ) { conditional }
+    (77) lambda -> FDEF ( . pattern_list ) { conditional }
+    (47) pattern_list -> . lpattern
+    (48) pattern_list -> . pattern_list , lpattern
+    (23) lpattern -> . lvar
+    (24) lpattern -> . llist
+    (25) lpattern -> . ltuple
+    (53) lvar -> . ID
+    (54) lvar -> . [ SPECIALID ]
+    (55) lvar -> . STRINGT
+    (56) lvar -> . INTT
+    (57) lvar -> . FLOATT
+    (58) lvar -> . CHART
+    (59) lvar -> . BOOLT
+    (60) lvar -> . ( lpattern )
+    (44) llist -> . [ ]
+    (45) llist -> . [ pattern_list ]
+    (46) llist -> . [ lpattern | lpattern ]
+    (49) ltuple -> . ( )
+    (50) ltuple -> . ( ltuple_cont )
+
+    )               shift and go to state 142
+    ID              shift and go to state 46
+    [               shift and go to state 47
+    STRINGT         shift and go to state 48
+    INTT            shift and go to state 49
+    FLOATT          shift and go to state 50
+    CHART           shift and go to state 51
+    BOOLT           shift and go to state 52
+    (               shift and go to state 39
+
+    pattern_list                   shift and go to state 143
+    lpattern                       shift and go to state 144
+    lvar                           shift and go to state 43
+    llist                          shift and go to state 44
+    ltuple                         shift and go to state 45
+
+state 108
+
+    (72) cond_block -> COND { . cond , ELSE : conditional }
+    (73) cond -> . cond_singl
+    (74) cond -> . cond , cond_singl
+    (75) cond_singl -> . conditional : conditional
+    (61) conditional -> . compound
+    (62) conditional -> . IF conditional THEN conditional ELSE conditional
+    (63) compound -> . expression
+    (64) compound -> . compound infix expression
+    (65) compound -> . ( compound infix )
+    (66) compound -> . ( infix expression )
+    (69) expression -> . multivar
+    (70) expression -> . lambda
+    (71) expression -> . cond_block
+    (78) multivar -> . primaryvar
+    (79) multivar -> . rlist
+    (80) multivar -> . rtuple
+    (81) multivar -> . multivar ( condition_list )
+    (76) lambda -> . FDEF ( ) { conditional }
+    (77) lambda -> . FDEF ( pattern_list ) { conditional }
+    (72) cond_block -> . COND { cond , ELSE : conditional }
+    (82) primaryvar -> . ID
+    (83) primaryvar -> . [ SPECIALID ]
+    (84) primaryvar -> . INTT
+    (85) primaryvar -> . FLOATT
+    (86) primaryvar -> . CHART
+    (87) primaryvar -> . BOOLT
+    (88) primaryvar -> . ( conditional )
+    (93) rlist -> . [ ]
+    (94) rlist -> . [ condition_list ]
+    (95) rlist -> . [ conditional | conditional ]
+    (96) rlist -> . [ conditional RANGER conditional ]
+    (89) rtuple -> . ( )
+    (90) rtuple -> . ( rtuple_cont )
+
+    IF              shift and go to state 63
+    (               shift and go to state 65
+    FDEF            shift and go to state 72
+    COND            shift and go to state 73
+    ID              shift and go to state 60
+    [               shift and go to state 74
+    INTT            shift and go to state 75
+    FLOATT          shift and go to state 76
+    CHART           shift and go to state 77
+    BOOLT           shift and go to state 78
+
+    cond                           shift and go to state 145
+    conditional                    shift and go to state 146
+    cond_singl                     shift and go to state 147
+    compound                       shift and go to state 62
+    expression                     shift and go to state 64
+    multivar                       shift and go to state 66
+    lambda                         shift and go to state 67
+    cond_block                     shift and go to state 68
+    primaryvar                     shift and go to state 69
+    rlist                          shift and go to state 70
+    rtuple                         shift and go to state 71
+
+state 109
+
+    (83) primaryvar -> [ SPECIALID . ]
+
+    ]               shift and go to state 148
+
+
+state 110
+
+    (93) rlist -> [ ] .
+
+    (               reduce using rule 93 (rlist -> [ ] .)
+    `               reduce using rule 93 (rlist -> [ ] .)
+    SPECIALID       reduce using rule 93 (rlist -> [ ] .)
+    END             reduce using rule 93 (rlist -> [ ] .)
+    ALIAS           reduce using rule 93 (rlist -> [ ] .)
+    LET             reduce using rule 93 (rlist -> [ ] .)
+    FDEF            reduce using rule 93 (rlist -> [ ] .)
+    THEN            reduce using rule 93 (rlist -> [ ] .)
+    )               reduce using rule 93 (rlist -> [ ] .)
+    ,               reduce using rule 93 (rlist -> [ ] .)
+    |               reduce using rule 93 (rlist -> [ ] .)
+    RANGER          reduce using rule 93 (rlist -> [ ] .)
+    ]               reduce using rule 93 (rlist -> [ ] .)
+    }               reduce using rule 93 (rlist -> [ ] .)
+    :               reduce using rule 93 (rlist -> [ ] .)
+    ELSE            reduce using rule 93 (rlist -> [ ] .)
+
+
+state 111
+
+    (94) rlist -> [ condition_list . ]
+    (98) condition_list -> condition_list . , conditional
+
+    ]               shift and go to state 149
+    ,               shift and go to state 150
+
+
+state 112
+
+    (95) rlist -> [ conditional . | conditional ]
+    (96) rlist -> [ conditional . RANGER conditional ]
+    (97) condition_list -> conditional .
+
+    |               shift and go to state 151
+    RANGER          shift and go to state 152
+    ]               reduce using rule 97 (condition_list -> conditional .)
+    ,               reduce using rule 97 (condition_list -> conditional .)
+
+
+state 113
+
+    (9) function -> FDEF prefix args returntype { compound . }
+    (64) compound -> compound . infix expression
+    (67) infix -> . ` ID `
+    (68) infix -> . SPECIALID
+
+    }               shift and go to state 153
+    `               shift and go to state 98
+    SPECIALID       shift and go to state 99
+
+    infix                          shift and go to state 97
+
+state 114
+
+    (10) function -> FDEF prefix args returntype { let_block . compound }
+    (63) compound -> . expression
+    (64) compound -> . compound infix expression
+    (65) compound -> . ( compound infix )
+    (66) compound -> . ( infix expression )
+    (69) expression -> . multivar
+    (70) expression -> . lambda
+    (71) expression -> . cond_block
+    (78) multivar -> . primaryvar
+    (79) multivar -> . rlist
+    (80) multivar -> . rtuple
+    (81) multivar -> . multivar ( condition_list )
+    (76) lambda -> . FDEF ( ) { conditional }
+    (77) lambda -> . FDEF ( pattern_list ) { conditional }
+    (72) cond_block -> . COND { cond , ELSE : conditional }
+    (82) primaryvar -> . ID
+    (83) primaryvar -> . [ SPECIALID ]
+    (84) primaryvar -> . INTT
+    (85) primaryvar -> . FLOATT
+    (86) primaryvar -> . CHART
+    (87) primaryvar -> . BOOLT
+    (88) primaryvar -> . ( conditional )
+    (93) rlist -> . [ ]
+    (94) rlist -> . [ condition_list ]
+    (95) rlist -> . [ conditional | conditional ]
+    (96) rlist -> . [ conditional RANGER conditional ]
+    (89) rtuple -> . ( )
+    (90) rtuple -> . ( rtuple_cont )
+
+    (               shift and go to state 65
+    FDEF            shift and go to state 72
+    COND            shift and go to state 73
+    ID              shift and go to state 60
+    [               shift and go to state 74
+    INTT            shift and go to state 75
+    FLOATT          shift and go to state 76
+    CHART           shift and go to state 77
+    BOOLT           shift and go to state 78
+
+    compound                       shift and go to state 154
+    expression                     shift and go to state 64
+    multivar                       shift and go to state 66
+    lambda                         shift and go to state 67
+    cond_block                     shift and go to state 68
+    primaryvar                     shift and go to state 69
+    rlist                          shift and go to state 70
+    rtuple                         shift and go to state 71
+
+state 115
+
+    (19) let_block -> LET . { let_cont }
+
+    {               shift and go to state 155
+
+
+state 116
+
+    (60) lvar -> ( lpattern ) .
+
+    :               reduce using rule 60 (lvar -> ( lpattern ) .)
+    )               reduce using rule 60 (lvar -> ( lpattern ) .)
+    ,               reduce using rule 60 (lvar -> ( lpattern ) .)
+    |               reduce using rule 60 (lvar -> ( lpattern ) .)
+    ]               reduce using rule 60 (lvar -> ( lpattern ) .)
+    =               reduce using rule 60 (lvar -> ( lpattern ) .)
+
+
+state 117
+
+    (51) ltuple_cont -> lpattern , . lpattern
+    (23) lpattern -> . lvar
+    (24) lpattern -> . llist
+    (25) lpattern -> . ltuple
+    (53) lvar -> . ID
+    (54) lvar -> . [ SPECIALID ]
+    (55) lvar -> . STRINGT
+    (56) lvar -> . INTT
+    (57) lvar -> . FLOATT
+    (58) lvar -> . CHART
+    (59) lvar -> . BOOLT
+    (60) lvar -> . ( lpattern )
+    (44) llist -> . [ ]
+    (45) llist -> . [ pattern_list ]
+    (46) llist -> . [ lpattern | lpattern ]
+    (49) ltuple -> . ( )
+    (50) ltuple -> . ( ltuple_cont )
+
+    ID              shift and go to state 46
+    [               shift and go to state 47
+    STRINGT         shift and go to state 48
+    INTT            shift and go to state 49
+    FLOATT          shift and go to state 50
+    CHART           shift and go to state 51
+    BOOLT           shift and go to state 52
+    (               shift and go to state 39
+
+    lpattern                       shift and go to state 156
+    lvar                           shift and go to state 43
+    llist                          shift and go to state 44
+    ltuple                         shift and go to state 45
+
+state 118
+
+    (50) ltuple -> ( ltuple_cont ) .
+
+    :               reduce using rule 50 (ltuple -> ( ltuple_cont ) .)
+    )               reduce using rule 50 (ltuple -> ( ltuple_cont ) .)
+    ,               reduce using rule 50 (ltuple -> ( ltuple_cont ) .)
+    |               reduce using rule 50 (ltuple -> ( ltuple_cont ) .)
+    ]               reduce using rule 50 (ltuple -> ( ltuple_cont ) .)
+    =               reduce using rule 50 (ltuple -> ( ltuple_cont ) .)
+
+
+state 119
+
+    (52) ltuple_cont -> ltuple_cont , . lpattern
+    (23) lpattern -> . lvar
+    (24) lpattern -> . llist
+    (25) lpattern -> . ltuple
+    (53) lvar -> . ID
+    (54) lvar -> . [ SPECIALID ]
+    (55) lvar -> . STRINGT
+    (56) lvar -> . INTT
+    (57) lvar -> . FLOATT
+    (58) lvar -> . CHART
+    (59) lvar -> . BOOLT
+    (60) lvar -> . ( lpattern )
+    (44) llist -> . [ ]
+    (45) llist -> . [ pattern_list ]
+    (46) llist -> . [ lpattern | lpattern ]
+    (49) ltuple -> . ( )
+    (50) ltuple -> . ( ltuple_cont )
+
+    ID              shift and go to state 46
+    [               shift and go to state 47
+    STRINGT         shift and go to state 48
+    INTT            shift and go to state 49
+    FLOATT          shift and go to state 50
+    CHART           shift and go to state 51
+    BOOLT           shift and go to state 52
+    (               shift and go to state 39
+
+    lpattern                       shift and go to state 157
+    lvar                           shift and go to state 43
+    llist                          shift and go to state 44
+    ltuple                         shift and go to state 45
+
+state 120
+
+    (14) arg_list -> arg_list , lpattern . annotation
+    (26) annotation -> .
+    (27) annotation -> . : typedesc
+
+    )               reduce using rule 26 (annotation -> .)
+    ,               reduce using rule 26 (annotation -> .)
+    :               shift and go to state 19
+
+    annotation                     shift and go to state 158
+
+state 121
+
+    (54) lvar -> [ SPECIALID ] .
+
+    :               reduce using rule 54 (lvar -> [ SPECIALID ] .)
+    )               reduce using rule 54 (lvar -> [ SPECIALID ] .)
+    ,               reduce using rule 54 (lvar -> [ SPECIALID ] .)
+    |               reduce using rule 54 (lvar -> [ SPECIALID ] .)
+    ]               reduce using rule 54 (lvar -> [ SPECIALID ] .)
+    =               reduce using rule 54 (lvar -> [ SPECIALID ] .)
+
+
+state 122
+
+    (45) llist -> [ pattern_list ] .
+
+    :               reduce using rule 45 (llist -> [ pattern_list ] .)
+    )               reduce using rule 45 (llist -> [ pattern_list ] .)
+    ,               reduce using rule 45 (llist -> [ pattern_list ] .)
+    |               reduce using rule 45 (llist -> [ pattern_list ] .)
+    ]               reduce using rule 45 (llist -> [ pattern_list ] .)
+    =               reduce using rule 45 (llist -> [ pattern_list ] .)
+
+
+state 123
+
+    (48) pattern_list -> pattern_list , . lpattern
+    (23) lpattern -> . lvar
+    (24) lpattern -> . llist
+    (25) lpattern -> . ltuple
+    (53) lvar -> . ID
+    (54) lvar -> . [ SPECIALID ]
+    (55) lvar -> . STRINGT
+    (56) lvar -> . INTT
+    (57) lvar -> . FLOATT
+    (58) lvar -> . CHART
+    (59) lvar -> . BOOLT
+    (60) lvar -> . ( lpattern )
+    (44) llist -> . [ ]
+    (45) llist -> . [ pattern_list ]
+    (46) llist -> . [ lpattern | lpattern ]
+    (49) ltuple -> . ( )
+    (50) ltuple -> . ( ltuple_cont )
+
+    ID              shift and go to state 46
+    [               shift and go to state 47
+    STRINGT         shift and go to state 48
+    INTT            shift and go to state 49
+    FLOATT          shift and go to state 50
+    CHART           shift and go to state 51
+    BOOLT           shift and go to state 52
+    (               shift and go to state 39
+
+    lpattern                       shift and go to state 159
+    lvar                           shift and go to state 43
+    llist                          shift and go to state 44
+    ltuple                         shift and go to state 45
+
+state 124
+
+    (46) llist -> [ lpattern | . lpattern ]
+    (23) lpattern -> . lvar
+    (24) lpattern -> . llist
+    (25) lpattern -> . ltuple
+    (53) lvar -> . ID
+    (54) lvar -> . [ SPECIALID ]
+    (55) lvar -> . STRINGT
+    (56) lvar -> . INTT
+    (57) lvar -> . FLOATT
+    (58) lvar -> . CHART
+    (59) lvar -> . BOOLT
+    (60) lvar -> . ( lpattern )
+    (44) llist -> . [ ]
+    (45) llist -> . [ pattern_list ]
+    (46) llist -> . [ lpattern | lpattern ]
+    (49) ltuple -> . ( )
+    (50) ltuple -> . ( ltuple_cont )
+
+    ID              shift and go to state 46
+    [               shift and go to state 47
+    STRINGT         shift and go to state 48
+    INTT            shift and go to state 49
+    FLOATT          shift and go to state 50
+    CHART           shift and go to state 51
+    BOOLT           shift and go to state 52
+    (               shift and go to state 39
+
+    lpattern                       shift and go to state 160
+    lvar                           shift and go to state 43
+    llist                          shift and go to state 44
+    ltuple                         shift and go to state 45
+
+state 125
+
+    (35) function_type -> ( tuple_type ) RARROW . typedesc
+    (28) typedesc -> . typeid
+    (29) typedesc -> . typeclass
+    (30) typedesc -> . function_type
+    (31) typedesc -> . ( tuple_type )
+    (38) typeid -> . INT
+    (39) typeid -> . FLOAT
+    (40) typeid -> . CHAR
+    (41) typeid -> . BOOL
+    (42) typeid -> . ID
+    (43) typeid -> . [ typedesc ]
+    (32) typeclass -> . TYPECLASS ID
+    (33) function_type -> . ( ) RARROW typedesc
+    (34) function_type -> . ( typedesc ) RARROW typedesc
+    (35) function_type -> . ( tuple_type ) RARROW typedesc
+
+    (               shift and go to state 28
+    INT             shift and go to state 29
+    FLOAT           shift and go to state 30
+    CHAR            shift and go to state 31
+    BOOL            shift and go to state 32
+    ID              shift and go to state 23
+    [               shift and go to state 33
+    TYPECLASS       shift and go to state 34
+
+    typedesc                       shift and go to state 161
+    typeid                         shift and go to state 25
+    typeclass                      shift and go to state 26
+    function_type                  shift and go to state 27
+
+state 126
+
+    (37) tuple_type -> tuple_type , typeid .
+
+    )               reduce using rule 37 (tuple_type -> tuple_type , typeid .)
+    ,               reduce using rule 37 (tuple_type -> tuple_type , typeid .)
+
+
+state 127
+
+    (33) function_type -> ( ) RARROW typedesc .
+
+    END             reduce using rule 33 (function_type -> ( ) RARROW typedesc .)
+    ALIAS           reduce using rule 33 (function_type -> ( ) RARROW typedesc .)
+    LET             reduce using rule 33 (function_type -> ( ) RARROW typedesc .)
+    FDEF            reduce using rule 33 (function_type -> ( ) RARROW typedesc .)
+    =               reduce using rule 33 (function_type -> ( ) RARROW typedesc .)
+    )               reduce using rule 33 (function_type -> ( ) RARROW typedesc .)
+    ,               reduce using rule 33 (function_type -> ( ) RARROW typedesc .)
+    ]               reduce using rule 33 (function_type -> ( ) RARROW typedesc .)
+    {               reduce using rule 33 (function_type -> ( ) RARROW typedesc .)
+
+
+state 128
+
+    (34) function_type -> ( typedesc ) RARROW . typedesc
+    (28) typedesc -> . typeid
+    (29) typedesc -> . typeclass
+    (30) typedesc -> . function_type
+    (31) typedesc -> . ( tuple_type )
+    (38) typeid -> . INT
+    (39) typeid -> . FLOAT
+    (40) typeid -> . CHAR
+    (41) typeid -> . BOOL
+    (42) typeid -> . ID
+    (43) typeid -> . [ typedesc ]
+    (32) typeclass -> . TYPECLASS ID
+    (33) function_type -> . ( ) RARROW typedesc
+    (34) function_type -> . ( typedesc ) RARROW typedesc
+    (35) function_type -> . ( tuple_type ) RARROW typedesc
+
+    (               shift and go to state 28
+    INT             shift and go to state 29
+    FLOAT           shift and go to state 30
+    CHAR            shift and go to state 31
+    BOOL            shift and go to state 32
+    ID              shift and go to state 23
+    [               shift and go to state 33
+    TYPECLASS       shift and go to state 34
+
+    typedesc                       shift and go to state 162
+    typeid                         shift and go to state 25
+    typeclass                      shift and go to state 26
+    function_type                  shift and go to state 27
+
+state 129
+
+    (36) tuple_type -> typeid , typeid .
+
+    )               reduce using rule 36 (tuple_type -> typeid , typeid .)
+    ,               reduce using rule 36 (tuple_type -> typeid , typeid .)
+
+
+state 130
+
+    (64) compound -> compound infix expression .
+
+    `               reduce using rule 64 (compound -> compound infix expression .)
+    SPECIALID       reduce using rule 64 (compound -> compound infix expression .)
+    END             reduce using rule 64 (compound -> compound infix expression .)
+    ALIAS           reduce using rule 64 (compound -> compound infix expression .)
+    LET             reduce using rule 64 (compound -> compound infix expression .)
+    FDEF            reduce using rule 64 (compound -> compound infix expression .)
+    THEN            reduce using rule 64 (compound -> compound infix expression .)
+    )               reduce using rule 64 (compound -> compound infix expression .)
+    ,               reduce using rule 64 (compound -> compound infix expression .)
+    |               reduce using rule 64 (compound -> compound infix expression .)
+    RANGER          reduce using rule 64 (compound -> compound infix expression .)
+    ]               reduce using rule 64 (compound -> compound infix expression .)
+    }               reduce using rule 64 (compound -> compound infix expression .)
+    :               reduce using rule 64 (compound -> compound infix expression .)
+    ELSE            reduce using rule 64 (compound -> compound infix expression .)
+
+
+state 131
+
+    (88) primaryvar -> ( . conditional )
+    (89) rtuple -> ( . )
+    (90) rtuple -> ( . rtuple_cont )
+    (61) conditional -> . compound
+    (62) conditional -> . IF conditional THEN conditional ELSE conditional
+    (91) rtuple_cont -> . conditional , conditional
+    (92) rtuple_cont -> . rtuple_cont , conditional
+    (63) compound -> . expression
+    (64) compound -> . compound infix expression
+    (65) compound -> . ( compound infix )
+    (66) compound -> . ( infix expression )
+    (69) expression -> . multivar
+    (70) expression -> . lambda
+    (71) expression -> . cond_block
+    (78) multivar -> . primaryvar
+    (79) multivar -> . rlist
+    (80) multivar -> . rtuple
+    (81) multivar -> . multivar ( condition_list )
+    (76) lambda -> . FDEF ( ) { conditional }
+    (77) lambda -> . FDEF ( pattern_list ) { conditional }
+    (72) cond_block -> . COND { cond , ELSE : conditional }
+    (82) primaryvar -> . ID
+    (83) primaryvar -> . [ SPECIALID ]
+    (84) primaryvar -> . INTT
+    (85) primaryvar -> . FLOATT
+    (86) primaryvar -> . CHART
+    (87) primaryvar -> . BOOLT
+    (88) primaryvar -> . ( conditional )
+    (93) rlist -> . [ ]
+    (94) rlist -> . [ condition_list ]
+    (95) rlist -> . [ conditional | conditional ]
+    (96) rlist -> . [ conditional RANGER conditional ]
+    (89) rtuple -> . ( )
+    (90) rtuple -> . ( rtuple_cont )
+
+    )               shift and go to state 103
+    IF              shift and go to state 63
+    (               shift and go to state 65
+    FDEF            shift and go to state 72
+    COND            shift and go to state 73
+    ID              shift and go to state 60
+    [               shift and go to state 74
+    INTT            shift and go to state 75
+    FLOATT          shift and go to state 76
+    CHART           shift and go to state 77
+    BOOLT           shift and go to state 78
+
+    conditional                    shift and go to state 104
+    rtuple_cont                    shift and go to state 105
+    compound                       shift and go to state 62
+    expression                     shift and go to state 64
+    multivar                       shift and go to state 66
+    lambda                         shift and go to state 67
+    cond_block                     shift and go to state 68
+    primaryvar                     shift and go to state 69
+    rlist                          shift and go to state 70
+    rtuple                         shift and go to state 71
+
+state 132
+
+    (67) infix -> ` ID . `
+
+    `               shift and go to state 163
+
+
+state 133
+
+    (62) conditional -> IF conditional THEN . conditional ELSE conditional
+    (61) conditional -> . compound
+    (62) conditional -> . IF conditional THEN conditional ELSE conditional
+    (63) compound -> . expression
+    (64) compound -> . compound infix expression
+    (65) compound -> . ( compound infix )
+    (66) compound -> . ( infix expression )
+    (69) expression -> . multivar
+    (70) expression -> . lambda
+    (71) expression -> . cond_block
+    (78) multivar -> . primaryvar
+    (79) multivar -> . rlist
+    (80) multivar -> . rtuple
+    (81) multivar -> . multivar ( condition_list )
+    (76) lambda -> . FDEF ( ) { conditional }
+    (77) lambda -> . FDEF ( pattern_list ) { conditional }
+    (72) cond_block -> . COND { cond , ELSE : conditional }
+    (82) primaryvar -> . ID
+    (83) primaryvar -> . [ SPECIALID ]
+    (84) primaryvar -> . INTT
+    (85) primaryvar -> . FLOATT
+    (86) primaryvar -> . CHART
+    (87) primaryvar -> . BOOLT
+    (88) primaryvar -> . ( conditional )
+    (93) rlist -> . [ ]
+    (94) rlist -> . [ condition_list ]
+    (95) rlist -> . [ conditional | conditional ]
+    (96) rlist -> . [ conditional RANGER conditional ]
+    (89) rtuple -> . ( )
+    (90) rtuple -> . ( rtuple_cont )
+
+    IF              shift and go to state 63
+    (               shift and go to state 65
+    FDEF            shift and go to state 72
+    COND            shift and go to state 73
+    ID              shift and go to state 60
+    [               shift and go to state 74
+    INTT            shift and go to state 75
+    FLOATT          shift and go to state 76
+    CHART           shift and go to state 77
+    BOOLT           shift and go to state 78
+
+    conditional                    shift and go to state 164
+    compound                       shift and go to state 62
+    expression                     shift and go to state 64
+    multivar                       shift and go to state 66
+    lambda                         shift and go to state 67
+    cond_block                     shift and go to state 68
+    primaryvar                     shift and go to state 69
+    rlist                          shift and go to state 70
+    rtuple                         shift and go to state 71
+
+state 134
+
+    (65) compound -> ( compound infix . )
+    (64) compound -> compound infix . expression
+    (69) expression -> . multivar
+    (70) expression -> . lambda
+    (71) expression -> . cond_block
+    (78) multivar -> . primaryvar
+    (79) multivar -> . rlist
+    (80) multivar -> . rtuple
+    (81) multivar -> . multivar ( condition_list )
+    (76) lambda -> . FDEF ( ) { conditional }
+    (77) lambda -> . FDEF ( pattern_list ) { conditional }
+    (72) cond_block -> . COND { cond , ELSE : conditional }
+    (82) primaryvar -> . ID
+    (83) primaryvar -> . [ SPECIALID ]
+    (84) primaryvar -> . INTT
+    (85) primaryvar -> . FLOATT
+    (86) primaryvar -> . CHART
+    (87) primaryvar -> . BOOLT
+    (88) primaryvar -> . ( conditional )
+    (93) rlist -> . [ ]
+    (94) rlist -> . [ condition_list ]
+    (95) rlist -> . [ conditional | conditional ]
+    (96) rlist -> . [ conditional RANGER conditional ]
+    (89) rtuple -> . ( )
+    (90) rtuple -> . ( rtuple_cont )
+
+    )               shift and go to state 165
+    FDEF            shift and go to state 72
+    COND            shift and go to state 73
+    ID              shift and go to state 60
+    [               shift and go to state 74
+    INTT            shift and go to state 75
+    FLOATT          shift and go to state 76
+    CHART           shift and go to state 77
+    BOOLT           shift and go to state 78
+    (               shift and go to state 131
+
+    expression                     shift and go to state 130
+    multivar                       shift and go to state 66
+    lambda                         shift and go to state 67
+    cond_block                     shift and go to state 68
+    primaryvar                     shift and go to state 69
+    rlist                          shift and go to state 70
+    rtuple                         shift and go to state 71
+
+state 135
+
+    (66) compound -> ( infix expression . )
+
+    )               shift and go to state 166
+
+
+state 136
+
+    (88) primaryvar -> ( conditional ) .
+
+    (               reduce using rule 88 (primaryvar -> ( conditional ) .)
+    `               reduce using rule 88 (primaryvar -> ( conditional ) .)
+    SPECIALID       reduce using rule 88 (primaryvar -> ( conditional ) .)
+    END             reduce using rule 88 (primaryvar -> ( conditional ) .)
+    ALIAS           reduce using rule 88 (primaryvar -> ( conditional ) .)
+    LET             reduce using rule 88 (primaryvar -> ( conditional ) .)
+    FDEF            reduce using rule 88 (primaryvar -> ( conditional ) .)
+    THEN            reduce using rule 88 (primaryvar -> ( conditional ) .)
+    )               reduce using rule 88 (primaryvar -> ( conditional ) .)
+    ,               reduce using rule 88 (primaryvar -> ( conditional ) .)
+    |               reduce using rule 88 (primaryvar -> ( conditional ) .)
+    RANGER          reduce using rule 88 (primaryvar -> ( conditional ) .)
+    ]               reduce using rule 88 (primaryvar -> ( conditional ) .)
+    }               reduce using rule 88 (primaryvar -> ( conditional ) .)
+    :               reduce using rule 88 (primaryvar -> ( conditional ) .)
+    ELSE            reduce using rule 88 (primaryvar -> ( conditional ) .)
+
+
+state 137
+
+    (91) rtuple_cont -> conditional , . conditional
+    (61) conditional -> . compound
+    (62) conditional -> . IF conditional THEN conditional ELSE conditional
+    (63) compound -> . expression
+    (64) compound -> . compound infix expression
+    (65) compound -> . ( compound infix )
+    (66) compound -> . ( infix expression )
+    (69) expression -> . multivar
+    (70) expression -> . lambda
+    (71) expression -> . cond_block
+    (78) multivar -> . primaryvar
+    (79) multivar -> . rlist
+    (80) multivar -> . rtuple
+    (81) multivar -> . multivar ( condition_list )
+    (76) lambda -> . FDEF ( ) { conditional }
+    (77) lambda -> . FDEF ( pattern_list ) { conditional }
+    (72) cond_block -> . COND { cond , ELSE : conditional }
+    (82) primaryvar -> . ID
+    (83) primaryvar -> . [ SPECIALID ]
+    (84) primaryvar -> . INTT
+    (85) primaryvar -> . FLOATT
+    (86) primaryvar -> . CHART
+    (87) primaryvar -> . BOOLT
+    (88) primaryvar -> . ( conditional )
+    (93) rlist -> . [ ]
+    (94) rlist -> . [ condition_list ]
+    (95) rlist -> . [ conditional | conditional ]
+    (96) rlist -> . [ conditional RANGER conditional ]
+    (89) rtuple -> . ( )
+    (90) rtuple -> . ( rtuple_cont )
+
+    IF              shift and go to state 63
+    (               shift and go to state 65
+    FDEF            shift and go to state 72
+    COND            shift and go to state 73
+    ID              shift and go to state 60
+    [               shift and go to state 74
+    INTT            shift and go to state 75
+    FLOATT          shift and go to state 76
+    CHART           shift and go to state 77
+    BOOLT           shift and go to state 78
+
+    conditional                    shift and go to state 167
+    compound                       shift and go to state 62
+    expression                     shift and go to state 64
+    multivar                       shift and go to state 66
+    lambda                         shift and go to state 67
+    cond_block                     shift and go to state 68
+    primaryvar                     shift and go to state 69
+    rlist                          shift and go to state 70
+    rtuple                         shift and go to state 71
+
+state 138
+
+    (90) rtuple -> ( rtuple_cont ) .
+
+    (               reduce using rule 90 (rtuple -> ( rtuple_cont ) .)
+    `               reduce using rule 90 (rtuple -> ( rtuple_cont ) .)
+    SPECIALID       reduce using rule 90 (rtuple -> ( rtuple_cont ) .)
+    END             reduce using rule 90 (rtuple -> ( rtuple_cont ) .)
+    ALIAS           reduce using rule 90 (rtuple -> ( rtuple_cont ) .)
+    LET             reduce using rule 90 (rtuple -> ( rtuple_cont ) .)
+    FDEF            reduce using rule 90 (rtuple -> ( rtuple_cont ) .)
+    THEN            reduce using rule 90 (rtuple -> ( rtuple_cont ) .)
+    )               reduce using rule 90 (rtuple -> ( rtuple_cont ) .)
+    ,               reduce using rule 90 (rtuple -> ( rtuple_cont ) .)
+    |               reduce using rule 90 (rtuple -> ( rtuple_cont ) .)
+    RANGER          reduce using rule 90 (rtuple -> ( rtuple_cont ) .)
+    ]               reduce using rule 90 (rtuple -> ( rtuple_cont ) .)
+    }               reduce using rule 90 (rtuple -> ( rtuple_cont ) .)
+    :               reduce using rule 90 (rtuple -> ( rtuple_cont ) .)
+    ELSE            reduce using rule 90 (rtuple -> ( rtuple_cont ) .)
+
+
+state 139
+
+    (92) rtuple_cont -> rtuple_cont , . conditional
+    (61) conditional -> . compound
+    (62) conditional -> . IF conditional THEN conditional ELSE conditional
+    (63) compound -> . expression
+    (64) compound -> . compound infix expression
+    (65) compound -> . ( compound infix )
+    (66) compound -> . ( infix expression )
+    (69) expression -> . multivar
+    (70) expression -> . lambda
+    (71) expression -> . cond_block
+    (78) multivar -> . primaryvar
+    (79) multivar -> . rlist
+    (80) multivar -> . rtuple
+    (81) multivar -> . multivar ( condition_list )
+    (76) lambda -> . FDEF ( ) { conditional }
+    (77) lambda -> . FDEF ( pattern_list ) { conditional }
+    (72) cond_block -> . COND { cond , ELSE : conditional }
+    (82) primaryvar -> . ID
+    (83) primaryvar -> . [ SPECIALID ]
+    (84) primaryvar -> . INTT
+    (85) primaryvar -> . FLOATT
+    (86) primaryvar -> . CHART
+    (87) primaryvar -> . BOOLT
+    (88) primaryvar -> . ( conditional )
+    (93) rlist -> . [ ]
+    (94) rlist -> . [ condition_list ]
+    (95) rlist -> . [ conditional | conditional ]
+    (96) rlist -> . [ conditional RANGER conditional ]
+    (89) rtuple -> . ( )
+    (90) rtuple -> . ( rtuple_cont )
+
+    IF              shift and go to state 63
+    (               shift and go to state 65
+    FDEF            shift and go to state 72
+    COND            shift and go to state 73
+    ID              shift and go to state 60
+    [               shift and go to state 74
+    INTT            shift and go to state 75
+    FLOATT          shift and go to state 76
+    CHART           shift and go to state 77
+    BOOLT           shift and go to state 78
+
+    conditional                    shift and go to state 168
+    compound                       shift and go to state 62
+    expression                     shift and go to state 64
+    multivar                       shift and go to state 66
+    lambda                         shift and go to state 67
+    cond_block                     shift and go to state 68
+    primaryvar                     shift and go to state 69
+    rlist                          shift and go to state 70
+    rtuple                         shift and go to state 71
+
+state 140
+
+    (81) multivar -> multivar ( condition_list . )
+    (98) condition_list -> condition_list . , conditional
+
+    )               shift and go to state 169
+    ,               shift and go to state 150
+
+
+state 141
+
+    (97) condition_list -> conditional .
+
+    )               reduce using rule 97 (condition_list -> conditional .)
+    ,               reduce using rule 97 (condition_list -> conditional .)
+
+
+state 142
+
+    (76) lambda -> FDEF ( ) . { conditional }
+
+    {               shift and go to state 170
+
+
+state 143
+
+    (77) lambda -> FDEF ( pattern_list . ) { conditional }
+    (48) pattern_list -> pattern_list . , lpattern
+
+    )               shift and go to state 171
+    ,               shift and go to state 123
+
+
+state 144
+
+    (47) pattern_list -> lpattern .
+
+    )               reduce using rule 47 (pattern_list -> lpattern .)
+    ,               reduce using rule 47 (pattern_list -> lpattern .)
+
+
+state 145
+
+    (72) cond_block -> COND { cond . , ELSE : conditional }
+    (74) cond -> cond . , cond_singl
+
+    ,               shift and go to state 172
+
+
+state 146
+
+    (75) cond_singl -> conditional . : conditional
+
+    :               shift and go to state 173
+
+
+state 147
+
+    (73) cond -> cond_singl .
+
+    ,               reduce using rule 73 (cond -> cond_singl .)
+
+
+state 148
+
+    (83) primaryvar -> [ SPECIALID ] .
+
+    (               reduce using rule 83 (primaryvar -> [ SPECIALID ] .)
+    `               reduce using rule 83 (primaryvar -> [ SPECIALID ] .)
+    SPECIALID       reduce using rule 83 (primaryvar -> [ SPECIALID ] .)
+    END             reduce using rule 83 (primaryvar -> [ SPECIALID ] .)
+    ALIAS           reduce using rule 83 (primaryvar -> [ SPECIALID ] .)
+    LET             reduce using rule 83 (primaryvar -> [ SPECIALID ] .)
+    FDEF            reduce using rule 83 (primaryvar -> [ SPECIALID ] .)
+    THEN            reduce using rule 83 (primaryvar -> [ SPECIALID ] .)
+    )               reduce using rule 83 (primaryvar -> [ SPECIALID ] .)
+    ,               reduce using rule 83 (primaryvar -> [ SPECIALID ] .)
+    |               reduce using rule 83 (primaryvar -> [ SPECIALID ] .)
+    RANGER          reduce using rule 83 (primaryvar -> [ SPECIALID ] .)
+    ]               reduce using rule 83 (primaryvar -> [ SPECIALID ] .)
+    }               reduce using rule 83 (primaryvar -> [ SPECIALID ] .)
+    :               reduce using rule 83 (primaryvar -> [ SPECIALID ] .)
+    ELSE            reduce using rule 83 (primaryvar -> [ SPECIALID ] .)
+
+
+state 149
+
+    (94) rlist -> [ condition_list ] .
+
+    (               reduce using rule 94 (rlist -> [ condition_list ] .)
+    `               reduce using rule 94 (rlist -> [ condition_list ] .)
+    SPECIALID       reduce using rule 94 (rlist -> [ condition_list ] .)
+    END             reduce using rule 94 (rlist -> [ condition_list ] .)
+    ALIAS           reduce using rule 94 (rlist -> [ condition_list ] .)
+    LET             reduce using rule 94 (rlist -> [ condition_list ] .)
+    FDEF            reduce using rule 94 (rlist -> [ condition_list ] .)
+    THEN            reduce using rule 94 (rlist -> [ condition_list ] .)
+    )               reduce using rule 94 (rlist -> [ condition_list ] .)
+    ,               reduce using rule 94 (rlist -> [ condition_list ] .)
+    |               reduce using rule 94 (rlist -> [ condition_list ] .)
+    RANGER          reduce using rule 94 (rlist -> [ condition_list ] .)
+    ]               reduce using rule 94 (rlist -> [ condition_list ] .)
+    }               reduce using rule 94 (rlist -> [ condition_list ] .)
+    :               reduce using rule 94 (rlist -> [ condition_list ] .)
+    ELSE            reduce using rule 94 (rlist -> [ condition_list ] .)
+
+
+state 150
+
+    (98) condition_list -> condition_list , . conditional
+    (61) conditional -> . compound
+    (62) conditional -> . IF conditional THEN conditional ELSE conditional
+    (63) compound -> . expression
+    (64) compound -> . compound infix expression
+    (65) compound -> . ( compound infix )
+    (66) compound -> . ( infix expression )
+    (69) expression -> . multivar
+    (70) expression -> . lambda
+    (71) expression -> . cond_block
+    (78) multivar -> . primaryvar
+    (79) multivar -> . rlist
+    (80) multivar -> . rtuple
+    (81) multivar -> . multivar ( condition_list )
+    (76) lambda -> . FDEF ( ) { conditional }
+    (77) lambda -> . FDEF ( pattern_list ) { conditional }
+    (72) cond_block -> . COND { cond , ELSE : conditional }
+    (82) primaryvar -> . ID
+    (83) primaryvar -> . [ SPECIALID ]
+    (84) primaryvar -> . INTT
+    (85) primaryvar -> . FLOATT
+    (86) primaryvar -> . CHART
+    (87) primaryvar -> . BOOLT
+    (88) primaryvar -> . ( conditional )
+    (93) rlist -> . [ ]
+    (94) rlist -> . [ condition_list ]
+    (95) rlist -> . [ conditional | conditional ]
+    (96) rlist -> . [ conditional RANGER conditional ]
+    (89) rtuple -> . ( )
+    (90) rtuple -> . ( rtuple_cont )
+
+    IF              shift and go to state 63
+    (               shift and go to state 65
+    FDEF            shift and go to state 72
+    COND            shift and go to state 73
+    ID              shift and go to state 60
+    [               shift and go to state 74
+    INTT            shift and go to state 75
+    FLOATT          shift and go to state 76
+    CHART           shift and go to state 77
+    BOOLT           shift and go to state 78
+
+    conditional                    shift and go to state 174
+    compound                       shift and go to state 62
+    expression                     shift and go to state 64
+    multivar                       shift and go to state 66
+    lambda                         shift and go to state 67
+    cond_block                     shift and go to state 68
+    primaryvar                     shift and go to state 69
+    rlist                          shift and go to state 70
+    rtuple                         shift and go to state 71
+
+state 151
+
+    (95) rlist -> [ conditional | . conditional ]
+    (61) conditional -> . compound
+    (62) conditional -> . IF conditional THEN conditional ELSE conditional
+    (63) compound -> . expression
+    (64) compound -> . compound infix expression
+    (65) compound -> . ( compound infix )
+    (66) compound -> . ( infix expression )
+    (69) expression -> . multivar
+    (70) expression -> . lambda
+    (71) expression -> . cond_block
+    (78) multivar -> . primaryvar
+    (79) multivar -> . rlist
+    (80) multivar -> . rtuple
+    (81) multivar -> . multivar ( condition_list )
+    (76) lambda -> . FDEF ( ) { conditional }
+    (77) lambda -> . FDEF ( pattern_list ) { conditional }
+    (72) cond_block -> . COND { cond , ELSE : conditional }
+    (82) primaryvar -> . ID
+    (83) primaryvar -> . [ SPECIALID ]
+    (84) primaryvar -> . INTT
+    (85) primaryvar -> . FLOATT
+    (86) primaryvar -> . CHART
+    (87) primaryvar -> . BOOLT
+    (88) primaryvar -> . ( conditional )
+    (93) rlist -> . [ ]
+    (94) rlist -> . [ condition_list ]
+    (95) rlist -> . [ conditional | conditional ]
+    (96) rlist -> . [ conditional RANGER conditional ]
+    (89) rtuple -> . ( )
+    (90) rtuple -> . ( rtuple_cont )
+
+    IF              shift and go to state 63
+    (               shift and go to state 65
+    FDEF            shift and go to state 72
+    COND            shift and go to state 73
+    ID              shift and go to state 60
+    [               shift and go to state 74
+    INTT            shift and go to state 75
+    FLOATT          shift and go to state 76
+    CHART           shift and go to state 77
+    BOOLT           shift and go to state 78
+
+    conditional                    shift and go to state 175
+    compound                       shift and go to state 62
+    expression                     shift and go to state 64
+    multivar                       shift and go to state 66
+    lambda                         shift and go to state 67
+    cond_block                     shift and go to state 68
+    primaryvar                     shift and go to state 69
+    rlist                          shift and go to state 70
+    rtuple                         shift and go to state 71
+
+state 152
+
+    (96) rlist -> [ conditional RANGER . conditional ]
+    (61) conditional -> . compound
+    (62) conditional -> . IF conditional THEN conditional ELSE conditional
+    (63) compound -> . expression
+    (64) compound -> . compound infix expression
+    (65) compound -> . ( compound infix )
+    (66) compound -> . ( infix expression )
+    (69) expression -> . multivar
+    (70) expression -> . lambda
+    (71) expression -> . cond_block
+    (78) multivar -> . primaryvar
+    (79) multivar -> . rlist
+    (80) multivar -> . rtuple
+    (81) multivar -> . multivar ( condition_list )
+    (76) lambda -> . FDEF ( ) { conditional }
+    (77) lambda -> . FDEF ( pattern_list ) { conditional }
+    (72) cond_block -> . COND { cond , ELSE : conditional }
+    (82) primaryvar -> . ID
+    (83) primaryvar -> . [ SPECIALID ]
+    (84) primaryvar -> . INTT
+    (85) primaryvar -> . FLOATT
+    (86) primaryvar -> . CHART
+    (87) primaryvar -> . BOOLT
+    (88) primaryvar -> . ( conditional )
+    (93) rlist -> . [ ]
+    (94) rlist -> . [ condition_list ]
+    (95) rlist -> . [ conditional | conditional ]
+    (96) rlist -> . [ conditional RANGER conditional ]
+    (89) rtuple -> . ( )
+    (90) rtuple -> . ( rtuple_cont )
+
+    IF              shift and go to state 63
+    (               shift and go to state 65
+    FDEF            shift and go to state 72
+    COND            shift and go to state 73
+    ID              shift and go to state 60
+    [               shift and go to state 74
+    INTT            shift and go to state 75
+    FLOATT          shift and go to state 76
+    CHART           shift and go to state 77
+    BOOLT           shift and go to state 78
+
+    conditional                    shift and go to state 176
+    compound                       shift and go to state 62
+    expression                     shift and go to state 64
+    multivar                       shift and go to state 66
+    lambda                         shift and go to state 67
+    cond_block                     shift and go to state 68
+    primaryvar                     shift and go to state 69
+    rlist                          shift and go to state 70
+    rtuple                         shift and go to state 71
+
+state 153
+
+    (9) function -> FDEF prefix args returntype { compound } .
+
+    END             reduce using rule 9 (function -> FDEF prefix args returntype { compound } .)
+    ALIAS           reduce using rule 9 (function -> FDEF prefix args returntype { compound } .)
+    LET             reduce using rule 9 (function -> FDEF prefix args returntype { compound } .)
+    FDEF            reduce using rule 9 (function -> FDEF prefix args returntype { compound } .)
+
+
+state 154
+
+    (10) function -> FDEF prefix args returntype { let_block compound . }
+    (64) compound -> compound . infix expression
+    (67) infix -> . ` ID `
+    (68) infix -> . SPECIALID
+
+    }               shift and go to state 177
+    `               shift and go to state 98
+    SPECIALID       shift and go to state 99
+
+    infix                          shift and go to state 97
+
+state 155
+
+    (19) let_block -> LET { . let_cont }
+    (20) let_cont -> . assign
+    (21) let_cont -> . let_cont , assign
+    (22) assign -> . lpattern annotation = conditional
+    (23) lpattern -> . lvar
+    (24) lpattern -> . llist
+    (25) lpattern -> . ltuple
+    (53) lvar -> . ID
+    (54) lvar -> . [ SPECIALID ]
+    (55) lvar -> . STRINGT
+    (56) lvar -> . INTT
+    (57) lvar -> . FLOATT
+    (58) lvar -> . CHART
+    (59) lvar -> . BOOLT
+    (60) lvar -> . ( lpattern )
+    (44) llist -> . [ ]
+    (45) llist -> . [ pattern_list ]
+    (46) llist -> . [ lpattern | lpattern ]
+    (49) ltuple -> . ( )
+    (50) ltuple -> . ( ltuple_cont )
+
+    ID              shift and go to state 46
+    [               shift and go to state 47
+    STRINGT         shift and go to state 48
+    INTT            shift and go to state 49
+    FLOATT          shift and go to state 50
+    CHART           shift and go to state 51
+    BOOLT           shift and go to state 52
+    (               shift and go to state 39
+
+    let_cont                       shift and go to state 178
+    assign                         shift and go to state 179
+    lpattern                       shift and go to state 180
+    lvar                           shift and go to state 43
+    llist                          shift and go to state 44
+    ltuple                         shift and go to state 45
+
+state 156
+
+    (51) ltuple_cont -> lpattern , lpattern .
+
+    )               reduce using rule 51 (ltuple_cont -> lpattern , lpattern .)
+    ,               reduce using rule 51 (ltuple_cont -> lpattern , lpattern .)
+
+
+state 157
+
+    (52) ltuple_cont -> ltuple_cont , lpattern .
+
+    )               reduce using rule 52 (ltuple_cont -> ltuple_cont , lpattern .)
+    ,               reduce using rule 52 (ltuple_cont -> ltuple_cont , lpattern .)
+
+
+state 158
+
+    (14) arg_list -> arg_list , lpattern annotation .
+
+    )               reduce using rule 14 (arg_list -> arg_list , lpattern annotation .)
+    ,               reduce using rule 14 (arg_list -> arg_list , lpattern annotation .)
+
+
+state 159
+
+    (48) pattern_list -> pattern_list , lpattern .
+
+    ]               reduce using rule 48 (pattern_list -> pattern_list , lpattern .)
+    ,               reduce using rule 48 (pattern_list -> pattern_list , lpattern .)
+    )               reduce using rule 48 (pattern_list -> pattern_list , lpattern .)
+
+
+state 160
+
+    (46) llist -> [ lpattern | lpattern . ]
+
+    ]               shift and go to state 181
+
+
+state 161
+
+    (35) function_type -> ( tuple_type ) RARROW typedesc .
+
+    END             reduce using rule 35 (function_type -> ( tuple_type ) RARROW typedesc .)
+    ALIAS           reduce using rule 35 (function_type -> ( tuple_type ) RARROW typedesc .)
+    LET             reduce using rule 35 (function_type -> ( tuple_type ) RARROW typedesc .)
+    FDEF            reduce using rule 35 (function_type -> ( tuple_type ) RARROW typedesc .)
+    =               reduce using rule 35 (function_type -> ( tuple_type ) RARROW typedesc .)
+    )               reduce using rule 35 (function_type -> ( tuple_type ) RARROW typedesc .)
+    ,               reduce using rule 35 (function_type -> ( tuple_type ) RARROW typedesc .)
+    ]               reduce using rule 35 (function_type -> ( tuple_type ) RARROW typedesc .)
+    {               reduce using rule 35 (function_type -> ( tuple_type ) RARROW typedesc .)
+
+
+state 162
+
+    (34) function_type -> ( typedesc ) RARROW typedesc .
+
+    END             reduce using rule 34 (function_type -> ( typedesc ) RARROW typedesc .)
+    ALIAS           reduce using rule 34 (function_type -> ( typedesc ) RARROW typedesc .)
+    LET             reduce using rule 34 (function_type -> ( typedesc ) RARROW typedesc .)
+    FDEF            reduce using rule 34 (function_type -> ( typedesc ) RARROW typedesc .)
+    =               reduce using rule 34 (function_type -> ( typedesc ) RARROW typedesc .)
+    )               reduce using rule 34 (function_type -> ( typedesc ) RARROW typedesc .)
+    ,               reduce using rule 34 (function_type -> ( typedesc ) RARROW typedesc .)
+    ]               reduce using rule 34 (function_type -> ( typedesc ) RARROW typedesc .)
+    {               reduce using rule 34 (function_type -> ( typedesc ) RARROW typedesc .)
+
+
+state 163
+
+    (67) infix -> ` ID ` .
+
+    FDEF            reduce using rule 67 (infix -> ` ID ` .)
+    COND            reduce using rule 67 (infix -> ` ID ` .)
+    ID              reduce using rule 67 (infix -> ` ID ` .)
+    [               reduce using rule 67 (infix -> ` ID ` .)
+    INTT            reduce using rule 67 (infix -> ` ID ` .)
+    FLOATT          reduce using rule 67 (infix -> ` ID ` .)
+    CHART           reduce using rule 67 (infix -> ` ID ` .)
+    BOOLT           reduce using rule 67 (infix -> ` ID ` .)
+    (               reduce using rule 67 (infix -> ` ID ` .)
+    )               reduce using rule 67 (infix -> ` ID ` .)
+
+
+state 164
+
+    (62) conditional -> IF conditional THEN conditional . ELSE conditional
+
+    ELSE            shift and go to state 182
+
+
+state 165
+
+    (65) compound -> ( compound infix ) .
+
+    `               reduce using rule 65 (compound -> ( compound infix ) .)
+    SPECIALID       reduce using rule 65 (compound -> ( compound infix ) .)
+    END             reduce using rule 65 (compound -> ( compound infix ) .)
+    ALIAS           reduce using rule 65 (compound -> ( compound infix ) .)
+    LET             reduce using rule 65 (compound -> ( compound infix ) .)
+    FDEF            reduce using rule 65 (compound -> ( compound infix ) .)
+    THEN            reduce using rule 65 (compound -> ( compound infix ) .)
+    )               reduce using rule 65 (compound -> ( compound infix ) .)
+    ,               reduce using rule 65 (compound -> ( compound infix ) .)
+    |               reduce using rule 65 (compound -> ( compound infix ) .)
+    RANGER          reduce using rule 65 (compound -> ( compound infix ) .)
+    ]               reduce using rule 65 (compound -> ( compound infix ) .)
+    }               reduce using rule 65 (compound -> ( compound infix ) .)
+    :               reduce using rule 65 (compound -> ( compound infix ) .)
+    ELSE            reduce using rule 65 (compound -> ( compound infix ) .)
+
+
+state 166
+
+    (66) compound -> ( infix expression ) .
+
+    `               reduce using rule 66 (compound -> ( infix expression ) .)
+    SPECIALID       reduce using rule 66 (compound -> ( infix expression ) .)
+    END             reduce using rule 66 (compound -> ( infix expression ) .)
+    ALIAS           reduce using rule 66 (compound -> ( infix expression ) .)
+    LET             reduce using rule 66 (compound -> ( infix expression ) .)
+    FDEF            reduce using rule 66 (compound -> ( infix expression ) .)
+    THEN            reduce using rule 66 (compound -> ( infix expression ) .)
+    )               reduce using rule 66 (compound -> ( infix expression ) .)
+    ,               reduce using rule 66 (compound -> ( infix expression ) .)
+    |               reduce using rule 66 (compound -> ( infix expression ) .)
+    RANGER          reduce using rule 66 (compound -> ( infix expression ) .)
+    ]               reduce using rule 66 (compound -> ( infix expression ) .)
+    }               reduce using rule 66 (compound -> ( infix expression ) .)
+    :               reduce using rule 66 (compound -> ( infix expression ) .)
+    ELSE            reduce using rule 66 (compound -> ( infix expression ) .)
+
+
+state 167
+
+    (91) rtuple_cont -> conditional , conditional .
+
+    )               reduce using rule 91 (rtuple_cont -> conditional , conditional .)
+    ,               reduce using rule 91 (rtuple_cont -> conditional , conditional .)
+
+
+state 168
+
+    (92) rtuple_cont -> rtuple_cont , conditional .
+
+    )               reduce using rule 92 (rtuple_cont -> rtuple_cont , conditional .)
+    ,               reduce using rule 92 (rtuple_cont -> rtuple_cont , conditional .)
+
+
+state 169
+
+    (81) multivar -> multivar ( condition_list ) .
+
+    (               reduce using rule 81 (multivar -> multivar ( condition_list ) .)
+    `               reduce using rule 81 (multivar -> multivar ( condition_list ) .)
+    SPECIALID       reduce using rule 81 (multivar -> multivar ( condition_list ) .)
+    END             reduce using rule 81 (multivar -> multivar ( condition_list ) .)
+    ALIAS           reduce using rule 81 (multivar -> multivar ( condition_list ) .)
+    LET             reduce using rule 81 (multivar -> multivar ( condition_list ) .)
+    FDEF            reduce using rule 81 (multivar -> multivar ( condition_list ) .)
+    THEN            reduce using rule 81 (multivar -> multivar ( condition_list ) .)
+    )               reduce using rule 81 (multivar -> multivar ( condition_list ) .)
+    ,               reduce using rule 81 (multivar -> multivar ( condition_list ) .)
+    |               reduce using rule 81 (multivar -> multivar ( condition_list ) .)
+    RANGER          reduce using rule 81 (multivar -> multivar ( condition_list ) .)
+    ]               reduce using rule 81 (multivar -> multivar ( condition_list ) .)
+    }               reduce using rule 81 (multivar -> multivar ( condition_list ) .)
+    :               reduce using rule 81 (multivar -> multivar ( condition_list ) .)
+    ELSE            reduce using rule 81 (multivar -> multivar ( condition_list ) .)
+
+
+state 170
+
+    (76) lambda -> FDEF ( ) { . conditional }
+    (61) conditional -> . compound
+    (62) conditional -> . IF conditional THEN conditional ELSE conditional
+    (63) compound -> . expression
+    (64) compound -> . compound infix expression
+    (65) compound -> . ( compound infix )
+    (66) compound -> . ( infix expression )
+    (69) expression -> . multivar
+    (70) expression -> . lambda
+    (71) expression -> . cond_block
+    (78) multivar -> . primaryvar
+    (79) multivar -> . rlist
+    (80) multivar -> . rtuple
+    (81) multivar -> . multivar ( condition_list )
+    (76) lambda -> . FDEF ( ) { conditional }
+    (77) lambda -> . FDEF ( pattern_list ) { conditional }
+    (72) cond_block -> . COND { cond , ELSE : conditional }
+    (82) primaryvar -> . ID
+    (83) primaryvar -> . [ SPECIALID ]
+    (84) primaryvar -> . INTT
+    (85) primaryvar -> . FLOATT
+    (86) primaryvar -> . CHART
+    (87) primaryvar -> . BOOLT
+    (88) primaryvar -> . ( conditional )
+    (93) rlist -> . [ ]
+    (94) rlist -> . [ condition_list ]
+    (95) rlist -> . [ conditional | conditional ]
+    (96) rlist -> . [ conditional RANGER conditional ]
+    (89) rtuple -> . ( )
+    (90) rtuple -> . ( rtuple_cont )
+
+    IF              shift and go to state 63
+    (               shift and go to state 65
+    FDEF            shift and go to state 72
+    COND            shift and go to state 73
+    ID              shift and go to state 60
+    [               shift and go to state 74
+    INTT            shift and go to state 75
+    FLOATT          shift and go to state 76
+    CHART           shift and go to state 77
+    BOOLT           shift and go to state 78
+
+    conditional                    shift and go to state 183
+    compound                       shift and go to state 62
+    expression                     shift and go to state 64
+    multivar                       shift and go to state 66
+    lambda                         shift and go to state 67
+    cond_block                     shift and go to state 68
+    primaryvar                     shift and go to state 69
+    rlist                          shift and go to state 70
+    rtuple                         shift and go to state 71
+
+state 171
+
+    (77) lambda -> FDEF ( pattern_list ) . { conditional }
+
+    {               shift and go to state 184
+
+
+state 172
+
+    (72) cond_block -> COND { cond , . ELSE : conditional }
+    (74) cond -> cond , . cond_singl
+    (75) cond_singl -> . conditional : conditional
+    (61) conditional -> . compound
+    (62) conditional -> . IF conditional THEN conditional ELSE conditional
+    (63) compound -> . expression
+    (64) compound -> . compound infix expression
+    (65) compound -> . ( compound infix )
+    (66) compound -> . ( infix expression )
+    (69) expression -> . multivar
+    (70) expression -> . lambda
+    (71) expression -> . cond_block
+    (78) multivar -> . primaryvar
+    (79) multivar -> . rlist
+    (80) multivar -> . rtuple
+    (81) multivar -> . multivar ( condition_list )
+    (76) lambda -> . FDEF ( ) { conditional }
+    (77) lambda -> . FDEF ( pattern_list ) { conditional }
+    (72) cond_block -> . COND { cond , ELSE : conditional }
+    (82) primaryvar -> . ID
+    (83) primaryvar -> . [ SPECIALID ]
+    (84) primaryvar -> . INTT
+    (85) primaryvar -> . FLOATT
+    (86) primaryvar -> . CHART
+    (87) primaryvar -> . BOOLT
+    (88) primaryvar -> . ( conditional )
+    (93) rlist -> . [ ]
+    (94) rlist -> . [ condition_list ]
+    (95) rlist -> . [ conditional | conditional ]
+    (96) rlist -> . [ conditional RANGER conditional ]
+    (89) rtuple -> . ( )
+    (90) rtuple -> . ( rtuple_cont )
+
+    ELSE            shift and go to state 185
+    IF              shift and go to state 63
+    (               shift and go to state 65
+    FDEF            shift and go to state 72
+    COND            shift and go to state 73
+    ID              shift and go to state 60
+    [               shift and go to state 74
+    INTT            shift and go to state 75
+    FLOATT          shift and go to state 76
+    CHART           shift and go to state 77
+    BOOLT           shift and go to state 78
+
+    conditional                    shift and go to state 146
+    cond_singl                     shift and go to state 186
+    compound                       shift and go to state 62
+    expression                     shift and go to state 64
+    multivar                       shift and go to state 66
+    lambda                         shift and go to state 67
+    cond_block                     shift and go to state 68
+    primaryvar                     shift and go to state 69
+    rlist                          shift and go to state 70
+    rtuple                         shift and go to state 71
+
+state 173
+
+    (75) cond_singl -> conditional : . conditional
+    (61) conditional -> . compound
+    (62) conditional -> . IF conditional THEN conditional ELSE conditional
+    (63) compound -> . expression
+    (64) compound -> . compound infix expression
+    (65) compound -> . ( compound infix )
+    (66) compound -> . ( infix expression )
+    (69) expression -> . multivar
+    (70) expression -> . lambda
+    (71) expression -> . cond_block
+    (78) multivar -> . primaryvar
+    (79) multivar -> . rlist
+    (80) multivar -> . rtuple
+    (81) multivar -> . multivar ( condition_list )
+    (76) lambda -> . FDEF ( ) { conditional }
+    (77) lambda -> . FDEF ( pattern_list ) { conditional }
+    (72) cond_block -> . COND { cond , ELSE : conditional }
+    (82) primaryvar -> . ID
+    (83) primaryvar -> . [ SPECIALID ]
+    (84) primaryvar -> . INTT
+    (85) primaryvar -> . FLOATT
+    (86) primaryvar -> . CHART
+    (87) primaryvar -> . BOOLT
+    (88) primaryvar -> . ( conditional )
+    (93) rlist -> . [ ]
+    (94) rlist -> . [ condition_list ]
+    (95) rlist -> . [ conditional | conditional ]
+    (96) rlist -> . [ conditional RANGER conditional ]
+    (89) rtuple -> . ( )
+    (90) rtuple -> . ( rtuple_cont )
+
+    IF              shift and go to state 63
+    (               shift and go to state 65
+    FDEF            shift and go to state 72
+    COND            shift and go to state 73
+    ID              shift and go to state 60
+    [               shift and go to state 74
+    INTT            shift and go to state 75
+    FLOATT          shift and go to state 76
+    CHART           shift and go to state 77
+    BOOLT           shift and go to state 78
+
+    conditional                    shift and go to state 187
+    compound                       shift and go to state 62
+    expression                     shift and go to state 64
+    multivar                       shift and go to state 66
+    lambda                         shift and go to state 67
+    cond_block                     shift and go to state 68
+    primaryvar                     shift and go to state 69
+    rlist                          shift and go to state 70
+    rtuple                         shift and go to state 71
+
+state 174
+
+    (98) condition_list -> condition_list , conditional .
+
+    ]               reduce using rule 98 (condition_list -> condition_list , conditional .)
+    ,               reduce using rule 98 (condition_list -> condition_list , conditional .)
+    )               reduce using rule 98 (condition_list -> condition_list , conditional .)
+
+
+state 175
+
+    (95) rlist -> [ conditional | conditional . ]
+
+    ]               shift and go to state 188
+
+
+state 176
+
+    (96) rlist -> [ conditional RANGER conditional . ]
+
+    ]               shift and go to state 189
+
+
+state 177
+
+    (10) function -> FDEF prefix args returntype { let_block compound } .
+
+    END             reduce using rule 10 (function -> FDEF prefix args returntype { let_block compound } .)
+    ALIAS           reduce using rule 10 (function -> FDEF prefix args returntype { let_block compound } .)
+    LET             reduce using rule 10 (function -> FDEF prefix args returntype { let_block compound } .)
+    FDEF            reduce using rule 10 (function -> FDEF prefix args returntype { let_block compound } .)
+
+
+state 178
+
+    (19) let_block -> LET { let_cont . }
+    (21) let_cont -> let_cont . , assign
+
+    }               shift and go to state 190
+    ,               shift and go to state 191
+
+
+state 179
+
+    (20) let_cont -> assign .
+
+    }               reduce using rule 20 (let_cont -> assign .)
+    ,               reduce using rule 20 (let_cont -> assign .)
+
+
+state 180
+
+    (22) assign -> lpattern . annotation = conditional
+    (26) annotation -> .
+    (27) annotation -> . : typedesc
+
+    =               reduce using rule 26 (annotation -> .)
+    :               shift and go to state 19
+
+    annotation                     shift and go to state 192
+
+state 181
+
+    (46) llist -> [ lpattern | lpattern ] .
+
+    :               reduce using rule 46 (llist -> [ lpattern | lpattern ] .)
+    )               reduce using rule 46 (llist -> [ lpattern | lpattern ] .)
+    ,               reduce using rule 46 (llist -> [ lpattern | lpattern ] .)
+    |               reduce using rule 46 (llist -> [ lpattern | lpattern ] .)
+    ]               reduce using rule 46 (llist -> [ lpattern | lpattern ] .)
+    =               reduce using rule 46 (llist -> [ lpattern | lpattern ] .)
+
+
+state 182
+
+    (62) conditional -> IF conditional THEN conditional ELSE . conditional
+    (61) conditional -> . compound
+    (62) conditional -> . IF conditional THEN conditional ELSE conditional
+    (63) compound -> . expression
+    (64) compound -> . compound infix expression
+    (65) compound -> . ( compound infix )
+    (66) compound -> . ( infix expression )
+    (69) expression -> . multivar
+    (70) expression -> . lambda
+    (71) expression -> . cond_block
+    (78) multivar -> . primaryvar
+    (79) multivar -> . rlist
+    (80) multivar -> . rtuple
+    (81) multivar -> . multivar ( condition_list )
+    (76) lambda -> . FDEF ( ) { conditional }
+    (77) lambda -> . FDEF ( pattern_list ) { conditional }
+    (72) cond_block -> . COND { cond , ELSE : conditional }
+    (82) primaryvar -> . ID
+    (83) primaryvar -> . [ SPECIALID ]
+    (84) primaryvar -> . INTT
+    (85) primaryvar -> . FLOATT
+    (86) primaryvar -> . CHART
+    (87) primaryvar -> . BOOLT
+    (88) primaryvar -> . ( conditional )
+    (93) rlist -> . [ ]
+    (94) rlist -> . [ condition_list ]
+    (95) rlist -> . [ conditional | conditional ]
+    (96) rlist -> . [ conditional RANGER conditional ]
+    (89) rtuple -> . ( )
+    (90) rtuple -> . ( rtuple_cont )
+
+    IF              shift and go to state 63
+    (               shift and go to state 65
+    FDEF            shift and go to state 72
+    COND            shift and go to state 73
+    ID              shift and go to state 60
+    [               shift and go to state 74
+    INTT            shift and go to state 75
+    FLOATT          shift and go to state 76
+    CHART           shift and go to state 77
+    BOOLT           shift and go to state 78
+
+    conditional                    shift and go to state 193
+    compound                       shift and go to state 62
+    expression                     shift and go to state 64
+    multivar                       shift and go to state 66
+    lambda                         shift and go to state 67
+    cond_block                     shift and go to state 68
+    primaryvar                     shift and go to state 69
+    rlist                          shift and go to state 70
+    rtuple                         shift and go to state 71
+
+state 183
+
+    (76) lambda -> FDEF ( ) { conditional . }
+
+    }               shift and go to state 194
+
+
+state 184
+
+    (77) lambda -> FDEF ( pattern_list ) { . conditional }
+    (61) conditional -> . compound
+    (62) conditional -> . IF conditional THEN conditional ELSE conditional
+    (63) compound -> . expression
+    (64) compound -> . compound infix expression
+    (65) compound -> . ( compound infix )
+    (66) compound -> . ( infix expression )
+    (69) expression -> . multivar
+    (70) expression -> . lambda
+    (71) expression -> . cond_block
+    (78) multivar -> . primaryvar
+    (79) multivar -> . rlist
+    (80) multivar -> . rtuple
+    (81) multivar -> . multivar ( condition_list )
+    (76) lambda -> . FDEF ( ) { conditional }
+    (77) lambda -> . FDEF ( pattern_list ) { conditional }
+    (72) cond_block -> . COND { cond , ELSE : conditional }
+    (82) primaryvar -> . ID
+    (83) primaryvar -> . [ SPECIALID ]
+    (84) primaryvar -> . INTT
+    (85) primaryvar -> . FLOATT
+    (86) primaryvar -> . CHART
+    (87) primaryvar -> . BOOLT
+    (88) primaryvar -> . ( conditional )
+    (93) rlist -> . [ ]
+    (94) rlist -> . [ condition_list ]
+    (95) rlist -> . [ conditional | conditional ]
+    (96) rlist -> . [ conditional RANGER conditional ]
+    (89) rtuple -> . ( )
+    (90) rtuple -> . ( rtuple_cont )
+
+    IF              shift and go to state 63
+    (               shift and go to state 65
+    FDEF            shift and go to state 72
+    COND            shift and go to state 73
+    ID              shift and go to state 60
+    [               shift and go to state 74
+    INTT            shift and go to state 75
+    FLOATT          shift and go to state 76
+    CHART           shift and go to state 77
+    BOOLT           shift and go to state 78
+
+    conditional                    shift and go to state 195
+    compound                       shift and go to state 62
+    expression                     shift and go to state 64
+    multivar                       shift and go to state 66
+    lambda                         shift and go to state 67
+    cond_block                     shift and go to state 68
+    primaryvar                     shift and go to state 69
+    rlist                          shift and go to state 70
+    rtuple                         shift and go to state 71
+
+state 185
+
+    (72) cond_block -> COND { cond , ELSE . : conditional }
+
+    :               shift and go to state 196
+
+
+state 186
+
+    (74) cond -> cond , cond_singl .
+
+    ,               reduce using rule 74 (cond -> cond , cond_singl .)
+
+
+state 187
+
+    (75) cond_singl -> conditional : conditional .
+
+    ,               reduce using rule 75 (cond_singl -> conditional : conditional .)
+
+
+state 188
+
+    (95) rlist -> [ conditional | conditional ] .
+
+    (               reduce using rule 95 (rlist -> [ conditional | conditional ] .)
+    `               reduce using rule 95 (rlist -> [ conditional | conditional ] .)
+    SPECIALID       reduce using rule 95 (rlist -> [ conditional | conditional ] .)
+    END             reduce using rule 95 (rlist -> [ conditional | conditional ] .)
+    ALIAS           reduce using rule 95 (rlist -> [ conditional | conditional ] .)
+    LET             reduce using rule 95 (rlist -> [ conditional | conditional ] .)
+    FDEF            reduce using rule 95 (rlist -> [ conditional | conditional ] .)
+    THEN            reduce using rule 95 (rlist -> [ conditional | conditional ] .)
+    )               reduce using rule 95 (rlist -> [ conditional | conditional ] .)
+    ,               reduce using rule 95 (rlist -> [ conditional | conditional ] .)
+    |               reduce using rule 95 (rlist -> [ conditional | conditional ] .)
+    RANGER          reduce using rule 95 (rlist -> [ conditional | conditional ] .)
+    ]               reduce using rule 95 (rlist -> [ conditional | conditional ] .)
+    }               reduce using rule 95 (rlist -> [ conditional | conditional ] .)
+    :               reduce using rule 95 (rlist -> [ conditional | conditional ] .)
+    ELSE            reduce using rule 95 (rlist -> [ conditional | conditional ] .)
+
+
+state 189
+
+    (96) rlist -> [ conditional RANGER conditional ] .
+
+    (               reduce using rule 96 (rlist -> [ conditional RANGER conditional ] .)
+    `               reduce using rule 96 (rlist -> [ conditional RANGER conditional ] .)
+    SPECIALID       reduce using rule 96 (rlist -> [ conditional RANGER conditional ] .)
+    END             reduce using rule 96 (rlist -> [ conditional RANGER conditional ] .)
+    ALIAS           reduce using rule 96 (rlist -> [ conditional RANGER conditional ] .)
+    LET             reduce using rule 96 (rlist -> [ conditional RANGER conditional ] .)
+    FDEF            reduce using rule 96 (rlist -> [ conditional RANGER conditional ] .)
+    THEN            reduce using rule 96 (rlist -> [ conditional RANGER conditional ] .)
+    )               reduce using rule 96 (rlist -> [ conditional RANGER conditional ] .)
+    ,               reduce using rule 96 (rlist -> [ conditional RANGER conditional ] .)
+    |               reduce using rule 96 (rlist -> [ conditional RANGER conditional ] .)
+    RANGER          reduce using rule 96 (rlist -> [ conditional RANGER conditional ] .)
+    ]               reduce using rule 96 (rlist -> [ conditional RANGER conditional ] .)
+    }               reduce using rule 96 (rlist -> [ conditional RANGER conditional ] .)
+    :               reduce using rule 96 (rlist -> [ conditional RANGER conditional ] .)
+    ELSE            reduce using rule 96 (rlist -> [ conditional RANGER conditional ] .)
+
+
+state 190
+
+    (19) let_block -> LET { let_cont } .
+
+    (               reduce using rule 19 (let_block -> LET { let_cont } .)
+    FDEF            reduce using rule 19 (let_block -> LET { let_cont } .)
+    COND            reduce using rule 19 (let_block -> LET { let_cont } .)
+    ID              reduce using rule 19 (let_block -> LET { let_cont } .)
+    [               reduce using rule 19 (let_block -> LET { let_cont } .)
+    INTT            reduce using rule 19 (let_block -> LET { let_cont } .)
+    FLOATT          reduce using rule 19 (let_block -> LET { let_cont } .)
+    CHART           reduce using rule 19 (let_block -> LET { let_cont } .)
+    BOOLT           reduce using rule 19 (let_block -> LET { let_cont } .)
+
+
+state 191
+
+    (21) let_cont -> let_cont , . assign
+    (22) assign -> . lpattern annotation = conditional
+    (23) lpattern -> . lvar
+    (24) lpattern -> . llist
+    (25) lpattern -> . ltuple
+    (53) lvar -> . ID
+    (54) lvar -> . [ SPECIALID ]
+    (55) lvar -> . STRINGT
+    (56) lvar -> . INTT
+    (57) lvar -> . FLOATT
+    (58) lvar -> . CHART
+    (59) lvar -> . BOOLT
+    (60) lvar -> . ( lpattern )
+    (44) llist -> . [ ]
+    (45) llist -> . [ pattern_list ]
+    (46) llist -> . [ lpattern | lpattern ]
+    (49) ltuple -> . ( )
+    (50) ltuple -> . ( ltuple_cont )
+
+    ID              shift and go to state 46
+    [               shift and go to state 47
+    STRINGT         shift and go to state 48
+    INTT            shift and go to state 49
+    FLOATT          shift and go to state 50
+    CHART           shift and go to state 51
+    BOOLT           shift and go to state 52
+    (               shift and go to state 39
+
+    assign                         shift and go to state 197
+    lpattern                       shift and go to state 180
+    lvar                           shift and go to state 43
+    llist                          shift and go to state 44
+    ltuple                         shift and go to state 45
+
+state 192
+
+    (22) assign -> lpattern annotation . = conditional
+
+    =               shift and go to state 198
+
+
+state 193
+
+    (62) conditional -> IF conditional THEN conditional ELSE conditional .
+
+    END             reduce using rule 62 (conditional -> IF conditional THEN conditional ELSE conditional .)
+    ALIAS           reduce using rule 62 (conditional -> IF conditional THEN conditional ELSE conditional .)
+    LET             reduce using rule 62 (conditional -> IF conditional THEN conditional ELSE conditional .)
+    FDEF            reduce using rule 62 (conditional -> IF conditional THEN conditional ELSE conditional .)
+    THEN            reduce using rule 62 (conditional -> IF conditional THEN conditional ELSE conditional .)
+    )               reduce using rule 62 (conditional -> IF conditional THEN conditional ELSE conditional .)
+    ,               reduce using rule 62 (conditional -> IF conditional THEN conditional ELSE conditional .)
+    |               reduce using rule 62 (conditional -> IF conditional THEN conditional ELSE conditional .)
+    RANGER          reduce using rule 62 (conditional -> IF conditional THEN conditional ELSE conditional .)
+    ]               reduce using rule 62 (conditional -> IF conditional THEN conditional ELSE conditional .)
+    :               reduce using rule 62 (conditional -> IF conditional THEN conditional ELSE conditional .)
+    ELSE            reduce using rule 62 (conditional -> IF conditional THEN conditional ELSE conditional .)
+    }               reduce using rule 62 (conditional -> IF conditional THEN conditional ELSE conditional .)
+
+
+state 194
+
+    (76) lambda -> FDEF ( ) { conditional } .
+
+    `               reduce using rule 76 (lambda -> FDEF ( ) { conditional } .)
+    SPECIALID       reduce using rule 76 (lambda -> FDEF ( ) { conditional } .)
+    END             reduce using rule 76 (lambda -> FDEF ( ) { conditional } .)
+    ALIAS           reduce using rule 76 (lambda -> FDEF ( ) { conditional } .)
+    LET             reduce using rule 76 (lambda -> FDEF ( ) { conditional } .)
+    FDEF            reduce using rule 76 (lambda -> FDEF ( ) { conditional } .)
+    THEN            reduce using rule 76 (lambda -> FDEF ( ) { conditional } .)
+    )               reduce using rule 76 (lambda -> FDEF ( ) { conditional } .)
+    ,               reduce using rule 76 (lambda -> FDEF ( ) { conditional } .)
+    |               reduce using rule 76 (lambda -> FDEF ( ) { conditional } .)
+    RANGER          reduce using rule 76 (lambda -> FDEF ( ) { conditional } .)
+    ]               reduce using rule 76 (lambda -> FDEF ( ) { conditional } .)
+    }               reduce using rule 76 (lambda -> FDEF ( ) { conditional } .)
+    :               reduce using rule 76 (lambda -> FDEF ( ) { conditional } .)
+    ELSE            reduce using rule 76 (lambda -> FDEF ( ) { conditional } .)
+
+
+state 195
+
+    (77) lambda -> FDEF ( pattern_list ) { conditional . }
+
+    }               shift and go to state 199
+
+
+state 196
+
+    (72) cond_block -> COND { cond , ELSE : . conditional }
+    (61) conditional -> . compound
+    (62) conditional -> . IF conditional THEN conditional ELSE conditional
+    (63) compound -> . expression
+    (64) compound -> . compound infix expression
+    (65) compound -> . ( compound infix )
+    (66) compound -> . ( infix expression )
+    (69) expression -> . multivar
+    (70) expression -> . lambda
+    (71) expression -> . cond_block
+    (78) multivar -> . primaryvar
+    (79) multivar -> . rlist
+    (80) multivar -> . rtuple
+    (81) multivar -> . multivar ( condition_list )
+    (76) lambda -> . FDEF ( ) { conditional }
+    (77) lambda -> . FDEF ( pattern_list ) { conditional }
+    (72) cond_block -> . COND { cond , ELSE : conditional }
+    (82) primaryvar -> . ID
+    (83) primaryvar -> . [ SPECIALID ]
+    (84) primaryvar -> . INTT
+    (85) primaryvar -> . FLOATT
+    (86) primaryvar -> . CHART
+    (87) primaryvar -> . BOOLT
+    (88) primaryvar -> . ( conditional )
+    (93) rlist -> . [ ]
+    (94) rlist -> . [ condition_list ]
+    (95) rlist -> . [ conditional | conditional ]
+    (96) rlist -> . [ conditional RANGER conditional ]
+    (89) rtuple -> . ( )
+    (90) rtuple -> . ( rtuple_cont )
+
+    IF              shift and go to state 63
+    (               shift and go to state 65
+    FDEF            shift and go to state 72
+    COND            shift and go to state 73
+    ID              shift and go to state 60
+    [               shift and go to state 74
+    INTT            shift and go to state 75
+    FLOATT          shift and go to state 76
+    CHART           shift and go to state 77
+    BOOLT           shift and go to state 78
+
+    conditional                    shift and go to state 200
+    compound                       shift and go to state 62
+    expression                     shift and go to state 64
+    multivar                       shift and go to state 66
+    lambda                         shift and go to state 67
+    cond_block                     shift and go to state 68
+    primaryvar                     shift and go to state 69
+    rlist                          shift and go to state 70
+    rtuple                         shift and go to state 71
+
+state 197
+
+    (21) let_cont -> let_cont , assign .
+
+    }               reduce using rule 21 (let_cont -> let_cont , assign .)
+    ,               reduce using rule 21 (let_cont -> let_cont , assign .)
+
+
+state 198
+
+    (22) assign -> lpattern annotation = . conditional
+    (61) conditional -> . compound
+    (62) conditional -> . IF conditional THEN conditional ELSE conditional
+    (63) compound -> . expression
+    (64) compound -> . compound infix expression
+    (65) compound -> . ( compound infix )
+    (66) compound -> . ( infix expression )
+    (69) expression -> . multivar
+    (70) expression -> . lambda
+    (71) expression -> . cond_block
+    (78) multivar -> . primaryvar
+    (79) multivar -> . rlist
+    (80) multivar -> . rtuple
+    (81) multivar -> . multivar ( condition_list )
+    (76) lambda -> . FDEF ( ) { conditional }
+    (77) lambda -> . FDEF ( pattern_list ) { conditional }
+    (72) cond_block -> . COND { cond , ELSE : conditional }
+    (82) primaryvar -> . ID
+    (83) primaryvar -> . [ SPECIALID ]
+    (84) primaryvar -> . INTT
+    (85) primaryvar -> . FLOATT
+    (86) primaryvar -> . CHART
+    (87) primaryvar -> . BOOLT
+    (88) primaryvar -> . ( conditional )
+    (93) rlist -> . [ ]
+    (94) rlist -> . [ condition_list ]
+    (95) rlist -> . [ conditional | conditional ]
+    (96) rlist -> . [ conditional RANGER conditional ]
+    (89) rtuple -> . ( )
+    (90) rtuple -> . ( rtuple_cont )
+
+    IF              shift and go to state 63
+    (               shift and go to state 65
+    FDEF            shift and go to state 72
+    COND            shift and go to state 73
+    ID              shift and go to state 60
+    [               shift and go to state 74
+    INTT            shift and go to state 75
+    FLOATT          shift and go to state 76
+    CHART           shift and go to state 77
+    BOOLT           shift and go to state 78
+
+    conditional                    shift and go to state 201
+    compound                       shift and go to state 62
+    expression                     shift and go to state 64
+    multivar                       shift and go to state 66
+    lambda                         shift and go to state 67
+    cond_block                     shift and go to state 68
+    primaryvar                     shift and go to state 69
+    rlist                          shift and go to state 70
+    rtuple                         shift and go to state 71
+
+state 199
+
+    (77) lambda -> FDEF ( pattern_list ) { conditional } .
+
+    `               reduce using rule 77 (lambda -> FDEF ( pattern_list ) { conditional } .)
+    SPECIALID       reduce using rule 77 (lambda -> FDEF ( pattern_list ) { conditional } .)
+    END             reduce using rule 77 (lambda -> FDEF ( pattern_list ) { conditional } .)
+    ALIAS           reduce using rule 77 (lambda -> FDEF ( pattern_list ) { conditional } .)
+    LET             reduce using rule 77 (lambda -> FDEF ( pattern_list ) { conditional } .)
+    FDEF            reduce using rule 77 (lambda -> FDEF ( pattern_list ) { conditional } .)
+    THEN            reduce using rule 77 (lambda -> FDEF ( pattern_list ) { conditional } .)
+    )               reduce using rule 77 (lambda -> FDEF ( pattern_list ) { conditional } .)
+    ,               reduce using rule 77 (lambda -> FDEF ( pattern_list ) { conditional } .)
+    |               reduce using rule 77 (lambda -> FDEF ( pattern_list ) { conditional } .)
+    RANGER          reduce using rule 77 (lambda -> FDEF ( pattern_list ) { conditional } .)
+    ]               reduce using rule 77 (lambda -> FDEF ( pattern_list ) { conditional } .)
+    }               reduce using rule 77 (lambda -> FDEF ( pattern_list ) { conditional } .)
+    :               reduce using rule 77 (lambda -> FDEF ( pattern_list ) { conditional } .)
+    ELSE            reduce using rule 77 (lambda -> FDEF ( pattern_list ) { conditional } .)
+
+
+state 200
+
+    (72) cond_block -> COND { cond , ELSE : conditional . }
+
+    }               shift and go to state 202
+
+
+state 201
+
+    (22) assign -> lpattern annotation = conditional .
+
+    }               reduce using rule 22 (assign -> lpattern annotation = conditional .)
+    ,               reduce using rule 22 (assign -> lpattern annotation = conditional .)
+
+
+state 202
+
+    (72) cond_block -> COND { cond , ELSE : conditional } .
+
+    `               reduce using rule 72 (cond_block -> COND { cond , ELSE : conditional } .)
+    SPECIALID       reduce using rule 72 (cond_block -> COND { cond , ELSE : conditional } .)
+    END             reduce using rule 72 (cond_block -> COND { cond , ELSE : conditional } .)
+    ALIAS           reduce using rule 72 (cond_block -> COND { cond , ELSE : conditional } .)
+    LET             reduce using rule 72 (cond_block -> COND { cond , ELSE : conditional } .)
+    FDEF            reduce using rule 72 (cond_block -> COND { cond , ELSE : conditional } .)
+    THEN            reduce using rule 72 (cond_block -> COND { cond , ELSE : conditional } .)
+    )               reduce using rule 72 (cond_block -> COND { cond , ELSE : conditional } .)
+    ,               reduce using rule 72 (cond_block -> COND { cond , ELSE : conditional } .)
+    |               reduce using rule 72 (cond_block -> COND { cond , ELSE : conditional } .)
+    RANGER          reduce using rule 72 (cond_block -> COND { cond , ELSE : conditional } .)
+    ]               reduce using rule 72 (cond_block -> COND { cond , ELSE : conditional } .)
+    }               reduce using rule 72 (cond_block -> COND { cond , ELSE : conditional } .)
+    :               reduce using rule 72 (cond_block -> COND { cond , ELSE : conditional } .)
+    ELSE            reduce using rule 72 (cond_block -> COND { cond , ELSE : conditional } .)
+

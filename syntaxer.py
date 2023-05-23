@@ -1,362 +1,303 @@
 from lexer import tokens, literals
 import ply.yacc as yacc
 import semantics as sem
+import semantics.type_inference as ti
+import semantics.errors as err
 
-code_: sem.code = sem.code()
-scope = []
-
-
-def p_empty(p):
-    'empty : '
+# all
+def p_all_first2(p):
+    '''
+    all : 
+        | BEGIN END
+    '''
     pass
 
+def p_all_body(p):
+    "all : BEGIN body END"
+    p[0] = sem.code()
 
-def p_scope(p):
-    'scope : '
-    scope.append(set())
-
-
-def p_func(p):
-    'func : FDEF ID LPAR scope args RPAR LBRACE body RBRACE'
-    sem.code.insert_func(sem.func(name=p[2], args=p[5], body=p[8]))
-    scope.pop()
-
-
-def p_lvar_var(p):
-    '''lvar : var
-            | llist
-            | ltuple'''
-    p[0] = p[1]
-
-
-def p_llist(p):
-    'llist : LBRACKET llist_cont'
-    p[0] = p[1]
-
-
-def p_llist_cont_empty(p):
-    'llist_cont : RBRACKET'
-    p[0] = sem.llist(type='llist')
-
-
-def p_llist_term_lvar(p):
-    'llist_term : lvar'
-    try:
-        p[0].add_lvar(p[1])
-    except:
-        p[0] = sem.llist(type='llist')
-        p[0].add_lvar(p[1])
-
-
-def p_llist_term_COMMA_LISTER(p):
-    '''llist_term : llist_term COMMA lvar
-                  | lvar LISTER llist'''
-    try:
-        p[1].add_lvar(p[3])
-        p[0] = p[1]
-    except:
-        p[1] = sem.llist(type='llist', llist_term=p[3])
-        p[0] = p[1]
-
-
-def p_ltuple_LPAR(p):
-    'ltuple : LPAR ltuple_cont'
-    p[0] = p[2]
-
-
-def p_ltuple_cont_empty(p):
-    'ltuple_cont : empty RPAR'
-    p[0] = sem.ltuple(type='ltuple')
-
-
-def p_ltuple_cont_lvar(p):
-    'ltuple_cont : ltuple_term COMMA lvar RPAR'
-    p[0] = p[1].add_lvar(p[3])
-
-
-def p_ltuple_term_lvar(p):
-    'ltuple_term : lvar'
-    try:
-        p[0].add_lvar(p[1])
-    except:
-        p[0] = sem.ltuple(type='ltuple', ltuple_term=p[1])
-        p[0].add_lvar(p[1])
-
-
-def p_ltuple_term_cont(p):
-    'ltuple_term : ltuple_term COMMA lvar'
-    try:
-        p[1].add_lvar(p[1])
-        p[0] = p[1]
-    except:
-        p[1] = sem.ltuple(type='ltuple', ltuple_term=p[1])
-        p[1].add_lvar(p[1])
-        p[0] = p[1]
-
+# body
 
 def p_body_statement(p):
-    'body : statement body'
-    try:
-        p[0].statements.append(p[1])
-    except:
-        p[0] = sem.body('statement_body', p[1])
-        p[0].statements.append(p[1])
+    "body : statement"
+    p[0] = ...
 
+def p_body_statement_list(p):
+    "body : body statement"
+    p[0] = ...
 
-def p_body_exp(p):
-    'body : exp'
-    try:
-        p[0] = sem.body('body', p[1])
-    except:
-        print('''Found statement, expected expression at the end of function.
-        Accepted types are: ''')
-
-
-def p_statement(p):
-    '''statement : assign
-                 | reassign'''
+# statement
+def p_statement_function(p):
+    "statement : function"
     p[0] = p[1]
 
+def p_statement_alias(p):
+    "statement : ALIAS ID '=' typedesc"
+    p[0].add_alias(p[2], p[4])
 
-def p_assign_reassign(p):
-    '''assign : lvar ASSIGN exp
-              | lvar REASSIGN exp'''
-    type = 'reassign' if p[2] == '=' else 'assign'
-    p[0] = sem.statement(type=type, lvar=p[1], exp=p[3])
+def p_statement_global(p):
+    "statement : LET ID annotation '=' conditional"
+    if t := (p[3] & p[5]):
+        p[0].global_variables[p[2]] = t
+    else:
+        raise err.type_error()
 
+# function
+def p_function_nolet(p):
+    "function : FDEF prefix args returntype '{' compound '}'"
+    if (r := (p[4] & p[6])) and p[3]:
+        p[0][p[2]] = ti.function_(
+            return_=r,
+            args=p[3]
+        )
+    else:
+        raise err.type_error()
 
-def p_exp(p):
-    '''exp : rvar
-           | eval
-           | aritm
-           | cond
-           | lambda'''
+def p_function_let(p):
+    "function : FDEF prefix args returntype '{' let_block compound '}'"
+    if (r := (p[4] & p[7])) and p[3]:
+        p[0][p[2]] = ti.function_(
+            return_=r,
+            args=p[3]
+        )
+    else: 
+        raise err.type_error()
+
+# args
+def p_args_empty(p):
+    "args | '(' ')'"
+    p[0] = None
+
+def p_args_arg_list(p):
+    "args | '(' arg_list ')'"
     p[0] = p[1]
 
+def p_arg_list_one(p):
+    "arg_list : lpattern annotation"
+    
+    p[0] = [p[1]]
 
-def p_lambda_(p):
-    'lambda : LAMBDA args LBRACE exp RBRACE'
-    p[0] = sem.lambda_(type='lambda', args=p[2], exp=p[4])
+def p_arg_list(p):
+    "arg_list : arg_list ',' lpattern annotation"
+    p[0] = 
 
+# condition
+def p_conditional_compound(p):
+    "conditional : compound"
+    p[0] = p[1]
+
+def p_conditional_ifthenelse(p):
+    "conditional : IF conditional THEN conditional ELSE conditional"
+    if type(p[2]) == ti.bool_ and (t := (p[4] % p[6])):
+        p[0] = t
+    else:
+        raise err.type_error()
+
+# compound
+def p_compound_expression(p):
+    "compound : expression"
+    p[0] = p[1]
+
+def p_compound_infix(p):
+    "compound : compound infix expression"
+    type_ = type(p[2])
+    if type_ == ti.Any_:
+        p[0] = ti.function_(return_=ti.Any_(), content=[p[2] & p[3], p[3] & p[4]])
+    elif type_ == ti.function_:
+        p[2] = p[2].right_mod(p[3])
+        p[0] = p[2] % p[3]
+    else:
+        err.type_error()  
+
+def p_compound_right_infix(p):
+    "compound : '(' compound infix ')'"
+    type_ = type(p[1])
+    if type_ == ti.Any_:
+        p[0] = ti.function_(return_=ti.Any_(), content=[p[2] & p[3], ti.Any_()])
+    elif type_ == ti.function_:
+        p[0] = p[2] % p[3]
+    else:
+        err.type_error()
+
+def p_compound_left_infix(p):
+    "compound : '(' infix expression ')'"
+    type_ = type(p[2])
+    if type_ == ti.Any_:
+        p[0] = ti.function_(return_=ti.Any_(), content=[ti.Any_(), p[2] & p[3]])
+    elif type_ == ti.function_:
+        p[0] = p[2].right_mod(p[3])
+    else:
+        err.type_error()
+
+def p_infix_ID(p):
+    "infix : '`' ID '`'"
+    if p[2] in parser.function:
+        p[0] = parser.code[p[2]]
+    else:
+        p[0] = ti.Any_()
+
+def p_infix_SPECIALID(p):
+    "infix : SPECIALID"
+    if p[1] in parser.code:
+        p[0] = parser.code[p[1]]
+    else:
+        
+        p[0] = ti.Any_()
+
+#expression
+def p_expression(p):
+    '''
+    expression  : multivar
+                | lambda
+                | cond_block
+    '''
+    p[0] = p[1]
+
+#cond_block
+def p_cond_block(p):
+    "cond_block : COND '{' cond ',' ELSE ':' conditional '}'"
+    p[0] = p[3] & p[7]
 
 def p_cond(p):
-    'COND LBRACE condition RBRACE'
+    "cond : cond_singl"
     p[0] = p[1]
 
-
-def p_cond_if_then_else(p):
-    'cond : IF eval THEN exp ELSE exp'
-    p[0] = sem.if_then_else(type='if_then_else',
-                            eval=p[2], then=p[4], else_=p[6])
-
-
-def p_condition(p):
-    'condition : condition_cont ELSE COLON exp'
-    p[0].add_condition(p[1])
-    p[0].add_condition(p[4])
-
-
-def p_condition_cont_evalexp(p):
-    'condition_cont : evalexp'
+def p_cond(p):
+    "cond : cond ',' cond_singl"
     try:
-        p[0].add_condition(p[1])
+        p[0] &= p[1] & p[2]
     except:
-        p[0] = sem.cond('cond')
-        p[0].add_condition(p[1])
+        raise err.type_error()
 
-
-def p_condition_cont_evalexp(p):
-    'condition_cont : evalexp COMMA condition_cont'
-    try:
-        p[0].add_condition(p[1])
-    except:
-        p[0] = sem.cond('cond')
-        p[0].add_condition(p[1])
-
-
-def p_evalexp(p):
-    'evalexp : eval COLON exp'
-    p[0] = (p[1], p[3])
-
-
-def p_eval_ID(p):
-    'eval : ID'
-    p[0] = p[1]
-
-
-def p_eval_exp_OP_eval(p):
-    '''eval : exp EQ eval
-            | exp DIF eval
-            | exp LT eval
-            | exp GT eval
-            | exp LTE eval
-            | exp GTE eval'''
-    print(p[2])
-    p[0] = sem.eval(type='eval', condition=(p[2], p[1], p[3]))
-
-
-def p_eval_PAR(p):
-    'eval : LPAR eval RPAR'
-    p[0] = p[2]
-
-
-def p_aritm_ID_NUM(p):
-    '''aritm : ID
-             | NUM'''
-    p[0] = p[1]
-
-
-def p_aritm_OP(p):
-    '''aritm : ID SUM aritm
-             | ID PROD aritm
-             | ID DIV aritm
-             | ID SUB aritm
-             | ID MOD aritm
-             | ID POW aritm
-             | ID INTDIV aritm
-             | ID SUM aritm
-             | NUM PROD aritm
-             | NUM DIV aritm
-             | NUM SUB aritm
-             | NUM MOD aritm
-             | NUM POW aritm
-             | NUM INTDIV aritm'''
-    p[0] = sem.aritm(
-        type='aritm',
-        op=p[2],
-        var=p[1],
-        aritm=p[3])
-
-
-def p_aritm_aritm(p):
-    'aritm : LPAR aritm RPAR'
-    p[0] = p[2]
-
-
-def p_rvar(p):
-    '''rvar : var
-            | rlist
-            | rtuple
-            | func_call'''
-    p[0] = p[1]
-
-
-def p_rlist(p):
-    'rlist : LBRACKET rlist_cont'
-    p[0] = p[2]
-
-
-def p_rlist_cont(p):
-    'rlist_cont : RBRACKET'
-    pass
-
-
-def p_rlist_cont_term(p):
-    'rlist_cont : rlist_term RBRACKET'
-    p[0] = p[1]
-
-
-def p_rlist_term_exp(p):
-    'rlist_term : exp'
-    try:
-        p[0].add_exp(p[1])
-    except:
-        p[0] = sem.rlist(type='llist')
-        p[0].add_exp(p[1])
-
-
-def p_rlist_term_COMMA_LISTER(p):
-    '''llist_term : llist_term COMMA lvar
-                  | lvar LISTER llist'''
-    try:
-        p[1].add_lvar(p[3])
-        p[0] = p[1]
-    except:
-        p[1] = sem.llist(type='llist', llist_term=p[3])
-        p[0] = p[1]
-
-
-def p_rtuple_LPAR(p):
-    'rtuple : LPAR rtuple_cont'
-    p[0] = p[2]
-
-
-def p_rtuple_cont_empty(p):
-    'rtuple_cont : empty RPAR'
-    p[0] = sem.rtuple(type='rtuple')
-
-
-def p_rtuple_cont_exp(p):
-    'rtuple_cont : rtuple_term COMMA exp RPAR'
-    p[0] = p[1].add_exp(p[3])
-
-
-def p_rtuple_term_epx(p):
-    'rtuple_term : exp'
-    try:
-        p[0].add_exp(p[1])
-    except:
-        p[0] = sem.rtuple(type='rtuple', rtuple_term=p[1])
-        p[0].add_exp(p[1])
-
-
-def p_rtuple_term_cont(p):
-    'rtuple_term : rtuple_term COMMA exp'
-    try:
-        p[1].add_exp(p[1])
-        p[0] = p[1]
-    except:
-        p[1] = sem.rtuple(type='rtuple', rtuple_term=p[1])
-        p[1].add_exp(p[1])
-        p[0] = p[1]
-
-
-def p_func_call(p):
-    'func_call : ID LPAR func_call_cont'
-    p[3].add_id(p[1])
+def p_cond_singl(p):
+    "cond_singl : conditional ':' conditional"
+    if type(p[1]) != ti.bool_:
+        raise err.type_error()
     p[0] = p[3]
 
+#lambda
+def p_lambda_no_args(p):
+    "lambda : FDEF '(' ')' '{' conditional '}'"
+    p[0] = p[5]
 
-def p_func_call_cont_RPAR(p):
-    'func_call_cont : RPAR'
-    pass
+def p_lambda_args(p):
+    "lambda : FDEF '(' pattern_list ')' '{' conditional '}'"
+    p[0] = ti.function_(return_=p[6], args=p[3])
 
+#multivar
+def p_primaryvar(p):
+    """
+    multivar    : primaryvar
+                | rlist
+                | rtuple
+    """
+    p[0] = p[1]
 
-def p_func_call_cont_COMMA(p):
-    'func_call_cont : exp COMMA func_call_cont'
-    try:
-        p[0].add_args(p[1])
-    except:
-        p[0] = sem.func_call(type='func_call')
-        p[0].add_args(p[1])
+def p_multivar_call(p):
+    "multivar : multivar '(' condition_list ')'"
+    _type = type(p[1])
+    if p[1] in parser.code:
+        parser.check_args = parser.code[p[1]].type.check_args()
+        p[1] = ...
+        parser.check_args = None
 
+    else:
+        raise err.type_error()
 
-def p_var(p):
-    '''var : ID
-           | NUM
-           | STRING
-           | CHAR'''
-    p[0] = sem.variable(
-        type=p[1].token().type,
-        var=p[1])
+#primaryvar
+def p_primaryvar_ID(p):
+    "primaryvar : ID"
+    p[0] = ti.Any_()
 
+def p_primaryvar_SPECIALID(p):
+    "primaryvar : SPECIALID"
+    p[0] = ti.Any_()
+
+def p_primaryvar_int(p):
+    "primaryvar : INTT"
+    p[0] = ti.int_()
+
+def p_primaryvar_float(p):
+    "primaryvar : FLOATT"
+    p[0] = ti.float_()
+
+def p_primaryvar_char(p):
+    "primaryvar : CHART"
+    p[0] = ti.char_()
+
+def p_primaryvar_bool(p):
+    "primaryvar : BOOLT"
+    p[0] = ti.bool_()
+
+def p_primaryvar_conditional(p):
+    "primaryvar : '(' conditional ')'"
+    p[0] = p[2]
+
+#rtuple
+def p_rtuple_empty(p):
+    "rtuple : '(' ')'"
+    p[0] = ti.tuple_()
+
+def p_rtuple_cont(p):
+    "rtuple : '(' rtuple_cont ')'"
+    p[0] = p[2]
+
+def p_rtuple_cont_2_case(p):
+    "rtuple : conditional ',' conditional"
+    p[0] = p[1] & p[2]
+
+def p_rtuple_cont_rest_case(p):
+    "rtuple_cont : rtuple_cont ',' conditional"
+    p[0] &= p[1] & p[2]
+
+# rlist
+def p_rlist_empty(p):
+    "rlist : '[' ']"
+    p[0] = ti.list_()
+
+def p_rlist_normal(p):
+    "rlist : '[' condition_list ']'"
+    p[0] = ti.list_(content=p[2])
+
+def p_rlist_condition_list(p):
+    "rlist : '[' conditional '|' conditional ']'"
+    if type(p[2]) == type(p[4].content):
+        p[0] = ti.list_(p[2])
+    else:
+        raise err.type_error()
+
+def p_rlist_ranger(p):
+    "rlist : '[' conditional RANGER conditional ']'"
+    if isinstance(p[2], ti.int_) and isinstance(p[4], ti.int_):
+        p[0] = ti.list_(content=ti.int_())
+    else:
+        raise err.type_error()
+
+def p_rlist_condition_list_conditional(p):
+    "condition_list : conditional"
+    if parser.check_args:
+        p[0] = [p[1] & next(parser.check_args)]
+    else:
+        p[0] &= p[1]
+
+def p_rlist_condition_list_list(p):
+    "condition_list : condition_list ',' conditional"
+    if not p[2]:
+        raise err.type_error()
+    if parser.check_args:
+        p[0].append(p[1] & next(parser.check_args))
+    else:
+        try:
+            p[0] &= p[1] & p[2]
+        except:
+            raise err.type_error()
 
 def p_error(p):
     if not p:
         pass
-    # obviamente, erros provisórios
-    print('Deu erro')
-    while True:
-        tok = syntaxer.token()
-        if not tok or tok.type == 'RBRACE':
-            break
-    syntaxer.restart()
+    print(f"Parse error on '{err.red_bold}{p.value}' at {p.lineno(0)}")
 
-
-def start_syntaxer():
-    global syntaxer
-    syntaxer = yacc.yacc()
-
-
-if __name__ == '__main__':
-    start_syntaxer()
+parser = yacc.yacc()
+parser.check_args = None
+parser.scope = {}
+parser.code = sem.code.code()

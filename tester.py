@@ -5,30 +5,65 @@ import sys
 
 def p_grammar_tester(p):
     '''
-    all             : BEGIN body END
+    all             : 
+                    | BEGIN END
+                    | BEGIN body END
 
-    body            : function
-                    | body function
+    body            : statement
+                    | body statement
 
-    function        : FDEF prefix args '{' compound '}'
-                    | FDEF prefix args '{' let_block compound '}'
+    statement       : function
+                    | ALIAS ID '=' typedesc
+                    | LET ID annotation '=' conditional
+
+    function        : FDEF prefix args returntype '{' compound '}'
+                    | FDEF prefix args returntype '{' let_block compound '}'
 
     args            : '(' ')'
-                    | '(' pattern_list ')'
+                    | '(' arg_list ')'
+
+    arg_list        : lpattern annotation
+                    | arg_list ',' lpattern annotation
 
     prefix          : ID
                     | '[' SPECIALID ']'
+
+    returntype      : 
+                    | RARROW typedesc
 
     let_block       : LET '{' let_cont '}'
 
     let_cont        : assign
                     | let_cont ',' assign
 
-    assign          : lpattern '=' compound
+    assign          : lpattern annotation '=' conditional
 
     lpattern        : lvar
                     | llist
                     | ltuple
+
+    annotation      : 
+                    | ':' typedesc
+
+    typedesc        : typeid
+                    | typeclass
+                    | function_type
+                    | '(' tuple_type ')'
+
+    typeclass       : TYPECLASS ID
+
+    function_type   : '(' typedesc ')' RARROW typedesc
+                    | '(' tuple_type ')' RARROW typedesc
+
+    tuple_type      : typeid ',' typeid
+                    | tuple_type ',' typeid
+
+    typeid          : INT
+                    | FLOAT
+                    | CHAR
+                    | BOOL
+                    | ID
+                    | '[' typedesc ']'
 
     llist           : '[' ']'
                     | '[' pattern_list ']'
@@ -45,74 +80,72 @@ def p_grammar_tester(p):
 
     lvar            : ID
                     | '[' SPECIALID ']'
-                    | STRING
-                    | INT
-                    | FLOAT
-                    | CHAR
-                    | BOOL
+                    | STRINGT
+                    | INTT
+                    | FLOATT
+                    | CHART
+                    | BOOLT
                     | '(' lpattern ')'
+
+    conditional     : compound
+                    | IF conditional THEN conditional ELSE conditional
 
     compound        : expression
                     | compound infix expression
+                    | '(' compound infix ')'
                     | '(' infix expression ')'
-                    | '(' expression infix ')'
 
     infix           : '`' ID '`'
                     | SPECIALID
 
     expression      : multivar
                     | lambda
-                    | conditional
+                    | cond_block
 
-    lambda          : FDEF '(' ')' '{' expression '}' 
-                    | FDEF '(' pattern_list ')' '{' expression '}'
-
-    conditional     : COND '{' cond ',' ELSE ':' expression '}'
-                    | IF expression THEN expression ELSE expression
+    cond_block      : COND '{' cond ',' ELSE ':' conditional '}'
 
     cond            : cond_singl
                     | cond ',' cond_singl
 
-    cond_singl      : expression ':' expression
+    cond_singl      : conditional ':' conditional
+
+    lambda          : FDEF '(' ')' '{' conditional '}' 
+                    | FDEF '(' pattern_list ')' '{' conditional '}'
 
     multivar        : primaryvar
                     | rlist
                     | rtuple
-                    | multivar '(' compound_list ')'
-
-    compound_list   : compound
-                    | compound_list ',' compound
+                    | multivar '(' condition_list ')'
 
     primaryvar      : ID
                     | '[' SPECIALID ']'
-                    | STRING
-                    | INT
-                    | CHAR
-                    | BOOL
-                    | '(' expression ')'
+                    | INTT
+                    | FLOATT
+                    | CHART
+                    | BOOLT
+                    | '(' conditional ')'
 
     rtuple          : '(' ')'
                     | '(' rtuple_cont ')'
 
-    rtuple_cont     : expression ',' expression
-                    | rtuple_cont ',' expression
+    rtuple_cont     : conditional ',' conditional
+                    | rtuple_cont ',' conditional
 
     rlist           : '[' ']'
-                    | '[' exp_list ']'
-                    | '[' expression '|' expression ']'
-                    | '[' expression RANGER expression ']'
+                    | '[' condition_list ']'
+                    | '[' conditional '|' conditional ']'
+                    | '[' conditional RANGER conditional ']'
 
-    exp_list        : expression
-                    | exp_list ',' expression
+    condition_list  : conditional
+                    | condition_list ',' conditional
     '''
-    print('Worked!')
 
 
 def p_error(p):
     if not p:
         pass
     # obviamente, erros provisórios
-    print(f'Deu erro em {p}')
+    print(f"Deu erro em '{p}' on line {p.lexer.lineno}")
     while True:
         tok = parser.token()
         if not tok or tok.type == 'RBRACE':

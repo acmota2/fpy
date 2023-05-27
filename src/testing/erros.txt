@@ -1,0 +1,34 @@
+# variável fora da scope
+'''fpy
+fdef bla1(n) { bla }
+'''
+
+# lista não pode ser callable
+'''fpy
+fdef bla1(n) { [1,2,3](2) }
+'''
+
+# tuplo também não
+'''fpy
+fdef bla1(n) { (1,2)(3) }
+'''
+
+# e qualquer outra coisa que não seja do tipo function
+'''fpy
+fdef bla1(n) { 1(1) }
+'''
+
+'''fpy
+fdef bla1(n) { (1 + 2)(5) }
+'''
+
+'''fpy
+fdef bla1(n) { (not(5 == 2))(12) }
+'''
+
+# este erro deve acontecer, e após verificar tudo apenas
+'''fpy
+fdef bla1(n) { m }
+
+fdef bla2(m) { m }
+'''

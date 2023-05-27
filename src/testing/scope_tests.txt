@@ -1,0 +1,9 @@
+'''fpy
+fdef bla(n) {
+    id(n)
+}
+
+fdef id(n) {
+    n
+}
+'''

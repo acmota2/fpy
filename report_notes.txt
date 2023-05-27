@@ -1,0 +1,5 @@
+Sobre os tipos:
+
+Existem os tipos convencionais, que são char, bool, int e float
+Existem ainda os tipos compostos, que são os tuplos e as listas. Tuplos podem conter valores de vários tipos dentro, listas apenas podem conter um tipo
+Existem ainda as typeclasses, que são maneiras de generalizar tipos, e estas estão organizadas numa hierarquia (apresentar a hierarquia)

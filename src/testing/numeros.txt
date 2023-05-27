@@ -1,0 +1,13 @@
+'''fpy
+fdef bla(-1, n) {
+    n
+}
+
+fdef bla2(x) {
+    1 - -2
+}
+
+fdef bla3(1.1) {
+    1
+}
+'''

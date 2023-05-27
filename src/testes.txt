@@ -1,8 +1,5 @@
 '''fpy
-fdef bla {
-    []: []
-    [h|t] : [ h+1 | bla(t) ]
-}
+fdef bla([]) { [] }
 fdef bla([h|t]) {
     [ h+1 | bla(t) ]
 }

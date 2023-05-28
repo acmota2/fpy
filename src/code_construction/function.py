@@ -17,8 +17,11 @@ def {self.nome}(*___t):
             if not d is None:
                 s += f"""
             {d}"""
-            s+=f"""
+            if not r is None:
+                s+=f"""
             return {r}"""
+            else:
+                s = ""
         return s
 
 

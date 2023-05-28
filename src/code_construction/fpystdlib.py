@@ -17,6 +17,9 @@ neq = lambda x, y: x != y
 
 aand = lambda x, y: x and y
 oor = lambda x, y: x or y
+nnot = lambda x: not x
+
+from_int = lambda x: float(x)
 
 """fpy
 alias string = [char]

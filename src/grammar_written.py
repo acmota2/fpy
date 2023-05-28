@@ -24,21 +24,23 @@ infix_token_pairs = {
 }
 i = 0
 infix_function_pairs = {
-    '*':    "std.mul",
-    '/':    "std.frac",
-    '//':   "std.div",
-    '%':    "std.mod",
-    '^':    "std.ppow",
-    '+':    "std.add",
-    '-':    "std.sub",
-    '==':   "std.eq",
-    '!=':   "std.neq",
-    '>':    "std.gt",
-    '<':    "std.lt",
-    '<=':   "std.lte",
-    '>=':   "std.gte",
-    '&&':   "std.aand",
-    '||':   "std.oor"
+    '*':        "std.mul",
+    '/':        "std.frac",
+    '//':       "std.div",
+    '%':        "std.mod",
+    '^':        "std.ppow",
+    '+':        "std.add",
+    '-':        "std.sub",
+    '==':       "std.eq",
+    '!=':       "std.neq",
+    '>':        "std.gt",
+    '<':        "std.lt",
+    '<=':       "std.lte",
+    '>=':       "std.gte",
+    '&&':       "std.aand",
+    '||':       "std.oor",
+    "from_int": "std.from_int",
+    "not":      "std.nnot"
 }
 
 fs = {}
@@ -66,11 +68,11 @@ def p_all2(p):
 
 def p_body(p):
     "body : statement"
-    p[0] = [p[1]]
+    p[0] = [p[1]] if not p[1] is None else []
 
 def p_body1(p):
     "body : body statement"
-    p[0] = p[1] + [p[2]]
+    p[0] = p[1] + [p[2]] if not p[1] is None else p[1]
 
 def p_statement(p):
     "statement : function"
@@ -383,7 +385,7 @@ def p_lvar22(p):
 
 def p_conditional(p):
     "conditional : UNDEFINED"
-    p[0] = ""
+    pass
 
 def p_conditional1(p):
     "conditional : compound"
@@ -658,11 +660,11 @@ def p_rtuple1(p):
 
 def p_rtuple_cont(p):
     "rtuple_cont : conditional ',' conditional"
-    p[0] = f"""{p[1]}, {p[2]}"""
+    p[0] = f"""{p[1]}, {p[3]}"""
 
 def p_rtuple_cont1(p):
     "rtuple_cont : rtuple_cont ',' conditional"
-    p[0] = f"""{p[1]}, {p[2]}"""
+    p[0] = f"""{p[1]}, {p[3]}"""
 
 def p_primaryvar(p):
     "primaryvar : ID"
@@ -759,20 +761,65 @@ def p_primaryvar22(p):
 def p_error(p):
     print("Fizes te merda")
 
-test = """'''fpy
+test = '''
+"""fpy
+alias string = [char]
+
+# __builtin__
+fdef not(x: bool) -> bool {
+    undefined
+}
+
 fdef [.](f: (b) -> c, g: (a) -> b, a: a) -> c {
     f(g(a))
 }
-fdef bla(f, g, x) {
-    (f . g)(x,y)
-}'''"""
 
-parser = yacc.yacc()
-def parse_types(code):
-    p = parser.parse(test)
-    print(p)
+# __builtin__
+fdef from_int(x: int) -> float {
+    undefined
+}
+
+fdef foldl(_: (b,a) -> b, acc: b, []: [a]) -> b { acc }
+fdef foldl(f,acc,[h|t]) {
+    foldl(f,f(acc,h),t)
+}
+
+fdef foldr(_: (a,b) -> b, acc: b, []: [a]) -> b { acc }
+fdef foldr(f,acc,[h|t]) {
+    f(h,foldr(f,acc,t))
+}
+
+fdef [++]([],l) { l }
+fdef [++](l,[]) { l }
+fdef [++]([h|t], l) {
+    [h | t ++ l]
+}
+
+fdef [><](f: (a) -> c, g: (b) -> d, (a,b): (a,b)) -> (c,d) {
+    (f(a), g(b))
+}
+
+fdef map_(_: (a) -> b, []: [a]) -> [b] { [] }
+fdef map_(f, [h|t]) {
+    [f(h) | map_(f,t)]
+}
+
+fdef filter_(_: (a) -> bool, []: [a]) { [] }
+fdef filter_(f,[h|t]) {
+    [?..?] {
+        f(h): [h | filter_(f,t)],
+        else: filter_(f,t)
+    }
+}
+"""
+'''
+
+def gen_code(code: str):
+    parser = yacc.yacc()
+    p = parser.parse(code)
+    return p
 
 # testing
-if __name__ == "__main__":
-    # code = sys.stdin.read()
-    parse_types("")
+# if __name__ == "__main__":
+#     # code = sys.stdin.read()
+#     parse_types("")

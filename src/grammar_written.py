@@ -819,7 +819,7 @@ def p_primaryvar22(p):
     p[0] = p[2]
 
 def p_error(p):
-    print("Fizes te merda")
+    print("ERRO NA GERACAO DE CODIGO")
 
 test = '''
 """fpy

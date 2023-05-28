@@ -70,6 +70,6 @@ fdef filter_(f,[h|t]) {
 
 fdef concat([]) { [] }
 fdef concat([[h|t]|t2]) {
-    [h | t ++ concat(t2)]
+    [h | t `concatenate` concat(t2)]
 }
 """

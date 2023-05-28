@@ -179,7 +179,7 @@ def p_grammar_tester(p):
     cond_singl      : conditional ':' conditional
 
     lambda          : FDEF '(' ')' '{' conditional '}' 
-                    | FDEF '(' lambda_scope pattern_list ')' '{' conditional '}'
+                    | FDEF '(' lambda_scope arg_list ')' '{' conditional '}'
 
     lambda_scope    :
 

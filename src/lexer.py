@@ -16,6 +16,7 @@ reserved = {
     # misc
     '//': 'DIV',
     '->':'RARROW',
+    '..': 'RANGER',
     # conditionals
     '||': 'OR',
     '&&': 'AND',
@@ -31,16 +32,14 @@ tokens = [
     # types
     'INTT','FLOATT','STRINGT','CHART','BOOLT',
     # vars
-    'ID','SPECIALID',
+    'ID','SPECIALID',#'LISTER',
     # cond
     'COND',
-    # range
-    'RANGER',
 ] + list(reserved.values())
 
 func = ['+', '-', '*', '/', '%', '^', '<', '>']
 
-literals = ['[',']','(',')','{','}',',','=','|',':','`'] + func
+literals = ['[',']','(',')','{','}',',','|','=',':','`'] + func
 
 def get_literal(check: str, default: str):
     for t in literals:
@@ -52,11 +51,16 @@ states = (
    ('fpy','exclusive'),
 )
 
+def t_fpy_OR(t): r'\|\|' ; t.type = 'OR' ; return t
+
+# t_fpy_LISTER = r'\|(?!\|)'
+
 t_ignore = '\t\r '
 
 t_fpy_ignore = '\t\r '
 
-def t_python(t): r'(.+)\'\'\'fpy' ; pass
+
+# def t_python(t): r'(.+)(\'\'\'fpy|\"\"\"fpy)' ; pass
 def t_l1(t): r'\[' ; pass
 def t_l2(t): r'\]' ; pass
 def t_l3(t): r'\(' ; pass
@@ -89,10 +93,6 @@ def t_fpy_SPECIALID(t):
     t.type = reserved.get(t.value, 'SPECIALID')
     if initial_type == t.type:
         t.type = get_literal(t.value, 'SPECIALID')
-    return t
-
-def t_fpy_RANGER(t):
-    r'\.\.'
     return t
 
 def t_newline(t):

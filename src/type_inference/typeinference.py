@@ -33,8 +33,14 @@ class singleton:
         return self.__and__(other)
 
     def __mod__(self, other):
-        if isinstance(other, function_) and self & other.args[0]:
+        if isinstance(other, function_) and (t := (self & other.args[0])):
             x = other.args[1:]
+            old = other.args[0]
+            for i in range(len(x)):
+                if x[i] == old:
+                    x[i] = other
+            if old == other.return_:
+                other.return_ = old
             return (
                 function_(name=other.name, args=x, return_=other.return_)
                 if x 
@@ -100,6 +106,12 @@ class typeclass:
     def __mod__(self, other):
         if isinstance(other, function_) and (new := (self & (old := other.args[0]))):
             x = other.args[1:]
+            old = other.args[0]
+            for i in range(len(x)):
+                if x[i] == old:
+                    x[i] = other
+            if old == other.return_:
+                other.return_ = old
             return (
                 function_(name=other.name, args=x, return_=other.return_)
                 if x 
@@ -212,13 +224,19 @@ class composite:
     def __mod__(self, other):
         if isinstance(other, function_) and (new := self & (old := other.args[0])):
             x = other.args[1:]
+            old = other.args[0]
+            for i in range(len(x)):
+                if x[i] == old:
+                    x[i] = other
+            if old == other.return_:
+                other.return_ = old
             return (
                 function_(name=other.name, args=x, return_=other.return_)
                 if x 
                 else other.return_
             )
         return None 
-    
+
     def __rmod__(self, other):
         return self.__mod__(other)
     
@@ -265,7 +283,7 @@ class list_(composite, Any_):
         self.is_empty = is_empty
 
     def __eq__(self, other):
-        return type(other) == list_ and self.content == other.content
+        return str(self) == str(other)
 
     def __str__(self):
         return f"[{str(self.content)}]" if self.content else "[]"
@@ -300,14 +318,14 @@ class list_(composite, Any_):
 
 class htlist_(list_):
     def __init__(self, name='', content=Any_, tail=Any_, is_empty=False):
-        t = content & tail.content
+        t = content & tail.content if type(tail) != Any_ else content & tail
         self.name = name
         self.content = t
         self.tail = list_(content=t)
         self.is_empty = is_empty
 
     def __eq__(self, other):
-        return (self.content, self.tail) == (other.content, other.tail)
+        return str(self) == str(other)
     
     def __str__(self):
         return '[]' if self.is_empty else f'[{self.content}]'
@@ -335,7 +353,7 @@ class tuple_(composite, Any_):
         return str(self)
 
     def __eq__(self, other):
-        return type(other) == tuple_ and self.content == other.content
+        return str(self) == str(other)
 
     def __and__(self, other):
         if isinstance(other, tuple_):
@@ -377,9 +395,7 @@ class function_(Any_):
         self.return_ = return_
 
     def __eq__(self, other):
-        return type(other) == function_ and\
-            self.return_ == other.return_ and\
-            self.args == other.args
+        return str(self) == str(other)
 
     def __str__(self):
         if len(self.args) >= 2:
@@ -411,13 +427,24 @@ class function_(Any_):
         if len(self.args) > 1 and other & self.args[1]:
             x = self.args[:]
             x.pop(1)
+            old = self.args[1]
+            for i in range(len(x)):
+                if x[i] == old:
+                    x[i] = other
+            if old == self.return_:
+                self.return_ = old
             return function_(name=self.name, args=x, return_=self.return_)
         return None
 
     def __mod__(self, other):
-        print("inside mod", other, self.args)
         if other & self.args[0]:
             x = self.args[1:]
+            old = self.args[0]
+            for i in range(len(x)):
+                if x[i] == old:
+                    x[i] = other
+            if old == self.return_:
+                self.return_ = old
             return (
                 function_(name=self.name, args=x, return_=self.return_) 
                 if x != []
@@ -450,7 +477,7 @@ def flatmap_type(t) -> list[Any_]:
             case htlist_():
                 stack = [t_.content, t_.tail] + stack
             case discrete_list() | tuple_():
-                stack = t_.content + stack
+                stack = [t_.content] + stack
             case list_():
                 stack = [t_.content] + stack
             case int_() | char_() | bool_() | float_() |\

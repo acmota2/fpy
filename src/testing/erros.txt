@@ -32,3 +32,15 @@ fdef bla1(n) { m }
 
 fdef bla2(m) { m }
 '''
+
+# Redefinições
+'''fpy 
+let bla = 1
+
+fdef bla(n) { n }
+'''
+'''fpy 
+fdef bla(n) { n }
+
+let bla = 1
+'''

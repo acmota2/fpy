@@ -51,24 +51,12 @@ fdef zip([h|t],[h2|t2]) {
     [ (h,h2) | zip(t,t2) ]
 }
 
-fdef [++]([],l) { l }
-fdef [++](l,[]) { l }
-fdef [++]([h|t], l) {
-    [h | t ++ l]
-}
-
-# TODO: ver porque é que ele se caga nestes 3 casos
 fdef fact(0) { 1 }
 fdef fact(n) {
     n * fact(n - 1)
 }
-
-fdef foldr(_,acc,[]) { acc }
-fdef foldr(f,acc,[h|t]) {
-    let { _ = foldr(f,acc,t) }
-    f(acc,h)
-}
-
+'''
+'''fpy
 fdef ret_string(bla: string) {
     bla ++ "abc"
 }
@@ -83,4 +71,26 @@ fdef fact(0) { 1 }
 fdef fact(n) {
     n + 1
 }
+'''
+'''fpy              
+fdef bla(n) {
+        (fdef(y) { y })(n)
+}
+'''
+'''fpy
+fdef [><](f: (a) -> c,g: (b) -> d,(a,b): (a,b)) -> (c,d) {
+    (f(a), g(b))
+}
+'''
+'''fpy
+fdef bla2(n) {
+    bla + 1
+}
+
+let bla = 1.1
+'''
+'''fpy
+fdef id(n) { n }
+
+fdef id2(n) { n }
 '''

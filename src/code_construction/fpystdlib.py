@@ -1,25 +1,22 @@
 from typing import Any, Callable
 
-add = lambda x, y: x + y
-sub = lambda x, y: x - y
-mul = lambda x, y: x * y
-frac = lambda x, y: x / y
-div = lambda x, y: x // y
-mod = lambda x, y: x % y
-ppow = lambda x, y: x**y
-
-gt = lambda x, y: x > y
-lt = lambda x, y: x < y
-gte = lambda x, y: x >= y
-lte = lambda x, y: x <= y
-eq = lambda x, y: x == y
-neq = lambda x, y: x != y
-
-aand = lambda x, y: x and y
-oor = lambda x, y: x or y
-nnot = lambda x: not x
-
-from_int = lambda x: float(x)
+add =       "lambda x, y: x + y"
+sub =       "lambda x, y: x - y"
+mul =       "lambda x, y: x * y"
+frac =      "lambda x, y: x / y"
+div =       "lambda x, y: x // y"
+mod =       "lambda x, y: x % y"
+ppow =      "lambda x, y: x**y"
+gt =        "lambda x, y: x > y"
+lt =        "lambda x, y: x < y"
+gte =       "lambda x, y: x >= y"
+lte =       "lambda x, y: x <= y"
+eq =        "lambda x, y: x == y"
+neq =       "lambda x, y: x != y"
+aand =      "lambda x, y: x and y"
+oor =       "lambda x, y: x or y"
+nnot =      "lambda x: not x"
+from_int =  "lambda x: float(x)"
 
 """fpy
 alias string = [char]
@@ -29,7 +26,7 @@ fdef not(x: bool) -> bool {
     undefined
 }
 
-fdef [.](f: (b) -> c, g: (a) -> b, a: a) -> c {
+fdef compose(f: (b) -> c, g: (a) -> b, a: a) -> c {
     f(g(a))
 }
 
@@ -48,13 +45,13 @@ fdef foldr(f,acc,[h|t]) {
     f(h,foldr(f,acc,t))
 }
 
-fdef [++]([],l) { l }
-fdef [++](l,[]) { l }
-fdef [++]([h|t], l) {
-    [h | t ++ l]
+fdef concatenate([],l) { l }
+fdef concatenate(l,[]) { l }
+fdef concatenate([h|t], l) {
+    [h | concatenate(t, l)]
 }
 
-fdef [><](f: (a) -> c, g: (b) -> d, (a,b): (a,b)) -> (c,d) {
+fdef func_prod(f: (a) -> c, g: (b) -> d, (a,b): (a,b)) -> (c,d) {
     (f(a), g(b))
 }
 

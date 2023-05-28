@@ -1,7 +1,7 @@
 import re
 import sys
 
-f = sys.stdin if len(sys.argv) < 2 else open('grammar.txt', 'r')
+f = open('grammar.txt', 'r')
 output = open('grammar_written.py', 'w')
 
 print('''from lexer import tokens, literals

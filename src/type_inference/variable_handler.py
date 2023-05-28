@@ -55,11 +55,9 @@ class var_function(variable):
         for i in range(len(args)):
             self.type = self.type % args[i].type
         self.is_id = False
-        print("MODULO", isinstance(self.type, function_), self.type)
         r = self if isinstance(self.type, function_) else variable(
             name=self.name, type_=self.type, line=self.line, is_id=False
         )
-        print(r)
         return r
 
 class arg_scope:
@@ -72,6 +70,7 @@ class arg_scope:
         for k, typ in zip(self.names.keys(), to_compare):
             # again, sendo pedantic
             self.names[k].type &= typ
+            print("UPDATE TYPES", self.names[k].type)
 
     def __str__(self):
         return str(self.names)
@@ -110,7 +109,6 @@ def right_infix_checker(op: var_function, operand: variable):
 def infix_checker(operand1: variable, op: var_function, operand2: variable):
     operand2_new_type = op.type.args[1] & operand2.type
     if (v := (op.type.right_mod(operand2_new_type))) and operand2_new_type and v:
-        print("INFIX CHECKER",v)
         operand1_new_type = v.args[0] & operand1.type
         if not operand1_new_type:
             return None, None, None

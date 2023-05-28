@@ -33,7 +33,6 @@ def p_statement_function(p):
 
 def p_statement_alias(p):
     "statement : ALIAS ID '=' typedesc"
-    print("ALIAS", p[2], p[4], type(p[4]))
     parser.code.add_alias(p[2], p[4])
 
 def p_statement_global(p):
@@ -97,7 +96,7 @@ def p_main_scope(p):
             err.argument_warning(p[3], p[2])
         case ti.arg_conflict.redefinition:
             f = parser.code[p[1]]
-            err.name_already_defined(p[1], p.lexer.lineno, f.line)
+            err.function_redefinition(p[1], p.lexer.lineno, f.line)
             parser.err_type = err.err_types.name
             p_error(p)
         case ti.arg_conflict.type_conflict:
@@ -109,6 +108,10 @@ def p_main_scope(p):
 
 def p_lvar_scope(p):
     "new_f : FDEF prefix"
+    if p[2] in parser.code and parser.code[p[2]].reserved:
+        parser.err_type = err.err_types.redef
+        err.reserved_function_redefinition(p[2], p.lexer.lineno)
+        p_error(p)
     parser.code.new_function_definition(p[2], p.lexer.lineno)
     parser.code.cur_f = p[2]
     p[0] = p[2]
@@ -129,7 +132,6 @@ def p_lpattern_scope(p):
 def p_arg_list_one(p):
     "arg_list : lpattern_scope lpattern annotation"
     t = None
-    print(p[3], type(p[3]))
     if not p[3] or (t := (p[3] & p[2])):
         p[0] = [t]
     else:
@@ -137,7 +139,6 @@ def p_arg_list_one(p):
         err.fpy_type_error(make_error_text(p), p[3], p[2], p.lexer.lineno)
         p_error(p)
     parser.cur_arg.update_types(t)
-    print("ARG_LIST", parser.code[parser.code.cur_f].scope)
     if v := parser.code[parser.code.cur_f].scope_in_error(parser.cur_arg):
         parser.err_type = err.err_types.redef
         err.name_already_defined(v.name, p.lexer.lineno, v.line)
@@ -232,7 +233,8 @@ def p_tuple_type_simple(p):
 
 def p_tuple_type_list(p):
     "tuple_type : tuple_type ',' typeid"
-    p[0] = p[1].append(p[3])
+    p[1].append(p[3])
+    p[0] = p[1]
 
 def p_typeid_int(p):
     "typeid : INT"
@@ -266,10 +268,7 @@ def p_let_block(p):
 def p_let_cont(p):
     """let_cont : assign
                 | let_cont ',' assign"""
-    if v := parser.code[parser.code.cur_f].scope_in_error(parser.cur_arg):
-        parser.err_type = err.err_types.redef
-        err.name_already_defined(v.name, p.lexer.lineno, v.line)
-        p_error(p)
+    pass
 
 def p_assign(p):
     "assign : lpattern_scope lpattern annotation '=' conditional"
@@ -278,12 +277,16 @@ def p_assign(p):
         parser.err_type = err.err_types.type
         err.fpy_type_error(p[3].name, p[3], p[5], p.lexer.lineno)
         p_error(p)
-    for v in parser.cur_arg.names:
+    for v in parser.cur_arg.names.values():
         if t := parser.code.lvar_in_scope(v):
             parser.err_type = err.err_types.name
             err.name_already_defined(v.name, p.lexer.lineno, v.line)
             p_error(p)
-    parser.cur_arg.update_types(p[5])
+    parser.cur_arg.update_types(p[5].type)
+    if v := parser.code[parser.code.cur_f].scope_in_error(parser.cur_arg):
+        parser.err_type = err.err_types.name
+        err.name_already_defined(v.name, p.lexer.lineno, v.line)
+        p_error(p)
 
 def p_lpattern(p):
     """
@@ -343,7 +346,7 @@ def p_lvar(p):
     "lvar : ID"
     p[0] = ti.Any_()
     ti.typeclass.generic_count += 1
-    parser.cur_arg[p[1]] = ti.variable(p[1], p[0], p.lexer.lineno)
+    parser.cur_arg[p[1]] = ti.variable(name=p[1], type_=p[0], line=p.lexer.lineno)
 
 def p_lvar1(p):
     """lvar : '[' SPECIALID ']'
@@ -406,11 +409,12 @@ def p_conditional_compound(p):
 
 def p_conditional_ifthenelse(p):
     "conditional : IF conditional THEN conditional ELSE conditional"
-    if type(p[2].type) == ti.bool_ and (t := (p[4].type % p[6].type)):
-        p[0] = t
+    if type(p[2].type) == ti.bool_ and (t := (p[4].type & p[6].type)):
+        p[4].type = t
+        p[0] = p[4]
     else:
         parser.err_type = err.err_types.type
-        err.fpy_type_error(make_error_text(p), p[4], p[5])
+        err.fpy_type_error(make_error_text(p), p[4].type, p[6].type, p.lexer.lineno)
         p_error(p)
 
 # compound
@@ -564,17 +568,17 @@ def p_pow(p):
 
 def p_pow_infix(p):
     "pow : pow '^' rest"
-    p[2] = ti.function_(args=[ti.float_(), ti.float_()], return_=ti.float_())
+    p[2] = ti.var_function(name=p[2], type_=ti.function_(args=[ti.float_(), ti.float_()], return_=ti.float_()))
     p[0] = infix_case(p[1], p[2], p[3], p)
 
 def p_pow_right_infix(p):
     "pow : '[' pow '^' ']'"
-    p[2] = ti.function_(args=[ti.float_(), ti.float_()], return_=ti.float_())
+    p[2] = ti.var_function(name=p[2], type_=ti.function_(args=[ti.float_(), ti.float_()], return_=ti.float_()))
     p[0] = right_infix_case(p[2], p[3], p)
 
 def p_pow_left_infix(p):
     "pow : '[' '^' rest ']'"
-    p[2] = ti.function_(args=[ti.float_(), ti.float_()], return_=ti.float_())
+    p[2] = ti.var_function(name=p[2], type_=ti.function_(args=[ti.float_(), ti.float_()], return_=ti.float_()))
     p[0] = left_infix_case(p[3], p[2], p)
     # REST
 
@@ -683,7 +687,6 @@ def p_multivar_call(p):
     f: ti.var_function = None
     needs_check = isinstance(p[1].type, ti.function_)
     name = p[1].name
-    print("MULTIVAR", needs_check, p[1])
 # TODO: MELHORAR A VERIFICAÇÃO DE ERROS DESTA FUNÇÃO!!! NESTE SÍTIO!!!
     if not (f := p[1].promote(p[3])):
         parser.err_type = err.err_types.call
@@ -745,7 +748,7 @@ def p_rlist_condition_list(p):
         or (type_p4 == ti.function_ and p[2].type & p[4].type.return_)
         or p[2].type & p[4].type
     ):
-        p[0] = ti.make_htlist(p[2], p[4] , p.lexer.lineno)
+        p[0] = ti.make_htlist(p[2], p[4], p.lexer.lineno)
     else:
         parser.err_type = err.err_types.type
         err.fpy_type_error(
@@ -756,11 +759,11 @@ def p_rlist_condition_list(p):
 def p_rlist_ranger(p):
     "rlist : '[' conditional RANGER conditional ']'"
     if p[2].type & ti.int_() and p[4].type & ti.int_():
-        p[0] = ti.variable(name=f"[{p[2]}..{p[4]}]", type_=ti.discrete_list(content=ti.int_(), is_empty=False), line=p.lexer.lineno)
+        p[0] = ti.variable(name=f"[{p[2].name}..{p[4].name}]", type_=ti.discrete_list(content=ti.int_(), is_empty=False), line=p.lexer.lineno)
     else:
         parser.err_type = err.err_types.type
         err.fpy_type_error(
-            f"[{p[2]}..{p[4]}]", ti.list_(content=ti.int_()), f"{p[2].type}: ?", p.lexer.lineno
+            f"[{p[2].name}..{p[4].name}]", ti.list_(content=ti.int_()), f"{p[2].type}: ?", p.lexer.lineno
         )
         p_error(p)
 
@@ -947,15 +950,6 @@ def p_error(p):
                 f"Parse error with '{err.red_bold(p)}' on line {p.lexer.lineno}:{lexpos(p)}"
             )
 
-# def on_type_error(p):
-    # if not p:
-        # pass
-    # tok = parser.token()
-    # while tok and tok.type == "RBRACE":
-        # tok = parser.token()
-    # parser.err_type = None
-    # parser.errok()
-
 parser = yacc.yacc()
 parser.code: ti.code_ = ti.code_()
 parser.err_type = None
@@ -965,7 +959,7 @@ def make_error_text(p):
     cur_err = code__[p.lexer.lineno - 1][(p.lexer.lexpos - p.lexer.dif + 1) :]
     return cur_err if len(cur_err) < 20 else f"{cur_err[:20]}..."
 
-def parse_types(code):
+def parse_types(code) -> bool:
     global code__
     stdlib = open("./code_construction/fpystdlib.py", "r").read()
     code__ = stdlib.split("\n")
@@ -973,7 +967,10 @@ def parse_types(code):
     parser.restart()
     lexer.lineno = 1
     code__ = code.split("\n")
+    for x in parser.code.functions.values():
+        x.reserved = True
     parser.parse(code)
+    return True
 
 # testing
 if __name__ == "__main__":

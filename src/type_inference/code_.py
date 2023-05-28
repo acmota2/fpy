@@ -9,12 +9,13 @@ arg_conflict = Enum("arg_check", ["type_conflict", "less_generic", "redefinition
 class function_info:
     ID_matcher = compile(r'[_a-zA-Z]\w*')
     
-    def __init__(self, name="", type_=Any_(), line=0):
+    def __init__(self, name="", type_=Any_(), line=0, reserved=False):
         self.name: str = name
         self.line: int = line
         self.type: function_ = type_
         self.scope: dict = {}
         self.args: list = []
+        self.reserved = reserved
 
     def __str__(self):
         return f"{self.name}: {self.type}"
@@ -32,7 +33,7 @@ class function_info:
 
     def arg_checker(self, f: function_) -> arg_conflict:
         r = arg_conflict.no_conflict
-        if len(self.type.args) != len(f.args) or not f:
+        if not self.type or  not f or len(self.type.args) != len(f.args):
             return arg_conflict.redefinition
 
         for arg1, arg2 in zip(self.type.args, f.args):
@@ -50,7 +51,6 @@ class function_info:
     def scope_in_error(self, arg: arg_scope):
         for v in arg.names.values():
             if v.name in self.scope:
-                print("IN SCOPE")
                 return self.scope[v.name]
             if v.name != '_' and self.ID_matcher.match(v.name):
                 self.scope[v.name] = v
@@ -64,7 +64,7 @@ class function_info:
 
 class code_:
     type_aliases = {}
-    not_found_aliases = {}
+    not_found_aliases = set()
     global_variables = {}
     functions: dict[function_info] = {}
     not_yet_found = {}
@@ -110,7 +110,7 @@ class code_:
 
     def lvar_in_scope(self, name: str):
         if name in self.functions[self.cur_f].scope:
-            return self.global_variables[name]
+            return self.functions[self.cur_f].scope[name]
         return None
 
     def deal_with_name(self, name: str):
@@ -125,36 +125,41 @@ class code_:
         return Any_()
 
     def add_alias(self, alias_name, equivalence):
-        match equivalence:
-            case tuple_():
-                for i in range(len(equivalence.content)):
-                    equivalence.content[i] = (
-                        self.check_single_alias(equivalence.content[i])
-                    )
-            case list_():
-                equivalence = self.check_single_alias(equivalence.content)
-            case Any_():
-                equivalence = self.check_single_alias(equivalence)
+        equivalence = self.add_alias_rec(equivalence)
         self.type_aliases[alias_name] = equivalence
+        return True
 
-    def check_single_alias(self, equivalence):
-        if type(equivalence) != str:
+    def add_alias_rec(self, equivalence):
+        match equivalence:
+            case function_():
+                for arg in equivalence.args:
+                    arg = self.add_alias_rec(arg)
+                equivalence.return_ = self.add_alias_rec(equivalence.return_)
+                return equivalence
+            case tuple_():
+                for arg in equivalence.content:
+                    arg = self.add_alias_rec(arg)
+                return equivalence
+            case list_():
+                equivalence.content = self.add_alias_rec(equivalence.content)
+                return equivalence
+            case Any_():
+                return self.check_single_alias(equivalence)
+
+    def check_single_alias(self, equivalence: Any_):
+        if issubclass(type(equivalence), Any_):
             return equivalence
-        if equivalence in self.not_found_aliases:
+        if equivalence.name in self.not_found_aliases:
             return None
-        while equivalence in self.type_aliases:
-            equivalence = self.type_aliases[equivalence]
-        self.type_aliases[equivalence] = equivalence
+        while equivalence.name in self.type_aliases:
+            equivalence = self.type_aliases[equivalence.name]
+        return equivalence
 
     def check_alias(self, type_id):
-        rolled = False
-        while type_id in self.type_aliases:
-            rolled = True
-            type_id = self.type_aliases[type_id]
-        if rolled:
-            return type_id
-        self.not_found_aliases[type_id] = Any_(name=type_id ,generic=type_id)
-        return self.not_found_aliases[type_id]
+        if type_id in self.type_aliases:
+            return self.type_aliases[type_id]
+        self.not_found_aliases.add(type_id)
+        return Any_(name=type_id)
 
     def func_body_id(self, name, line):
         if name in self.functions:
@@ -178,7 +183,6 @@ class code_:
         if not var.is_id:
             return [True] # como se nada fosse
         if var.name in self.functions[self.cur_f].scope and (t := (var.type & (v := self.functions[self.cur_f].scope[var.name]).type)):
-            print("bla")
             self.functions[self.cur_f].scope[var.name].type = t
             return [True]
         if var.name in self.not_yet_found and (t := (var.type & (v := self.not_yet_found[var.name]).type)):

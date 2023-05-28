@@ -34,6 +34,14 @@ def name_already_defined(name, cur_line, prev_line):
     print(f'''
 {red_bold("Fatal:")} name {bold(name)} defined on line {cur_line} already in use by global value on line {prev_line}''')
 
+def function_redefinition(name, cur_line, prev_line):
+    print(f'''
+{red_bold("Fatal:")} name {bold(name)} defined on line {cur_line} already in use by function on line {prev_line}''')
+
+def reserved_function_redefinition(name, cur_line):
+    print(f'''
+{red_bold("Fatal:")} name {cyan_bold(name)} defined on line {cur_line} is reserved and can't be redefined''')
+
 def impossible_function_case(name, line):
     print(warning(f"""Using function name for pattern matching with {cyan_bold(name)} at {line}
 Pattern match is redundant"""))

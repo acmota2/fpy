@@ -1,9 +1,9 @@
 '''fpy
-fdef bla(n) {
-    id(n)
-}
-
 fdef id(n) {
     n
+}
+
+fdef bla(n) {
+    id(n,m)
 }
 '''

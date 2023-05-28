@@ -24,24 +24,36 @@ infix_token_pairs = {
 }
 i = 0
 infix_function_pairs = {
-    '*':        "std.mul",
-    '/':        "std.frac",
-    '//':       "std.div",
-    '%':        "std.mod",
-    '^':        "std.ppow",
-    '+':        "std.add",
-    '-':        "std.sub",
-    '==':       "std.eq",
-    '!=':       "std.neq",
-    '>':        "std.gt",
-    '<':        "std.lt",
-    '<=':       "std.lte",
-    '>=':       "std.gte",
-    '&&':       "std.aand",
-    '||':       "std.oor",
-    "from_int": "std.from_int",
-    "not":      "std.nnot"
+    '*':        std.mul,
+    '/':        std.frac,
+    '//':       std.div,
+    '%':        std.mod,
+    '^':        std.ppow,
+    '+':        std.add,
+    '-':        std.sub,
+    '==':       std.eq,
+    '!=':       std.neq,
+    '>':        std.gt,
+    '<':        std.lt,
+    '<=':       std.lte,
+    '>=':       std.gte,
+    '&&':       std.aand,
+    '||':       std.oor,
+    "from_int": std.from_int,
+    "not":      std.nnot,
+    ".":        "std.compose",
+    "++":       "std.concatenate",
+    "><":       "std.func_prod",
+    "foldr":    "std.foldr",
+    "foldl":    "std.foldl",
+    "map":      "std.map_",
+    "filter":   "std.filter_",
+    "concat":   "std.concat"
 }
+
+reserved_funcs = {"filter_", "map_", "concat", "foldl", "foldr", "concatenate", "func_prod", "compose"}
+
+scope_vars = (set(), None)
 
 fs = {}
 
@@ -55,7 +67,7 @@ def p_all1(p):
 
 def p_all2(p):
     "all : BEGIN body END"
-    s = "import __fpylib as std\n" # maybe needs changes
+    s = "" # maybe needs changes
     written_fs = set()
     for statement, isFunc in p[2]:
         if isFunc and not statement in written_fs:
@@ -114,6 +126,8 @@ def p_main_scope(p):
 def p_new_f(p):
     "new_f : FDEF prefix"
     p[0] = p[2]
+    global scope_vars
+    scope_vars = (set(), None)
 
 def p_args(p):
     "args : '(' ')'"
@@ -129,10 +143,14 @@ def p_lpattern_scope(p):
 
 def p_arg_list(p):
     "arg_list : lpattern_scope lpattern annotation"
+    global scope_vars
+    scope_vars[0].add(p[2])
     p[0] = p[2]
 
 def p_arg_list1(p):
     "arg_list : arg_list ',' lpattern_scope lpattern annotation"
+    global scope_vars
+    scope_vars[0].add(p[4])
     p[0] = f"""{p[1]}, {p[4]}"""
 
 def p_prefix(p):
@@ -241,6 +259,8 @@ def p_let_cont1(p):
 
 def p_assign(p):
     "assign : lpattern annotation '=' conditional"
+    global scope_vars
+    scope_vars[0].add(p[1])
     p[0] = f"{p[1]} = {p[4]}"
 
 def p_lpattern(p):
@@ -262,18 +282,27 @@ def p_llist(p):
 def p_llist1(p):
     "llist : '[' pattern_list ']'"
     p[0] = f"[{p[2]}]"
+    global scope_vars
+    scope_vars[0].add(p[2])
 
 def p_llist2(p):
     "llist : '[' lpattern '|' lpattern ']'"
     p[0] = f"[{p[2]}, *{p[4]}]"
+    global scope_vars
+    scope_vars[0].add(p[2])
+    scope_vars[0].add(p[4])
 
 def p_pattern_list(p):
     "pattern_list : lpattern"
     p[0] = p[1]
+    global scope_vars
+    scope_vars[0].add(p[1])
 
 def p_pattern_list1(p):
     "pattern_list : pattern_list ',' lpattern"
-    p[0] = f"{p[2]}, {p[4]}"
+    p[0] = f"{p[1]}, {p[3]}"
+    global scope_vars
+    scope_vars[0].add(p[3])
 
 def p_ltuple(p):
     "ltuple : '(' ')'"
@@ -282,14 +311,21 @@ def p_ltuple(p):
 def p_ltuple1(p):
     "ltuple : '(' ltuple_cont ')'"
     p[0] = f"({p[2]})"
+    global scope_vars
+    scope_vars[0].add(p[2])
 
 def p_ltuple_cont(p):
     "ltuple_cont : lpattern ',' lpattern"
-    p[0] = f"""({p[1]}, {p[2]})"""
+    p[0] = f"""{p[1]}, {p[3]}"""
+    global scope_vars
+    scope_vars[0].add(p[1])
+    scope_vars[0].add(p[3])
 
 def p_ltuple_cont1(p):
     "ltuple_cont : ltuple_cont ',' lpattern"
-    p[0] = f"""({p[1]}, {p[2]})"""
+    p[0] = f"""{p[1]}, {p[3]}"""
+    global scope_vars
+    scope_vars[0].add(p[3])
 
 def p_lvar(p):
     "lvar : ID"
@@ -598,21 +634,39 @@ def p_lambda(p):
 
 def p_lambda1(p):
     "lambda : FDEF '(' lambda_scope arg_list ')' '{' conditional '}'"
-    p[0] = "lambda {p[4]}: {p[7]}"
+    l_vars = re.sub(r"[\s\[\]]", "", p[4]).split(",")
+    i = 0
+    for v in l_vars:
+        to_sub = ""
+        if v[0] == "*":
+            to_sub = f"____t[{i}:]"
+            v = v[1:]
+        else:
+            to_sub = f"____t[{i}]" 
+        pattern = fr"\b{v}\b"
+        p[7] = re.sub(pattern, to_sub, p[7])
+        i+=1
+    p[0] = f"lambda ____t: {p[7]}"
+    global scope_vars
+    scope_vars = scope_vars[1]
+    pass
+
 
 def p_lambda_scope(p):
     "lambda_scope : "
+    global scope_vars
+    scope_vars = (set(scope_vars[0]), scope_vars)
     pass
 
 #chamada de funcao sem argumentos
 def p_multivar(p):
     "multivar : multivar '(' ')'"
-    p[0] = re.sub(r"\(([a-zA-Z_]\w*\([a-zA-Z_]\w*, [a-zA-Z_]\w*\))\)\(\)", "\1",f"""{p[1]}()""")
+    p[0] = re.sub(r"\(([a-zA-Z_][\w\.]*\([a-zA-Z_][\w\.]*, [a-zA-Z_][\w\.]*\))\)\(\)", "\1",f"""{p[1]}()""")
 
 #chamada de funcao com lista de argumentos
 def p_multivar1(p):
     "multivar : multivar '(' condition_list ')'"
-    p[0] = re.sub(r"\(([a-zA-Z_]\w*)\(([a-zA-Z_]\w*),([a-zA-Z_]\w*)\)\)\((.*)\)", r"\1(\2, \3, \4)",f"""{p[1]}({p[3]})""")
+    p[0] = re.sub(r"\(([a-zA-Z_][\w\.]*)\(([a-zA-Z_][\w\.]*),([a-zA-Z_][\w\.]*)\)\)\((.*)\)", r"\1(\2, \3, \4)",f"""{p[1]}({p[3]})""")
 
 def p_multivar2(p):
     "multivar : rlist"
@@ -668,7 +722,13 @@ def p_rtuple_cont1(p):
 
 def p_primaryvar(p):
     "primaryvar : ID"
-    p[0] = f"{p[1]}"
+    global scope_vars
+    if p[1] in infix_function_pairs:
+        p[0] = f"({infix_function_pairs[p[1]]})"
+    elif p[1] in scope_vars[0] or p[1] in reserved_funcs:
+        p[0] = f"{p[1]}"
+    else:
+        p[0] = f"{p[1]}()"
 
 def p_primaryvar1(p):
     "primaryvar : INTT"
@@ -763,53 +823,9 @@ def p_error(p):
 
 test = '''
 """fpy
-alias string = [char]
-
-# __builtin__
-fdef not(x: bool) -> bool {
-    undefined
-}
-
-fdef [.](f: (b) -> c, g: (a) -> b, a: a) -> c {
-    f(g(a))
-}
-
-# __builtin__
-fdef from_int(x: int) -> float {
-    undefined
-}
-
-fdef foldl(_: (b,a) -> b, acc: b, []: [a]) -> b { acc }
-fdef foldl(f,acc,[h|t]) {
-    foldl(f,f(acc,h),t)
-}
-
-fdef foldr(_: (a,b) -> b, acc: b, []: [a]) -> b { acc }
-fdef foldr(f,acc,[h|t]) {
-    f(h,foldr(f,acc,t))
-}
-
-fdef [++]([],l) { l }
-fdef [++](l,[]) { l }
-fdef [++]([h|t], l) {
-    [h | t ++ l]
-}
-
-fdef [><](f: (a) -> c, g: (b) -> d, (a,b): (a,b)) -> (c,d) {
-    (f(a), g(b))
-}
-
-fdef map_(_: (a) -> b, []: [a]) -> [b] { [] }
-fdef map_(f, [h|t]) {
-    [f(h) | map_(f,t)]
-}
-
-fdef filter_(_: (a) -> bool, []: [a]) { [] }
-fdef filter_(f,[h|t]) {
-    [?..?] {
-        f(h): [h | filter_(f,t)],
-        else: filter_(f,t)
-    }
+fdef [<>](_,[]) { [] }
+fdef [<>](f,[h|t]) {
+        [ f(h) | f <> t ]
 }
 """
 '''
@@ -822,4 +838,4 @@ def gen_code(code: str):
 # testing
 # if __name__ == "__main__":
 #     # code = sys.stdin.read()
-#     parse_types("")
+#     print(gen_code(test))

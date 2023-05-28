@@ -70,7 +70,6 @@ class arg_scope:
         for k, typ in zip(self.names.keys(), to_compare):
             # again, sendo pedantic
             self.names[k].type &= typ
-            print("UPDATE TYPES", self.names[k].type)
 
     def __str__(self):
         return str(self.names)

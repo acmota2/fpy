@@ -70,4 +70,9 @@ fdef filter_(f,[h|t]) {
         else: filter_(f,t)
     }
 }
+
+fdef concat([]) { [] }
+fdef concat([[h|t]|t2]) {
+    [h | t ++ concat(t2)]
+}
 """

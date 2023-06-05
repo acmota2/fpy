@@ -949,11 +949,13 @@ def p_error(p):
             print(
                 f"Parse error with '{err.red_bold(p)}' on line {p.lexer.lineno}:{lexpos(p)}"
             )
+    parser.success = False
 
 parser = yacc.yacc()
 parser.code: ti.code_ = ti.code_()
 parser.err_type = None
 parser.code.cur_arg = None
+parser.success = True
 
 def make_error_text(p):
     cur_err = code__[p.lexer.lineno - 1][(p.lexer.lexpos - p.lexer.dif + 1) :]
@@ -970,7 +972,7 @@ def parse_types(code) -> bool:
     for x in parser.code.functions.values():
         x.reserved = True
     parser.parse(code)
-    return True
+    return parser.success
 
 # testing
 if __name__ == "__main__":

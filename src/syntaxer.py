@@ -16,6 +16,8 @@ def p_all_body(p):
     "all : BEGIN body END"
     for v in parser.code.not_yet_found.values():
         err.variable_not_in_scope(v.name, v.line)
+        parser.err_type = err.err_types.scope
+        p_error(p)
 
 # body
 def p_body_statement(p):

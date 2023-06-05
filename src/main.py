@@ -38,7 +38,7 @@ if __name__ == '__main__':
     if (args.outFileName):
         output = args.outFileName
         outFolder = os.path.dirname(output) + "/"
-    syntaxer.parse_types(code)
-    code = "import __fpylib as std\n" + grammar_written.gen_code(code)
-    write_to_file(code, output)
-    process_std_lib(outFolder)
+    if syntaxer.parse_types(code):
+        code = "import __fpylib as std\n" + grammar_written.gen_code(code)
+        write_to_file(code, output)
+        process_std_lib(outFolder)

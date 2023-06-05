@@ -1,6 +1,7 @@
 # Ours
 parser.out
 parsetab.py
+.vscode
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

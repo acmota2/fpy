@@ -938,6 +938,7 @@ def infix_case(operand1, operator, operand2, p):
 lexpos = lambda p: p.lexer.lexpos - p.lexer.dif + 1
 
 def p_error(p):
+    parser.success = False
     if parser.code.cur_f:
         parser.code[parser.code.cur_f].scope = {}
     if not p:
@@ -949,7 +950,6 @@ def p_error(p):
             print(
                 f"Parse error with '{err.red_bold(p)}' on line {p.lexer.lineno}:{lexpos(p)}"
             )
-    parser.success = False
 
 parser = yacc.yacc()
 parser.code: ti.code_ = ti.code_()

@@ -9,14 +9,9 @@ fdef uncurry(f,(a,b)) {
     f(a,b)
 }
 
-
-# let bla2 = 73
-
-# fdef bla(cenas) {
-#     let {
-#         x = fdef([_|t]) { foldr([+], 0, t) }
-#     }
-#     bla2 + x([1,2,3]) * cenas
+# Da erro
+# fdef bla(n: int) {
+#     n + 1.1
 # }
 
 fdef normalmap(_,[]) { [] }
@@ -27,6 +22,20 @@ fdef normalmap(f,[h|t]) {
 fdef [<>](_,[]) { [] }
 fdef [<>](f,[h|t]) {
         [ f(h) | f <> t ]
+}
+
+fdef inSort([]) { [] }
+fdef inSort([x]) { [x] }
+fdef inSort([h|t]) {
+  insertOrd(h, inSort(t))
+}
+
+fdef insertOrd(x, []) { [x] }
+fdef insertOrd(x, [h|t]) {
+  [?..?] {
+    h < x: [h | insertOrd(x, t)],
+    else: [h | [x | t] ]
+  }
 }
 
 '''

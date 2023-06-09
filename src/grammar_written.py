@@ -666,7 +666,9 @@ def p_multivar(p):
 #chamada de funcao com lista de argumentos
 def p_multivar1(p):
     "multivar : multivar '(' condition_list ')'"
-    p[0] = re.sub(r"\(([a-zA-Z_][\w\.]*)\(([a-zA-Z_][\w\.]*),([a-zA-Z_][\w\.]*)\)\)\((.*)\)", r"\1(\2, \3, \4)",f"""{p[1]}({p[3]})""")
+    s = f"""{p[1]}({p[3]})"""
+    s = re.sub(r"\(([a-zA-Z_][\w\.]*)\(([a-zA-Z_][\w\.]*),([a-zA-Z_][\w\.]*)\)\)\((.*)\)", r"\1(\2, \3, \4)",s)
+    p[0] = re.sub(r"([a-zA-Z_][\w\.]*)\(\)(.*\))", r"\1\2",s)
 
 def p_multivar2(p):
     "multivar : rlist"
@@ -823,9 +825,18 @@ def p_error(p):
 
 test = '''
 """fpy
-fdef [<>](_,[]) { [] }
-fdef [<>](f,[h|t]) {
-        [ f(h) | f <> t ]
+fdef inSort([]) { [] }
+fdef inSort([x]) { [x] }
+fdef inSort([h|t]) {
+  insertOrd(h, inSort(t))
+}
+
+fdef insertOrd(x, []) { [x] }
+fdef insertOrd(x, [h|t]) {
+  [?..?] {
+    h < x: [h | insertOrd(x, t)],
+    else: [h | [x | t] ]
+  }
 }
 """
 '''
@@ -836,6 +847,6 @@ def gen_code(code: str):
     return p
 
 # testing
-# if __name__ == "__main__":
-#     # code = sys.stdin.read()
-#     print(gen_code(test))
+if __name__ == "__main__":
+    # code = sys.stdin.read()
+    print(gen_code(test))
